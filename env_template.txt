@@ -1,0 +1,11 @@
+# Copy this to .env and update with your actual values
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/waste_marketplace
+
+# JWT Secret Key (use a strong random string in production!)
+SECRET_KEY=your-secret-key-change-this-in-production-to-a-strong-random-string
+
+# CORS Origins (comma-separated, no spaces)
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+
