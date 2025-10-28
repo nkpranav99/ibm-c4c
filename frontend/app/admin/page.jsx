@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { adminAPI } from '@/lib/api'
 import { useRouter } from 'next/navigation'
-import type { User, Listing } from '@/types'
 
 export default function AdminPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [stats, setStats] = useState<any>(null)
-  const [users, setUsers] = useState<User[]>([])
-  const [listings, setListings] = useState<Listing[]>([])
+  const [stats, setStats] = useState(null)
+  const [users, setUsers] = useState([])
+  const [listings, setListings] = useState([])
   const [activeTab, setActiveTab] = useState('overview')
   const [loading, setLoading] = useState(true)
 
@@ -46,7 +45,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleToggleUser = async (userId: number) => {
+  const handleToggleUser = async (userId) => {
     try {
       await adminAPI.toggleUserActive(userId)
       loadData()
@@ -55,7 +54,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleDeleteListing = async (listingId: number) => {
+  const handleDeleteListing = async (listingId) => {
     if (!confirm('Are you sure you want to delete this listing?')) return
     
     try {
@@ -127,7 +126,7 @@ export default function AdminPage() {
             <div className="card">
               <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
               <div className="space-y-2">
-                {stats.recent_users?.slice(0, 5).map((u: User) => (
+                {stats.recent_users?.slice(0, 5).map((u) => (
                   <div key={u.id} className="p-2 border rounded">
                     <p className="font-medium">{u.email}</p>
                     <p className="text-sm text-gray-600">{u.role}</p>
@@ -139,7 +138,7 @@ export default function AdminPage() {
             <div className="card">
               <h2 className="text-xl font-semibold mb-4">Recent Listings</h2>
               <div className="space-y-2">
-                {stats.recent_listings?.slice(0, 5).map((l: Listing) => (
+                {stats.recent_listings?.slice(0, 5).map((l) => (
                   <div key={l.id} className="p-2 border rounded">
                     <p className="font-medium">{l.title}</p>
                     <p className="text-sm text-gray-600">${l.price} - {l.location}</p>

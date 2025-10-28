@@ -2,20 +2,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { authAPI } from '@/lib/api'
-import type { User, LoginCredentials } from '@/types'
 
-interface AuthContextType {
-  user: User | null
-  loading: boolean
-  login: (credentials: LoginCredentials) => Promise<void>
-  logout: () => void
-  isAuthenticated: boolean
-}
+const AuthContext = createContext(undefined)
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -36,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false)
   }
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (credentials) => {
     const { access_token } = await authAPI.login(credentials)
     localStorage.setItem('token', access_token)
     const userData = await authAPI.getCurrentUser()
@@ -48,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }
 
-  const value: AuthContextType = {
+  const value = {
     user,
     loading,
     login,

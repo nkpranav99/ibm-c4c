@@ -3,15 +3,14 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { listingsAPI, ordersAPI, auctionsAPI } from '@/lib/api'
-import type { Listing, Auction } from '@/types'
 import { useAuth } from '@/context/AuthContext'
 
 export default function ListingDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { user, isAuthenticated } = useAuth()
-  const [listing, setListing] = useState<Listing | null>(null)
-  const [auction, setAuction] = useState<Auction | null>(null)
+  const [listing, setListing] = useState(null)
+  const [auction, setAuction] = useState(null)
   const [loading, setLoading] = useState(true)
   const [bidAmount, setBidAmount] = useState('')
   const [orderQuantity, setOrderQuantity] = useState('')
@@ -51,14 +50,14 @@ export default function ListingDetailPage() {
 
     try {
       await ordersAPI.create({
-        listing_id: listing!.id,
+        listing_id: listing.id,
         quantity,
         total_price: totalPrice,
       })
       alert('Order placed successfully!')
       router.push('/dashboard')
-    } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to place order')
+    } catch (error) {
+      alert(error?.response?.data?.detail || 'Failed to place order')
     }
   }
 
@@ -74,8 +73,8 @@ export default function ListingDetailPage() {
       await auctionsAPI.placeBid(auction.id, parseFloat(bidAmount))
       alert('Bid placed successfully!')
       loadListing()
-    } catch (error: any) {
-      alert(error.response?.data?.detail || 'Failed to place bid')
+    } catch (error) {
+      alert(error?.response?.data?.detail || 'Failed to place bid')
     }
   }
 

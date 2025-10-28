@@ -12,15 +12,15 @@ export default function LoginPage() {
   const { login } = useAuth()
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
     try {
       await login({ username: email, password })
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.')
+    } catch (err) {
+      setError(err?.response?.data?.detail || 'Login failed. Please try again.')
     }
   }
 

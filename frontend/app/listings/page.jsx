@@ -2,16 +2,15 @@
 
 import React, { useEffect, useState } from 'react'
 import { listingsAPI } from '@/lib/api'
-import type { Listing } from '@/types'
 import Link from 'next/link'
 
 export default function ListingsPage() {
-  const [listings, setListings] = useState<Listing[]>([])
+  const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('')
   const [material, setMaterial] = useState('')
-  const [listingType, setListingType] = useState<string>('')
+  const [listingType, setListingType] = useState('')
 
   useEffect(() => {
     loadListings()

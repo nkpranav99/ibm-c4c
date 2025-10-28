@@ -9,7 +9,7 @@ import Link from 'next/link'
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function DashboardPage() {
           <div className="card mb-6">
             <h2 className="text-xl font-semibold mb-4">Recent Listings</h2>
             <div className="space-y-3">
-              {stats?.recent_listings?.map((listing: any) => (
+              {stats?.recent_listings?.map((listing) => (
                 <Link key={listing.id} href={`/listing/${listing.id}`} className="block p-3 hover:bg-gray-50 rounded">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">{listing.title}</span>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
             <div className="space-y-3">
-              {stats?.recent_orders?.map((order: any) => (
+              {stats?.recent_orders?.map((order) => (
                 <div key={order.id} className="p-3 border rounded">
                   <div className="flex justify-between items-center">
                     <div>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
           <div className="card mb-6">
             <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
             <div className="space-y-3">
-              {stats?.recent_orders?.map((order: any) => (
+              {stats?.recent_orders?.map((order) => (
                 <div key={order.id} className="p-3 border rounded">
                   <div className="flex justify-between items-center">
                     <div>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Recent Bids</h2>
             <div className="space-y-3">
-              {stats?.recent_bids?.map((bid: any) => (
+              {stats?.recent_bids?.map((bid) => (
                 <div key={bid.id} className="p-3 border rounded">
                   <div className="flex justify-between items-center">
                     <div>

@@ -4,10 +4,9 @@ import React from 'react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { listingsAPI } from '@/lib/api'
-import type { Listing } from '@/types'
 
 export default function Home() {
-  const [featuredListings, setFeaturedListings] = useState<Listing[]>([])
+  const [featuredListings, setFeaturedListings] = useState([])
 
   useEffect(() => {
     listingsAPI.getAll({ limit: 6 }).then(setFeaturedListings).catch(console.error)

@@ -11,20 +11,20 @@ export default function SignupPage() {
     username: '',
     password: '',
     company_name: '',
-    role: 'buyer' as 'admin' | 'seller' | 'buyer',
+    role: 'buyer',
   })
   const [error, setError] = useState('')
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
     try {
       await authAPI.register(formData)
       router.push('/login')
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed. Please try again.')
+    } catch (err) {
+      setError(err?.response?.data?.detail || 'Registration failed. Please try again.')
     }
   }
 
@@ -99,7 +99,7 @@ export default function SignupPage() {
               <select
                 className="input-field mt-1"
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               >
                 <option value="buyer">Buyer</option>
                 <option value="seller">Seller</option>
