@@ -1,6 +1,8 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
 from app.database import engine, Base
 
@@ -18,13 +20,25 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS
+# Configure CORS - Explicitly allow localhost origins for XHR/fetch requests
+# This fixes CORS errors for all API endpoints
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001", 
+    "http://127.0.0.1:3001"
+]
+
+# Use FastAPI's built-in CORS middleware with explicit configuration
+# This ensures CORS headers are set for all XHR/fetch requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+    expose_headers=["*"],
+    max_age=600,
 )
 
 # Mount uploads directory
@@ -52,4 +66,3 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
-

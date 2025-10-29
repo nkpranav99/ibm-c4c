@@ -3,11 +3,12 @@
 import React from 'react'
 import Link from 'next/link'
 import { useAuth } from '../context/AuthContext'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
 export default function Navigation() {
   const { user, logout, isAuthenticated } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleLogout = () => {
     logout()
@@ -40,7 +41,7 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+            {isAuthenticated && pathname !== '/login' && pathname !== '/signup' ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">
                   {user?.company_name || user?.username}
@@ -52,7 +53,7 @@ export default function Navigation() {
                   Logout
                 </button>
               </div>
-            ) : (
+            ) : pathname !== '/login' && pathname !== '/signup' ? (
               <>
                 <Link href="/login" className="text-gray-700 hover:text-primary-600 transition">
                   Login
@@ -61,7 +62,7 @@ export default function Navigation() {
                   Sign Up
                 </Link>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

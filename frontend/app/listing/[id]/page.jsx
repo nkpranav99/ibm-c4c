@@ -120,8 +120,15 @@ export default function ListingDetailPage() {
         <div className="space-y-6">
           <div className="card">
             <div className="text-center mb-6">
-              <span className="text-4xl font-bold text-primary-600">${listing.price}</span>
-              <p className="text-gray-600">per {listing.quantity_unit}</p>
+              <span className="text-4xl font-bold text-primary-600">
+                ₹{listing.price?.toLocaleString() || listing.price_per_unit?.toLocaleString() || '0'}
+              </span>
+              <p className="text-gray-600">per {listing.quantity_unit || 'unit'}</p>
+              {listing.total_value && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Total Value: <span className="font-semibold">₹{listing.total_value.toLocaleString()}</span>
+                </p>
+              )}
             </div>
 
             {listing.listing_type === 'fixed_price' ? (
@@ -144,7 +151,7 @@ export default function ListingDetailPage() {
                   <div className="mb-4 p-4 bg-primary-50 rounded-lg">
                     <p className="text-sm text-gray-600">Current Highest Bid</p>
                     <p className="text-2xl font-bold text-primary-600">
-                      ${auction.current_highest_bid || auction.starting_bid}
+                      ₹{(auction.current_highest_bid || auction.starting_bid)?.toLocaleString() || '0'}
                     </p>
                   </div>
                   <label className="block text-sm font-medium mb-2">Your Bid</label>
@@ -166,10 +173,38 @@ export default function ListingDetailPage() {
             )}
           </div>
 
-          {listing.seller_id !== user?.id && (
+
+          {/* Pricing Details */}
+          <div className="card">
+            <h3 className="font-semibold mb-3">Pricing & Details</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Price per Unit:</span>
+                <span className="font-semibold">₹{listing.price?.toLocaleString() || listing.price_per_unit?.toLocaleString() || '0'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Available Quantity:</span>
+                <span className="font-semibold">{listing.quantity?.toLocaleString()} {listing.quantity_unit}</span>
+              </div>
+              {listing.total_value && (
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-900 font-semibold">Total Lot Value:</span>
+                  <span className="font-bold text-primary-600 text-lg">₹{listing.total_value.toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {listing.seller_company && (
             <div className="card bg-primary-50">
               <h3 className="font-semibold mb-2">Seller Information</h3>
-              <p className="text-sm text-gray-600">Contact the seller for more details</p>
+              <p className="text-sm text-gray-700 font-medium">{listing.seller_company}</p>
+              {listing.views && listing.inquiries && (
+                <div className="mt-3 flex gap-4 text-xs text-gray-600">
+                  <span>👁️ {listing.views} views</span>
+                  <span>💬 {listing.inquiries} inquiries</span>
+                </div>
+              )}
             </div>
           )}
         </div>
