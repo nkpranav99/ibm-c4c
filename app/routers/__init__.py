@@ -1,2 +1,2 @@
-from app.routers import auth, listings, orders, auctions, dashboard, admin, websocket
+from app.routers import auth, listings, orders, auctions, dashboard, admin, websocket, chatbot
 
