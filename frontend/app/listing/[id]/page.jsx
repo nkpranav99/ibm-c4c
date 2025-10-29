@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { listingsAPI, ordersAPI, auctionsAPI } from '@/lib/api'
-import { useAuth } from '@/context/AuthContext'
+import { listingsAPI, ordersAPI, auctionsAPI } from '../../../lib/api'
+import { useAuth } from '../../../context/AuthContext'
 
 export default function ListingDetailPage() {
   const params = useParams()

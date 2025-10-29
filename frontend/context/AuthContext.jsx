@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { authAPI } from '@/lib/api'
+import { authAPI } from '../lib/api'
 
 const AuthContext = createContext(undefined)
 
@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('token')
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     if (token) {
       try {
         const userData = await authAPI.getCurrentUser()
@@ -23,6 +23,9 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('token')
         setUser(null)
       }
+    } else if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true') {
+      // Seed a mock user to bypass login in mock mode
+      setUser({ id: 1, username: 'mock_user', role: 'seller' })
     }
     setLoading(false)
   }

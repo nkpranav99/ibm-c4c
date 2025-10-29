@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
-import { adminAPI } from '@/lib/api'
+import { useAuth } from '../../context/AuthContext'
+import { adminAPI } from '../../lib/api'
 import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {

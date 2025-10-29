@@ -1,0 +1,1342 @@
+{
+  "metadata": {
+    "generated_date": "2025-10-28 06:08:35",
+    "platform_name": "Waste Material Marketplace",
+    "data_version": "1.0"
+  },
+  "waste_categories": {
+    "Agricultural/Biomass": [
+      {
+        "name": "Bagasse",
+        "unit": "tons",
+        "typical_price_range": "20-50"
+      },
+      {
+        "name": "Rice Husk",
+        "unit": "tons",
+        "typical_price_range": "15-35"
+      },
+      {
+        "name": "Coconut Shell",
+        "unit": "tons",
+        "typical_price_range": "25-45"
+      },
+      {
+        "name": "Straw/Hay",
+        "unit": "tons",
+        "typical_price_range": "10-30"
+      }
+    ],
+    "Industrial Ash": [
+      {
+        "name": "Fly Ash",
+        "unit": "tons",
+        "typical_price_range": "5-20"
+      },
+      {
+        "name": "Bottom Ash",
+        "unit": "tons",
+        "typical_price_range": "3-15"
+      },
+      {
+        "name": "Coal Ash",
+        "unit": "tons",
+        "typical_price_range": "8-25"
+      }
+    ],
+    "Plastic Waste": [
+      {
+        "name": "HDPE Scrap",
+        "unit": "kg",
+        "typical_price_range": "0.4-0.8"
+      },
+      {
+        "name": "PET Bottles",
+        "unit": "kg",
+        "typical_price_range": "0.3-0.6"
+      },
+      {
+        "name": "PP Scrap",
+        "unit": "kg",
+        "typical_price_range": "0.35-0.7"
+      },
+      {
+        "name": "LDPE Film",
+        "unit": "kg",
+        "typical_price_range": "0.25-0.5"
+      },
+      {
+        "name": "Mixed Plastic",
+        "unit": "kg",
+        "typical_price_range": "0.15-0.4"
+      }
+    ],
+    "Metal Scrap": [
+      {
+        "name": "Steel Scrap",
+        "unit": "tons",
+        "typical_price_range": "100-165"
+      },
+      {
+        "name": "Aluminum Scrap",
+        "unit": "kg",
+        "typical_price_range": "1.1-1.8"
+      },
+      {
+        "name": "Copper Wire",
+        "unit": "kg",
+        "typical_price_range": "8.0-12.0"
+      },
+      {
+        "name": "Brass Scrap",
+        "unit": "kg",
+        "typical_price_range": "4.5-7.0"
+      },
+      {
+        "name": "Cast Iron",
+        "unit": "tons",
+        "typical_price_range": "80-120"
+      }
+    ],
+    "Paper & Cardboard": [
+      {
+        "name": "Cardboard Bales",
+        "unit": "tons",
+        "typical_price_range": "50-120"
+      },
+      {
+        "name": "Mixed Paper",
+        "unit": "tons",
+        "typical_price_range": "30-80"
+      },
+      {
+        "name": "Newspaper",
+        "unit": "tons",
+        "typical_price_range": "40-90"
+      }
+    ],
+    "Construction & Demolition": [
+      {
+        "name": "Concrete Rubble",
+        "unit": "tons",
+        "typical_price_range": "5-15"
+      },
+      {
+        "name": "Brick Waste",
+        "unit": "tons",
+        "typical_price_range": "3-12"
+      },
+      {
+        "name": "Scrap Wood",
+        "unit": "tons",
+        "typical_price_range": "20-50"
+      },
+      {
+        "name": "Gypsum Waste",
+        "unit": "tons",
+        "typical_price_range": "10-30"
+      }
+    ],
+    "Glass": [
+      {
+        "name": "Clear Glass",
+        "unit": "tons",
+        "typical_price_range": "40-80"
+      },
+      {
+        "name": "Mixed Glass",
+        "unit": "tons",
+        "typical_price_range": "20-50"
+      },
+      {
+        "name": "Broken Glass",
+        "unit": "tons",
+        "typical_price_range": "10-35"
+      }
+    ],
+    "Textile Waste": [
+      {
+        "name": "Cotton Scrap",
+        "unit": "kg",
+        "typical_price_range": "0.5-1.2"
+      },
+      {
+        "name": "Fabric Remnants",
+        "unit": "kg",
+        "typical_price_range": "0.3-0.8"
+      },
+      {
+        "name": "Industrial Rags",
+        "unit": "kg",
+        "typical_price_range": "0.2-0.6"
+      }
+    ],
+    "Rubber & Tires": [
+      {
+        "name": "Tire Scrap",
+        "unit": "tons",
+        "typical_price_range": "30-70"
+      },
+      {
+        "name": "Rubber Crumb",
+        "unit": "tons",
+        "typical_price_range": "50-100"
+      }
+    ],
+    "Organic/Food Waste": [
+      {
+        "name": "Food Processing Waste",
+        "unit": "tons",
+        "typical_price_range": "5-20"
+      },
+      {
+        "name": "Vegetable Waste",
+        "unit": "tons",
+        "typical_price_range": "3-15"
+      }
+    ]
+  },
+  "summary_metrics": {
+    "total_listings": 20,
+    "active_listings": 3,
+    "sold_listings": 7,
+    "pending_listings": 4,
+    "expired_listings": 6,
+    "total_sellers": 12,
+    "active_sellers": 8,
+    "total_buyers": 185,
+    "active_buyers": 84,
+    "total_transactions": 353,
+    "total_revenue_inr": 13922850,
+    "avg_listing_value_inr": 145868,
+    "avg_days_to_sell": 22,
+    "active_auctions": 5,
+    "conversion_rate_percentage": 27.06,
+    "repeat_buyer_rate_percentage": 39.63
+  },
+  "listings": [
+    {
+      "id": 1,
+      "title": "Bagasse - Premium Quality",
+      "material_name": "Bagasse",
+      "category": "Agricultural/Biomass",
+      "quantity": 99,
+      "unit": "tons",
+      "price_per_unit": 28.08,
+      "total_value": 2779.92,
+      "listing_type": "fixed_price",
+      "status": "sold",
+      "location": "Ahmedabad",
+      "seller_company": "AgriWaste Solutions",
+      "date_posted": "2025-10-10",
+      "views": 252,
+      "inquiries": 10
+    },
+    {
+      "id": 2,
+      "title": "Rice Husk - Premium Quality",
+      "material_name": "Rice Husk",
+      "category": "Agricultural/Biomass",
+      "quantity": 342,
+      "unit": "tons",
+      "price_per_unit": 22.67,
+      "total_value": 7753.14,
+      "listing_type": "fixed_price",
+      "status": "sold",
+      "location": "Nagpur",
+      "seller_company": "GreenTech Industries",
+      "date_posted": "2025-09-11",
+      "views": 374,
+      "inquiries": 32
+    },
+    {
+      "id": 3,
+      "title": "Fly Ash - Premium Quality",
+      "material_name": "Fly Ash",
+      "category": "Industrial Ash",
+      "quantity": 142,
+      "unit": "tons",
+      "price_per_unit": 17.92,
+      "total_value": 2544.64,
+      "listing_type": "fixed_price",
+      "status": "pending",
+      "location": "Coimbatore",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-08-30",
+      "views": 339,
+      "inquiries": 10
+    },
+    {
+      "id": 4,
+      "title": "Bottom Ash - Premium Quality",
+      "material_name": "Bottom Ash",
+      "category": "Industrial Ash",
+      "quantity": 438,
+      "unit": "tons",
+      "price_per_unit": 3.51,
+      "total_value": 1537.38,
+      "listing_type": "fixed_price",
+      "status": "sold",
+      "location": "Coimbatore",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-09-08",
+      "views": 175,
+      "inquiries": 41
+    },
+    {
+      "id": 5,
+      "title": "HDPE Scrap - Premium Quality",
+      "material_name": "HDPE Scrap",
+      "category": "Plastic Waste",
+      "quantity": 145,
+      "unit": "kg",
+      "price_per_unit": 0.63,
+      "total_value": 91.35,
+      "listing_type": "auction",
+      "status": "active",
+      "location": "Nagpur",
+      "seller_company": "Sustainable Materials Co",
+      "date_posted": "2025-09-01",
+      "views": 337,
+      "inquiries": 29
+    },
+    {
+      "id": 6,
+      "title": "PET Bottles - Premium Quality",
+      "material_name": "PET Bottles",
+      "category": "Plastic Waste",
+      "quantity": 362,
+      "unit": "kg",
+      "price_per_unit": 0.5,
+      "total_value": 181.0,
+      "listing_type": "fixed_price",
+      "status": "expired",
+      "location": "Lucknow",
+      "seller_company": "Green Valley Industries",
+      "date_posted": "2025-10-13",
+      "views": 384,
+      "inquiries": 5
+    },
+    {
+      "id": 7,
+      "title": "Steel Scrap - Premium Quality",
+      "material_name": "Steel Scrap",
+      "category": "Metal Scrap",
+      "quantity": 48,
+      "unit": "tons",
+      "price_per_unit": 122.65,
+      "total_value": 5887.2,
+      "listing_type": "auction",
+      "status": "expired",
+      "location": "Kolkata",
+      "seller_company": "Urban Waste Management",
+      "date_posted": "2025-10-24",
+      "views": 222,
+      "inquiries": 41
+    },
+    {
+      "id": 8,
+      "title": "Aluminum Scrap - Premium Quality",
+      "material_name": "Aluminum Scrap",
+      "category": "Metal Scrap",
+      "quantity": 55,
+      "unit": "kg",
+      "price_per_unit": 1.31,
+      "total_value": 72.05,
+      "listing_type": "auction",
+      "status": "sold",
+      "location": "Chennai",
+      "seller_company": "CircularEconomy Inc",
+      "date_posted": "2025-09-12",
+      "views": 108,
+      "inquiries": 30
+    },
+    {
+      "id": 9,
+      "title": "Cardboard Bales - Premium Quality",
+      "material_name": "Cardboard Bales",
+      "category": "Paper & Cardboard",
+      "quantity": 27,
+      "unit": "tons",
+      "price_per_unit": 88.34,
+      "total_value": 2385.18,
+      "listing_type": "auction",
+      "status": "sold",
+      "location": "Hyderabad",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-09-29",
+      "views": 57,
+      "inquiries": 20
+    },
+    {
+      "id": 10,
+      "title": "Mixed Paper - Premium Quality",
+      "material_name": "Mixed Paper",
+      "category": "Paper & Cardboard",
+      "quantity": 222,
+      "unit": "tons",
+      "price_per_unit": 62.23,
+      "total_value": 13815.06,
+      "listing_type": "auction",
+      "status": "pending",
+      "location": "Lucknow",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-10-25",
+      "views": 333,
+      "inquiries": 21
+    },
+    {
+      "id": 11,
+      "title": "Concrete Rubble - Premium Quality",
+      "material_name": "Concrete Rubble",
+      "category": "Construction & Demolition",
+      "quantity": 211,
+      "unit": "tons",
+      "price_per_unit": 6.99,
+      "total_value": 1474.89,
+      "listing_type": "fixed_price",
+      "status": "expired",
+      "location": "Pune",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-09-23",
+      "views": 267,
+      "inquiries": 26
+    },
+    {
+      "id": 12,
+      "title": "Brick Waste - Premium Quality",
+      "material_name": "Brick Waste",
+      "category": "Construction & Demolition",
+      "quantity": 372,
+      "unit": "tons",
+      "price_per_unit": 4.31,
+      "total_value": 1603.32,
+      "listing_type": "auction",
+      "status": "sold",
+      "location": "Ahmedabad",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-09-26",
+      "views": 50,
+      "inquiries": 5
+    },
+    {
+      "id": 13,
+      "title": "Clear Glass - Premium Quality",
+      "material_name": "Clear Glass",
+      "category": "Glass",
+      "quantity": 445,
+      "unit": "tons",
+      "price_per_unit": 41.49,
+      "total_value": 18463.05,
+      "listing_type": "auction",
+      "status": "expired",
+      "location": "Kanpur",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-10-17",
+      "views": 82,
+      "inquiries": 28
+    },
+    {
+      "id": 14,
+      "title": "Mixed Glass - Premium Quality",
+      "material_name": "Mixed Glass",
+      "category": "Glass",
+      "quantity": 143,
+      "unit": "tons",
+      "price_per_unit": 31.79,
+      "total_value": 4545.97,
+      "listing_type": "auction",
+      "status": "expired",
+      "location": "Nagpur",
+      "seller_company": "Sustainable Materials Co",
+      "date_posted": "2025-09-26",
+      "views": 477,
+      "inquiries": 21
+    },
+    {
+      "id": 15,
+      "title": "Cotton Scrap - Premium Quality",
+      "material_name": "Cotton Scrap",
+      "category": "Textile Waste",
+      "quantity": 130,
+      "unit": "kg",
+      "price_per_unit": 1.04,
+      "total_value": 135.2,
+      "listing_type": "auction",
+      "status": "active",
+      "location": "Lucknow",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-10-07",
+      "views": 101,
+      "inquiries": 23
+    },
+    {
+      "id": 16,
+      "title": "Fabric Remnants - Premium Quality",
+      "material_name": "Fabric Remnants",
+      "category": "Textile Waste",
+      "quantity": 385,
+      "unit": "kg",
+      "price_per_unit": 0.8,
+      "total_value": 308.0,
+      "listing_type": "auction",
+      "status": "pending",
+      "location": "Bangalore",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-10-03",
+      "views": 264,
+      "inquiries": 49
+    },
+    {
+      "id": 17,
+      "title": "Tire Scrap - Premium Quality",
+      "material_name": "Tire Scrap",
+      "category": "Rubber & Tires",
+      "quantity": 58,
+      "unit": "tons",
+      "price_per_unit": 38.68,
+      "total_value": 2243.44,
+      "listing_type": "auction",
+      "status": "active",
+      "location": "Surat",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-10-19",
+      "views": 220,
+      "inquiries": 31
+    },
+    {
+      "id": 18,
+      "title": "Rubber Crumb - Premium Quality",
+      "material_name": "Rubber Crumb",
+      "category": "Rubber & Tires",
+      "quantity": 59,
+      "unit": "tons",
+      "price_per_unit": 54.94,
+      "total_value": 3241.46,
+      "listing_type": "fixed_price",
+      "status": "expired",
+      "location": "Ahmedabad",
+      "seller_company": "EcoFriendly Processors",
+      "date_posted": "2025-09-22",
+      "views": 153,
+      "inquiries": 20
+    },
+    {
+      "id": 19,
+      "title": "Food Processing Waste - Premium Quality",
+      "material_name": "Food Processing Waste",
+      "category": "Organic/Food Waste",
+      "quantity": 454,
+      "unit": "tons",
+      "price_per_unit": 11.39,
+      "total_value": 5171.06,
+      "listing_type": "fixed_price",
+      "status": "sold",
+      "location": "Kolkata",
+      "seller_company": "GreenTech Industries",
+      "date_posted": "2025-10-24",
+      "views": 333,
+      "inquiries": 29
+    },
+    {
+      "id": 20,
+      "title": "Vegetable Waste - Premium Quality",
+      "material_name": "Vegetable Waste",
+      "category": "Organic/Food Waste",
+      "quantity": 189,
+      "unit": "tons",
+      "price_per_unit": 14.78,
+      "total_value": 2793.42,
+      "listing_type": "auction",
+      "status": "pending",
+      "location": "Indore",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-09-25",
+      "views": 122,
+      "inquiries": 27
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "ORD1001",
+      "listing_id": 19,
+      "material_name": "Food Processing Waste",
+      "buyer_company": "Sustainable Materials Co",
+      "seller_company": "GreenTech Industries",
+      "quantity": 77,
+      "unit": "tons",
+      "price_per_unit": 11.39,
+      "total_amount_inr": 706.18,
+      "status": "in_transit",
+      "order_date": "2025-10-18",
+      "delivery_location": "Kolkata",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1002",
+      "listing_id": 9,
+      "material_name": "Cardboard Bales",
+      "buyer_company": "CircularEconomy Inc",
+      "seller_company": "ReSource Trading",
+      "quantity": 62,
+      "unit": "tons",
+      "price_per_unit": 88.34,
+      "total_amount_inr": 3710.28,
+      "status": "cancelled",
+      "order_date": "2025-09-30",
+      "delivery_location": "Coimbatore",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1003",
+      "listing_id": 4,
+      "material_name": "Bottom Ash",
+      "buyer_company": "CircularEconomy Inc",
+      "seller_company": "Waste2Wealth Enterprises",
+      "quantity": 93,
+      "unit": "tons",
+      "price_per_unit": 3.51,
+      "total_amount_inr": 161.46,
+      "status": "confirmed",
+      "order_date": "2025-10-22",
+      "delivery_location": "Indore",
+      "payment_status": "partial"
+    },
+    {
+      "order_id": "ORD1004",
+      "listing_id": 16,
+      "material_name": "Fabric Remnants",
+      "buyer_company": "Industrial Recyclers Ltd",
+      "seller_company": "ReSource Trading",
+      "quantity": 9,
+      "unit": "kg",
+      "price_per_unit": 0.8,
+      "total_amount_inr": 37.6,
+      "status": "in_transit",
+      "order_date": "2025-10-26",
+      "delivery_location": "Chennai",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1005",
+      "listing_id": 4,
+      "material_name": "Bottom Ash",
+      "buyer_company": "AgriWaste Solutions",
+      "seller_company": "Waste2Wealth Enterprises",
+      "quantity": 46,
+      "unit": "tons",
+      "price_per_unit": 3.51,
+      "total_amount_inr": 259.74,
+      "status": "pending",
+      "order_date": "2025-08-06",
+      "delivery_location": "Hyderabad",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1006",
+      "listing_id": 11,
+      "material_name": "Concrete Rubble",
+      "buyer_company": "CircularEconomy Inc",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "quantity": 63,
+      "unit": "tons",
+      "price_per_unit": 6.99,
+      "total_amount_inr": 699.0,
+      "status": "pending",
+      "order_date": "2025-08-18",
+      "delivery_location": "Ahmedabad",
+      "payment_status": "partial"
+    },
+    {
+      "order_id": "ORD1007",
+      "listing_id": 7,
+      "material_name": "Steel Scrap",
+      "buyer_company": "EcoFriendly Processors",
+      "seller_company": "Urban Waste Management",
+      "quantity": 51,
+      "unit": "tons",
+      "price_per_unit": 122.65,
+      "total_amount_inr": 8094.9,
+      "status": "pending",
+      "order_date": "2025-09-09",
+      "delivery_location": "Lucknow",
+      "payment_status": "paid"
+    },
+    {
+      "order_id": "ORD1008",
+      "listing_id": 20,
+      "material_name": "Vegetable Waste",
+      "buyer_company": "Metal Recyclers Pvt Ltd",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "quantity": 64,
+      "unit": "tons",
+      "price_per_unit": 14.78,
+      "total_amount_inr": 280.82,
+      "status": "delivered",
+      "order_date": "2025-08-04",
+      "delivery_location": "Surat",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1009",
+      "listing_id": 16,
+      "material_name": "Fabric Remnants",
+      "buyer_company": "Industrial Recyclers Ltd",
+      "seller_company": "ReSource Trading",
+      "quantity": 45,
+      "unit": "kg",
+      "price_per_unit": 0.8,
+      "total_amount_inr": 18.4,
+      "status": "pending",
+      "order_date": "2025-10-27",
+      "delivery_location": "Chennai",
+      "payment_status": "partial"
+    },
+    {
+      "order_id": "ORD1010",
+      "listing_id": 5,
+      "material_name": "HDPE Scrap",
+      "buyer_company": "EcoWaste Solutions",
+      "seller_company": "Sustainable Materials Co",
+      "quantity": 49,
+      "unit": "kg",
+      "price_per_unit": 0.63,
+      "total_amount_inr": 29.61,
+      "status": "confirmed",
+      "order_date": "2025-10-17",
+      "delivery_location": "Pune",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1011",
+      "listing_id": 11,
+      "material_name": "Concrete Rubble",
+      "buyer_company": "Waste2Wealth Enterprises",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "quantity": 12,
+      "unit": "tons",
+      "price_per_unit": 6.99,
+      "total_amount_inr": 559.2,
+      "status": "in_transit",
+      "order_date": "2025-08-01",
+      "delivery_location": "Delhi",
+      "payment_status": "paid"
+    },
+    {
+      "order_id": "ORD1012",
+      "listing_id": 19,
+      "material_name": "Food Processing Waste",
+      "buyer_company": "AgriWaste Solutions",
+      "seller_company": "GreenTech Industries",
+      "quantity": 65,
+      "unit": "tons",
+      "price_per_unit": 11.39,
+      "total_amount_inr": 261.97,
+      "status": "delivered",
+      "order_date": "2025-09-05",
+      "delivery_location": "Lucknow",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1013",
+      "listing_id": 20,
+      "material_name": "Vegetable Waste",
+      "buyer_company": "EcoWaste Solutions",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "quantity": 91,
+      "unit": "tons",
+      "price_per_unit": 14.78,
+      "total_amount_inr": 1374.54,
+      "status": "cancelled",
+      "order_date": "2025-09-05",
+      "delivery_location": "Ahmedabad",
+      "payment_status": "pending"
+    },
+    {
+      "order_id": "ORD1014",
+      "listing_id": 13,
+      "material_name": "Clear Glass",
+      "buyer_company": "Urban Waste Management",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "quantity": 14,
+      "unit": "tons",
+      "price_per_unit": 41.49,
+      "total_amount_inr": 954.27,
+      "status": "delivered",
+      "order_date": "2025-09-22",
+      "delivery_location": "Pune",
+      "payment_status": "partial"
+    },
+    {
+      "order_id": "ORD1015",
+      "listing_id": 8,
+      "material_name": "Aluminum Scrap",
+      "buyer_company": "ReSource Trading",
+      "seller_company": "CircularEconomy Inc",
+      "quantity": 15,
+      "unit": "kg",
+      "price_per_unit": 1.31,
+      "total_amount_inr": 61.57,
+      "status": "pending",
+      "order_date": "2025-10-07",
+      "delivery_location": "Coimbatore",
+      "payment_status": "pending"
+    }
+  ],
+  "auctions": [
+    {
+      "auction_id": "AUC500",
+      "listing_id": 5,
+      "material_name": "HDPE Scrap",
+      "category": "Plastic Waste",
+      "starting_bid": 0.63,
+      "current_highest_bid": 0.89,
+      "total_bids": 17,
+      "unique_bidders": 15,
+      "end_time": "2025-10-31 00:08:06",
+      "is_active": true,
+      "location": "Nagpur",
+      "seller_company": "Sustainable Materials Co"
+    },
+    {
+      "auction_id": "AUC501",
+      "listing_id": 7,
+      "material_name": "Steel Scrap",
+      "category": "Metal Scrap",
+      "starting_bid": 122.65,
+      "current_highest_bid": 160.81,
+      "total_bids": 19,
+      "unique_bidders": 14,
+      "end_time": "2025-11-01 16:08:06",
+      "is_active": true,
+      "location": "Kolkata",
+      "seller_company": "Urban Waste Management"
+    },
+    {
+      "auction_id": "AUC502",
+      "listing_id": 8,
+      "material_name": "Aluminum Scrap",
+      "category": "Metal Scrap",
+      "starting_bid": 1.31,
+      "current_highest_bid": 1.87,
+      "total_bids": 6,
+      "unique_bidders": 11,
+      "end_time": "2025-11-02 04:08:06",
+      "is_active": true,
+      "location": "Chennai",
+      "seller_company": "CircularEconomy Inc"
+    },
+    {
+      "auction_id": "AUC503",
+      "listing_id": 9,
+      "material_name": "Cardboard Bales",
+      "category": "Paper & Cardboard",
+      "starting_bid": 88.34,
+      "current_highest_bid": 125.42,
+      "total_bids": 8,
+      "unique_bidders": 5,
+      "end_time": "2025-10-30 21:08:06",
+      "is_active": true,
+      "location": "Hyderabad",
+      "seller_company": "ReSource Trading"
+    },
+    {
+      "auction_id": "AUC504",
+      "listing_id": 10,
+      "material_name": "Mixed Paper",
+      "category": "Paper & Cardboard",
+      "starting_bid": 62.23,
+      "current_highest_bid": 83.83,
+      "total_bids": 17,
+      "unique_bidders": 5,
+      "end_time": "2025-10-31 20:08:06",
+      "is_active": true,
+      "location": "Lucknow",
+      "seller_company": "ReSource Trading"
+    }
+  ],
+  "monthly_trends": [
+    {
+      "month": "May 2025",
+      "total_listings": 105,
+      "active_listings": 53,
+      "completed_transactions": 83,
+      "revenue_inr": 1336725,
+      "new_sellers": 12,
+      "new_buyers": 26,
+      "avg_order_value_inr": 53346
+    },
+    {
+      "month": "Jun 2025",
+      "total_listings": 135,
+      "active_listings": 40,
+      "completed_transactions": 65,
+      "revenue_inr": 1623536,
+      "new_sellers": 10,
+      "new_buyers": 22,
+      "avg_order_value_inr": 30435
+    },
+    {
+      "month": "Jul 2025",
+      "total_listings": 98,
+      "active_listings": 45,
+      "completed_transactions": 51,
+      "revenue_inr": 2562344,
+      "new_sellers": 11,
+      "new_buyers": 10,
+      "avg_order_value_inr": 35020
+    },
+    {
+      "month": "Aug 2025",
+      "total_listings": 81,
+      "active_listings": 55,
+      "completed_transactions": 65,
+      "revenue_inr": 1960882,
+      "new_sellers": 5,
+      "new_buyers": 16,
+      "avg_order_value_inr": 61222
+    },
+    {
+      "month": "Sep 2025",
+      "total_listings": 136,
+      "active_listings": 64,
+      "completed_transactions": 82,
+      "revenue_inr": 2904206,
+      "new_sellers": 7,
+      "new_buyers": 10,
+      "avg_order_value_inr": 62171
+    },
+    {
+      "month": "Oct 2025",
+      "total_listings": 131,
+      "active_listings": 76,
+      "completed_transactions": 73,
+      "revenue_inr": 2383953,
+      "new_sellers": 11,
+      "new_buyers": 25,
+      "avg_order_value_inr": 34415
+    }
+  ],
+  "category_distribution": [
+    {
+      "category": "Glass",
+      "total_listings": 2,
+      "total_value_inr": 23009.02,
+      "avg_price": 11504.51,
+      "percentage": 10.0,
+      "value_percentage": 29.87
+    },
+    {
+      "category": "Paper & Cardboard",
+      "total_listings": 2,
+      "total_value_inr": 16200.24,
+      "avg_price": 8100.12,
+      "percentage": 10.0,
+      "value_percentage": 21.03
+    },
+    {
+      "category": "Agricultural/Biomass",
+      "total_listings": 2,
+      "total_value_inr": 10533.060000000001,
+      "avg_price": 5266.53,
+      "percentage": 10.0,
+      "value_percentage": 13.67
+    },
+    {
+      "category": "Organic/Food Waste",
+      "total_listings": 2,
+      "total_value_inr": 7964.4800000000005,
+      "avg_price": 3982.24,
+      "percentage": 10.0,
+      "value_percentage": 10.34
+    },
+    {
+      "category": "Metal Scrap",
+      "total_listings": 2,
+      "total_value_inr": 5959.25,
+      "avg_price": 2979.62,
+      "percentage": 10.0,
+      "value_percentage": 7.74
+    },
+    {
+      "category": "Rubber & Tires",
+      "total_listings": 2,
+      "total_value_inr": 5484.9,
+      "avg_price": 2742.45,
+      "percentage": 10.0,
+      "value_percentage": 7.12
+    },
+    {
+      "category": "Industrial Ash",
+      "total_listings": 2,
+      "total_value_inr": 4082.02,
+      "avg_price": 2041.01,
+      "percentage": 10.0,
+      "value_percentage": 5.3
+    },
+    {
+      "category": "Construction & Demolition",
+      "total_listings": 2,
+      "total_value_inr": 3078.21,
+      "avg_price": 1539.11,
+      "percentage": 10.0,
+      "value_percentage": 4.0
+    },
+    {
+      "category": "Textile Waste",
+      "total_listings": 2,
+      "total_value_inr": 443.2,
+      "avg_price": 221.6,
+      "percentage": 10.0,
+      "value_percentage": 0.58
+    },
+    {
+      "category": "Plastic Waste",
+      "total_listings": 2,
+      "total_value_inr": 272.35,
+      "avg_price": 136.18,
+      "percentage": 10.0,
+      "value_percentage": 0.35
+    }
+  ],
+  "location_distribution": [
+    {
+      "city": "Kanpur",
+      "total_listings": 1,
+      "total_value_inr": 18463.05,
+      "active_sellers": 1
+    },
+    {
+      "city": "Lucknow",
+      "total_listings": 3,
+      "total_value_inr": 14131.26,
+      "active_sellers": 3
+    },
+    {
+      "city": "Nagpur",
+      "total_listings": 3,
+      "total_value_inr": 12390.46,
+      "active_sellers": 2
+    },
+    {
+      "city": "Kolkata",
+      "total_listings": 2,
+      "total_value_inr": 11058.26,
+      "active_sellers": 2
+    },
+    {
+      "city": "Ahmedabad",
+      "total_listings": 3,
+      "total_value_inr": 7624.7,
+      "active_sellers": 3
+    },
+    {
+      "city": "Coimbatore",
+      "total_listings": 2,
+      "total_value_inr": 4082.02,
+      "active_sellers": 1
+    },
+    {
+      "city": "Indore",
+      "total_listings": 1,
+      "total_value_inr": 2793.42,
+      "active_sellers": 1
+    },
+    {
+      "city": "Hyderabad",
+      "total_listings": 1,
+      "total_value_inr": 2385.18,
+      "active_sellers": 1
+    },
+    {
+      "city": "Surat",
+      "total_listings": 1,
+      "total_value_inr": 2243.44,
+      "active_sellers": 1
+    },
+    {
+      "city": "Pune",
+      "total_listings": 1,
+      "total_value_inr": 1474.89,
+      "active_sellers": 1
+    },
+    {
+      "city": "Bangalore",
+      "total_listings": 1,
+      "total_value_inr": 308.0,
+      "active_sellers": 1
+    },
+    {
+      "city": "Chennai",
+      "total_listings": 1,
+      "total_value_inr": 72.05,
+      "active_sellers": 1
+    }
+  ],
+  "seller_performance": [
+    {
+      "seller_name": "GreenTech Industries",
+      "total_listings": 2,
+      "active_listings": 0,
+      "sold_listings": 2,
+      "total_revenue_inr": 12924.2,
+      "avg_rating": 4.5,
+      "total_reviews": 90
+    },
+    {
+      "seller_name": "AgriWaste Solutions",
+      "total_listings": 1,
+      "active_listings": 0,
+      "sold_listings": 1,
+      "total_revenue_inr": 2779.92,
+      "avg_rating": 3.7,
+      "total_reviews": 22
+    },
+    {
+      "seller_name": "ReSource Trading",
+      "total_listings": 3,
+      "active_listings": 0,
+      "sold_listings": 1,
+      "total_revenue_inr": 2385.18,
+      "avg_rating": 3.5,
+      "total_reviews": 33
+    },
+    {
+      "seller_name": "Metal Recyclers Pvt Ltd",
+      "total_listings": 5,
+      "active_listings": 1,
+      "sold_listings": 1,
+      "total_revenue_inr": 1603.32,
+      "avg_rating": 4.0,
+      "total_reviews": 41
+    },
+    {
+      "seller_name": "Waste2Wealth Enterprises",
+      "total_listings": 3,
+      "active_listings": 1,
+      "sold_listings": 1,
+      "total_revenue_inr": 1537.38,
+      "avg_rating": 4.3,
+      "total_reviews": 33
+    },
+    {
+      "seller_name": "CircularEconomy Inc",
+      "total_listings": 1,
+      "active_listings": 0,
+      "sold_listings": 1,
+      "total_revenue_inr": 72.05,
+      "avg_rating": 4.1,
+      "total_reviews": 33
+    },
+    {
+      "seller_name": "Sustainable Materials Co",
+      "total_listings": 2,
+      "active_listings": 1,
+      "sold_listings": 0,
+      "total_revenue_inr": 0,
+      "avg_rating": 4.5,
+      "total_reviews": 42
+    },
+    {
+      "seller_name": "Green Valley Industries",
+      "total_listings": 1,
+      "active_listings": 0,
+      "sold_listings": 0,
+      "total_revenue_inr": 0,
+      "avg_rating": 4.9,
+      "total_reviews": 61
+    },
+    {
+      "seller_name": "Urban Waste Management",
+      "total_listings": 1,
+      "active_listings": 0,
+      "sold_listings": 0,
+      "total_revenue_inr": 0,
+      "avg_rating": 3.7,
+      "total_reviews": 46
+    },
+    {
+      "seller_name": "EcoFriendly Processors",
+      "total_listings": 1,
+      "active_listings": 0,
+      "sold_listings": 0,
+      "total_revenue_inr": 0,
+      "avg_rating": 4.6,
+      "total_reviews": 47
+    }
+  ],
+  "popular_materials": [
+    {
+      "material": "Straw/Hay",
+      "category": "Agricultural/Biomass",
+      "total_listings": 96,
+      "total_volume_traded": 4878,
+      "unit": "tons",
+      "avg_price": 20.0,
+      "growth_percentage": 3.01
+    },
+    {
+      "material": "Brick Waste",
+      "category": "Construction & Demolition",
+      "total_listings": 88,
+      "total_volume_traded": 1204,
+      "unit": "tons",
+      "avg_price": 7.5,
+      "growth_percentage": 24.09
+    },
+    {
+      "material": "Rubber Crumb",
+      "category": "Rubber & Tires",
+      "total_listings": 86,
+      "total_volume_traded": 3265,
+      "unit": "tons",
+      "avg_price": 75.0,
+      "growth_percentage": 29.81
+    },
+    {
+      "material": "Newspaper",
+      "category": "Paper & Cardboard",
+      "total_listings": 85,
+      "total_volume_traded": 4904,
+      "unit": "tons",
+      "avg_price": 65.0,
+      "growth_percentage": 39.04
+    },
+    {
+      "material": "Broken Glass",
+      "category": "Glass",
+      "total_listings": 85,
+      "total_volume_traded": 3718,
+      "unit": "tons",
+      "avg_price": 22.5,
+      "growth_percentage": 16.24
+    },
+    {
+      "material": "Aluminum Scrap",
+      "category": "Metal Scrap",
+      "total_listings": 83,
+      "total_volume_traded": 2061,
+      "unit": "kg",
+      "avg_price": 1.45,
+      "growth_percentage": 19.63
+    },
+    {
+      "material": "Clear Glass",
+      "category": "Glass",
+      "total_listings": 80,
+      "total_volume_traded": 4756,
+      "unit": "tons",
+      "avg_price": 60.0,
+      "growth_percentage": -12.6
+    },
+    {
+      "material": "Mixed Paper",
+      "category": "Paper & Cardboard",
+      "total_listings": 79,
+      "total_volume_traded": 3910,
+      "unit": "tons",
+      "avg_price": 55.0,
+      "growth_percentage": 11.02
+    },
+    {
+      "material": "Concrete Rubble",
+      "category": "Construction & Demolition",
+      "total_listings": 79,
+      "total_volume_traded": 1349,
+      "unit": "tons",
+      "avg_price": 10.0,
+      "growth_percentage": 12.23
+    },
+    {
+      "material": "PET Bottles",
+      "category": "Plastic Waste",
+      "total_listings": 78,
+      "total_volume_traded": 2928,
+      "unit": "kg",
+      "avg_price": 0.45,
+      "growth_percentage": 16.18
+    }
+  ],
+  "recent_activities": [
+    {
+      "id": 1,
+      "type": "listing",
+      "description": "New listing: HDPE Scrap - 145 kg",
+      "user": "Sustainable Materials Co",
+      "timestamp": "2025-10-28 04:08:35"
+    },
+    {
+      "id": 2,
+      "type": "order",
+      "description": "Order placed for Bagasse - 50 tons",
+      "user": "EcoWaste Solutions",
+      "timestamp": "2025-10-28 01:08:35"
+    },
+    {
+      "id": 3,
+      "type": "auction",
+      "description": "New bid on Steel Scrap auction - \u20b9160.81/ton",
+      "user": "Industrial Recyclers Ltd",
+      "timestamp": "2025-10-27 22:08:35"
+    },
+    {
+      "id": 4,
+      "type": "order",
+      "description": "Order delivered: Mixed Paper - 100 tons",
+      "user": "CircularEconomy Inc",
+      "timestamp": "2025-10-27 18:08:35"
+    },
+    {
+      "id": 5,
+      "type": "registration",
+      "description": "New seller registered: Waste Management Pro",
+      "user": "Waste Management Pro",
+      "timestamp": "2025-10-27 06:08:35"
+    }
+  ],
+  "environmental_impact": {
+    "total_waste_diverted_tons": 6220,
+    "co2_emissions_saved_tons": 3563,
+    "materials_recycled_percentage": 80.86,
+    "landfill_waste_prevented_tons": 6563,
+    "trees_saved_equivalent": 15395,
+    "water_saved_liters": 1438650
+  },
+  "price_trends": [
+    {
+      "material": "HDPE Scrap",
+      "unit": "kg",
+      "current_price": 0.63,
+      "last_month_price": 0.58,
+      "change_percentage": 8.62
+    },
+    {
+      "material": "Steel Scrap",
+      "unit": "tons",
+      "current_price": 122.65,
+      "last_month_price": 118.5,
+      "change_percentage": 3.5
+    },
+    {
+      "material": "Fly Ash",
+      "unit": "tons",
+      "current_price": 17.92,
+      "last_month_price": 19.2,
+      "change_percentage": -6.67
+    },
+    {
+      "material": "PET Bottles",
+      "unit": "kg",
+      "current_price": 0.5,
+      "last_month_price": 0.46,
+      "change_percentage": 8.7
+    },
+    {
+      "material": "Cardboard Bales",
+      "unit": "tons",
+      "current_price": 88.34,
+      "last_month_price": 92.1,
+      "change_percentage": -4.08
+    }
+  ]
+}

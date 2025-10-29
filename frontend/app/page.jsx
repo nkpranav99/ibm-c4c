@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { listingsAPI } from '@/lib/api'
+import { listingsAPI } from '../lib/api'
 
 export default function Home() {
   const [featuredListings, setFeaturedListings] = useState([])

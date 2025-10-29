@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
-import { dashboardAPI } from '@/lib/api'
+import { useAuth } from '../../context/AuthContext'
+import { dashboardAPI } from '../../lib/api'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 

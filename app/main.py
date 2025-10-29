@@ -8,8 +8,9 @@ from app.database import engine, Base
 from app.routers import auth, listings, orders, auctions, dashboard, admin
 from app.routers import websocket
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+# Create database tables (skip in mock mode)
+if not getattr(settings, "DISABLE_DB", False):
+    Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Waste Material Marketplace API",

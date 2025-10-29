@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/navigation'
 
 export default function Navigation() {

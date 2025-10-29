@@ -1,0 +1,20 @@
+{
+  "total_listings": 12,
+  "active_listings": 7,
+  "sold_listings": 3,
+  "total_sales": 48250,
+  "pending_orders": 2,
+  "active_auctions": 1,
+  "recent_listings": [
+    { "id": 101, "title": "Steel Scrap - Grade A", "status": "active", "created_at": "2025-10-15T10:30:00Z" },
+    { "id": 102, "title": "Mixed Plastics Bale", "status": "inactive", "created_at": "2025-10-13T14:10:00Z" },
+    { "id": 103, "title": "Copper Wire Offcuts", "status": "sold", "created_at": "2025-10-12T09:20:00Z" }
+  ],
+  "recent_orders": [
+    { "id": 9001, "quantity": 5, "total_price": 2500, "status": "pending", "created_at": "2025-10-16T08:00:00Z" },
+    { "id": 9002, "quantity": 12, "total_price": 7800, "status": "pending", "created_at": "2025-10-15T16:45:00Z" }
+  ]
+}
+
+
+

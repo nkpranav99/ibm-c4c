@@ -1,0 +1,41 @@
+[
+  {
+    "id": 101,
+    "title": "Steel Scrap - Grade A",
+    "description": "High-grade steel scrap suitable for smelting.",
+    "material_name": "Steel",
+    "quantity": 20,
+    "quantity_unit": "tons",
+    "price": 500,
+    "listing_type": "fixed_price",
+    "status": "active",
+    "location": "Pune",
+    "images": [],
+    "availability_from": "2025-10-10T00:00:00Z",
+    "availability_to": "2025-12-31T00:00:00Z",
+    "seller_id": 1,
+    "created_at": "2025-10-10T10:00:00Z",
+    "updated_at": null
+  },
+  {
+    "id": 102,
+    "title": "Mixed Plastics Bale",
+    "description": "Bales of mixed plastics, mostly PET and HDPE.",
+    "material_name": "Plastics",
+    "quantity": 10,
+    "quantity_unit": "tons",
+    "price": 300,
+    "listing_type": "auction",
+    "status": "inactive",
+    "location": "Mumbai",
+    "images": [],
+    "availability_from": "2025-10-12T00:00:00Z",
+    "availability_to": "2026-01-31T00:00:00Z",
+    "seller_id": 1,
+    "created_at": "2025-10-12T14:00:00Z",
+    "updated_at": null
+  }
+]
+
+
+

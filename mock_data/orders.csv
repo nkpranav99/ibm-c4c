@@ -1,0 +1,16 @@
+order_id,listing_id,material_name,buyer_company,seller_company,quantity,unit,price_per_unit,total_amount_inr,status,order_date,delivery_location,payment_status
+ORD1001,19,Food Processing Waste,Sustainable Materials Co,GreenTech Industries,77,tons,11.39,706.18,in_transit,2025-10-18,Kolkata,pending
+ORD1002,9,Cardboard Bales,CircularEconomy Inc,ReSource Trading,62,tons,88.34,3710.28,cancelled,2025-09-30,Coimbatore,pending
+ORD1003,4,Bottom Ash,CircularEconomy Inc,Waste2Wealth Enterprises,93,tons,3.51,161.46,confirmed,2025-10-22,Indore,partial
+ORD1004,16,Fabric Remnants,Industrial Recyclers Ltd,ReSource Trading,9,kg,0.8,37.6,in_transit,2025-10-26,Chennai,pending
+ORD1005,4,Bottom Ash,AgriWaste Solutions,Waste2Wealth Enterprises,46,tons,3.51,259.74,pending,2025-08-06,Hyderabad,pending
+ORD1006,11,Concrete Rubble,CircularEconomy Inc,Metal Recyclers Pvt Ltd,63,tons,6.99,699.0,pending,2025-08-18,Ahmedabad,partial
+ORD1007,7,Steel Scrap,EcoFriendly Processors,Urban Waste Management,51,tons,122.65,8094.9,pending,2025-09-09,Lucknow,paid
+ORD1008,20,Vegetable Waste,Metal Recyclers Pvt Ltd,Metal Recyclers Pvt Ltd,64,tons,14.78,280.82,delivered,2025-08-04,Surat,pending
+ORD1009,16,Fabric Remnants,Industrial Recyclers Ltd,ReSource Trading,45,kg,0.8,18.4,pending,2025-10-27,Chennai,partial
+ORD1010,5,HDPE Scrap,EcoWaste Solutions,Sustainable Materials Co,49,kg,0.63,29.61,confirmed,2025-10-17,Pune,pending
+ORD1011,11,Concrete Rubble,Waste2Wealth Enterprises,Metal Recyclers Pvt Ltd,12,tons,6.99,559.2,in_transit,2025-08-01,Delhi,paid
+ORD1012,19,Food Processing Waste,AgriWaste Solutions,GreenTech Industries,65,tons,11.39,261.97,delivered,2025-09-05,Lucknow,pending
+ORD1013,20,Vegetable Waste,EcoWaste Solutions,Metal Recyclers Pvt Ltd,91,tons,14.78,1374.54,cancelled,2025-09-05,Ahmedabad,pending
+ORD1014,13,Clear Glass,Urban Waste Management,Metal Recyclers Pvt Ltd,14,tons,41.49,954.27,delivered,2025-09-22,Pune,partial
+ORD1015,8,Aluminum Scrap,ReSource Trading,CircularEconomy Inc,15,kg,1.31,61.57,pending,2025-10-07,Coimbatore,pending
