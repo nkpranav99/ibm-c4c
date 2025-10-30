@@ -7,8 +7,6 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./waste_marketplace.db"  # Not used
     DISABLE_DB: bool = True
 
-
-    
     # JWT
     SECRET_KEY: str = "your-secret-key-change-this-in-production"
     ALGORITHM: str = "HS256"
@@ -26,6 +24,19 @@ class Settings(BaseSettings):
     # Upload
     UPLOAD_DIR: str = "uploads"
     MAX_UPLOAD_SIZE: int = 5242880  # 5MB
+    
+    # Watson Orchestrate Configuration
+    WATSON_API_KEY: Optional[str] = None
+    WATSON_HOST_URL: Optional[str] = None
+    WATSON_AGENT_ID: Optional[str] = None
+    WATSON_ENABLED: bool = False
+    
+    # Watsonx.ai Configuration (for general responses)
+    WATSONX_API_KEY: Optional[str] = None
+    WATSONX_PROJECT_ID: Optional[str] = None
+    WATSONX_URL: Optional[str] = None
+    WATSONX_MODEL_ID: str = "llama-3-405b-instruct"
+    WATSONX_ENABLED: bool = False
     
     class Config:
         env_file = ".env"

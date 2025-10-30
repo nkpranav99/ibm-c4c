@@ -5,6 +5,20 @@ from datetime import datetime
 import json
 from pathlib import Path
 from app.config import settings
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Try to import Watson service
+try:
+    from app.services.watson_service import get_watson_service
+    WATSON_AVAILABLE = True
+    logger.info("✅ Watson service imported successfully")
+except ImportError as e:
+    WATSON_AVAILABLE = False
+    get_watson_service = None
+    logger.warning(f"⚠️  Watson service not available: {e}")
 
 router = APIRouter(prefix="/api/chatbot", tags=["Chatbot"])
 
@@ -26,6 +40,36 @@ class ChatResponse(BaseModel):
     listings: Optional[List[dict]] = []  # Include relevant listings
 
 
+def extract_keywords_from_message(message: str) -> List[str]:
+    """
+    Extract keywords from user message for searching listings.
+    Returns a list of keywords that might match waste materials or categories.
+    """
+    message_lower = message.lower()
+    keywords = []
+    
+    # Material keywords
+    material_keywords = [
+        "plastic", "hdpe", "ldpe", "pp", "pet", "pvc",
+        "metal", "steel", "aluminum", "copper", "brass", "iron",
+        "paper", "cardboard", "paper",
+        "glass", "glassware",
+        "rubber", "tire",
+        "textile", "fabric", "cotton",
+        "ash", "fly ash", "bottom ash",
+        "bagasse", "rice husk", "coconut shell", "straw",
+        "construction", "concrete", "rubble", "brick",
+        "organic", "food waste", "vegetable waste"
+    ]
+    
+    # Check which keywords are in the message
+    for keyword in material_keywords:
+        if keyword in message_lower:
+            keywords.append(keyword)
+    
+    return keywords
+
+
 def search_listings_by_keywords(keywords: List[str], location: Optional[str] = None, limit: int = 5) -> List[dict]:
     """
     Search listings based on keywords and return relevant materials.
@@ -36,8 +80,8 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
             with open(mock_path, "r") as f:
                 master_data = json.load(f)
             
-            listings = master_data.get("listings", [])
-            listings = [l for l in listings if l.get("status") in ["active", "pending"]]
+            listings = master_data.get("waste_material_listings", [])
+            # Don't filter by status - show all listings for search
             
             # If no keywords provided, return all active listings
             if not keywords:
@@ -82,7 +126,7 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
                     "price": listing.get("price_per_unit"),
                     "total_value": listing.get("total_value"),
                     "location": listing.get("location"),
-                    "listing_type": listing.get("listing_type"),
+                    "listing_type": listing.get("sale_type"),
                     "seller_company": listing.get("seller_company"),
                 })
             
@@ -560,15 +604,63 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """
-    Chat endpoint that responds to user messages with contextual information.
+    Chat endpoint with hybrid Watson integration:
+    - Watson Orchestrate Agent for waste data queries (knowledge base)
+    - Watsonx.ai for general queries
+    - Rule-based fallback if both unavailable
     """
     try:
         if not request.message or not request.message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
         
+        # Try Watson services first if available
+        if WATSON_AVAILABLE and get_watson_service:
+            watson_service = get_watson_service()
+            
+            # Check if watson services are enabled
+            if watson_service.orchestrate_enabled or watson_service.watsonx_enabled:
+                logger.info("🤖 Using Watson services for response")
+                
+                # Prepare context data (listings, materials, etc.)
+                context_data = {}
+                keywords = extract_keywords_from_message(request.message)
+                
+                if keywords:
+                    listings = search_listings_by_keywords(keywords, limit=5)
+                    if listings:
+                        context_data["listings"] = listings
+                
+                # Generate AI response
+                ai_response = watson_service.generate_response(
+                    message=request.message,
+                    conversation_history=[
+                        {"role": msg.role, "content": msg.content} 
+                        for msg in request.conversation_history
+                    ],
+                    context_data=context_data if context_data else None
+                )
+                
+                if ai_response:
+                    logger.info("✅ Returned AI-generated response from Watson")
+                    return ChatResponse(
+                        message=ai_response,
+                        suggestions=[
+                            "Tell me about waste materials",
+                            "What are the prices?",
+                            "How do I start a business?",
+                        ],
+                        listings=context_data.get("listings", [])
+                    )
+                else:
+                    logger.warning("⚠️  Watson returned no response, falling back to rules")
+        
+        # Fallback to rule-based response
+        logger.info("📝 Using rule-based response (fallback)")
         response = get_chatbot_response(request.message, request.conversation_history)
         return response
+        
     except Exception as e:
+        logger.error(f"Error processing chat message: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing chat message: {str(e)}")
 
 
