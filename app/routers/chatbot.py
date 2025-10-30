@@ -1,0 +1,326 @@
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+import json
+from pathlib import Path
+from app.config import settings
+
+router = APIRouter(prefix="/api/chatbot", tags=["Chatbot"])
+
+
+class ChatMessage(BaseModel):
+    role: str  # "user" or "assistant"
+    content: str
+    timestamp: Optional[str] = None
+
+
+class ChatRequest(BaseModel):
+    message: str
+    conversation_history: Optional[List[ChatMessage]] = []
+
+
+class ChatResponse(BaseModel):
+    message: str
+    suggestions: Optional[List[str]] = []
+    listings: Optional[List[dict]] = []  # Include relevant listings
+
+
+def search_listings_by_keywords(keywords: List[str], location: Optional[str] = None, limit: int = 5) -> List[dict]:
+    """
+    Search listings based on keywords and return relevant materials.
+    """
+    try:
+        if getattr(settings, "DISABLE_DB", False):
+            mock_path = Path(__file__).resolve().parents[2] / "mock_data" / "waste_streams_dashboard_data.json"
+            with open(mock_path, "r") as f:
+                master_data = json.load(f)
+            
+            listings = master_data.get("listings", [])
+            listings = [l for l in listings if l.get("status") in ["active", "pending"]]
+            
+            # If no keywords provided, return all active listings
+            if not keywords:
+                matched_listings = listings.copy()
+            else:
+                # Filter by keywords
+                matched_listings = []
+                for listing in listings:
+                    title = listing.get("title", "").lower()
+                    material = listing.get("material_name", "").lower()
+                    category = listing.get("category", "").lower()
+                    description = listing.get("description", "").lower() if listing.get("description") else ""
+                    
+                    # Check if any keyword matches
+                    for keyword in keywords:
+                        keyword_lower = keyword.lower()
+                        if (keyword_lower in title or 
+                            keyword_lower in material or 
+                            keyword_lower in category or
+                            keyword_lower in description):
+                            matched_listings.append(listing)
+                            break
+            
+            # Filter by location if provided (prioritize location matches)
+            if location:
+                location_lower = location.lower()
+                location_matches = [l for l in matched_listings if location_lower in l.get("location", "").lower()]
+                if location_matches:
+                    # Show location matches first, then others if needed
+                    matched_listings = location_matches + [l for l in matched_listings if l not in location_matches]
+            
+            # Format listings
+            formatted = []
+            for listing in matched_listings[:limit]:
+                formatted.append({
+                    "id": listing.get("id"),
+                    "title": listing.get("title"),
+                    "material_name": listing.get("material_name"),
+                    "category": listing.get("category"),
+                    "quantity": listing.get("quantity"),
+                    "quantity_unit": listing.get("unit"),
+                    "price": listing.get("price_per_unit"),
+                    "total_value": listing.get("total_value"),
+                    "location": listing.get("location"),
+                    "listing_type": listing.get("listing_type"),
+                    "seller_company": listing.get("seller_company"),
+                })
+            
+            return formatted
+    except Exception as e:
+        print(f"Error searching listings: {e}")
+    return []
+
+
+def extract_manufacturing_intent(message: str) -> dict:
+    """
+    Extract manufacturing type and requirements from user message.
+    Returns dict with keywords, location, and material categories.
+    """
+    message_lower = message.lower()
+    
+    # Manufacturing keywords mapping
+    manufacturing_map = {
+        "plastic": ["plastic", "polymer", "hdpe", "ldpe", "pp", "pet", "pvc", "plastic manufacturing", "plastic products"],
+        "metal": ["metal", "steel", "aluminum", "copper", "brass", "iron", "metalworking", "foundry", "metal products"],
+        "construction": ["construction", "concrete", "cement", "building", "fly ash", "ash", "construction material"],
+        "paper": ["paper", "cardboard", "packaging", "paper products", "paper manufacturing"],
+        "textile": ["textile", "fabric", "clothing", "garment", "textile manufacturing"],
+        "biofuel": ["biofuel", "biomass", "bagasse", "agricultural", "crop", "organic", "energy"],
+        "glass": ["glass", "glassware", "glass manufacturing"],
+        "rubber": ["rubber", "tire", "rubber products"],
+    }
+    
+    # Extract location if mentioned
+    locations = ["mumbai", "delhi", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad", 
+                 "coimbatore", "nagpur", "surat", "jaipur", "lucknow", "kanpur", "kochi"]
+    location = None
+    for loc in locations:
+        if loc in message_lower:
+            location = loc
+            break
+    
+    # Find matching manufacturing types
+    keywords = []
+    categories = []
+    for category, terms in manufacturing_map.items():
+        if any(term in message_lower for term in terms):
+            keywords.extend(terms[:3])  # Add first 3 terms
+            categories.append(category)
+    
+    # If no specific match, return empty keywords to search all listings
+    # The search function will handle empty keywords by returning all listings
+    
+    return {
+        "keywords": list(set(keywords))[:5],  # Unique keywords, max 5
+        "location": location,
+        "categories": categories
+    }
+
+
+def get_chatbot_response(user_message: str, conversation_history: List[ChatMessage] = None) -> ChatResponse:
+    """
+    Generate intelligent responses based on user queries about the waste marketplace.
+    """
+    message_lower = user_message.lower()
+    
+    # Check for manufacturing/manufacturing unit/raw material intent
+    manufacturing_indicators = [
+        "manufacturing", "manufacturing unit", "factory", "production", 
+        "raw material", "raw materials", "need material", "need materials",
+        "looking for material", "looking for materials", "sourcing", "procure"
+    ]
+    
+    if any(indicator in message_lower for indicator in manufacturing_indicators):
+        # Extract intent
+        intent = extract_manufacturing_intent(user_message)
+        
+        # Search for relevant listings (even if no keywords, show all)
+        listings = search_listings_by_keywords(
+            intent["keywords"] if intent["keywords"] else [], 
+            intent["location"],
+            limit=5
+        )
+        
+        if listings:
+            # Format response with listings
+            message = "Great! I found some relevant materials for your manufacturing needs:\n\n"
+            
+            for idx, listing in enumerate(listings, 1):
+                price_str = f"₹{listing['price'] or 0:.2f}"
+                if listing.get('total_value'):
+                    price_str += f" (Total: ₹{listing['total_value']:.2f})"
+                
+                message += f"**{idx}. {listing['title']}**\n"
+                message += f"   • Material: {listing['material_name']}\n"
+                message += f"   • Category: {listing['category']}\n"
+                message += f"   • Quantity: {listing['quantity']} {listing['quantity_unit']}\n"
+                message += f"   • Price: {price_str} per {listing['quantity_unit']}\n"
+                message += f"   • Location: {listing['location']}\n"
+                message += f"   • Seller: {listing.get('seller_company', 'N/A')}\n"
+                message += f"   • Type: {listing['listing_type'].replace('_', ' ').title()}\n"
+                message += f"   • [View Details →](/listing/{listing['id']})\n\n"
+            
+            message += "💡 **Next Steps:**\n"
+            message += "• Click on any listing to see full details\n"
+            message += "• Contact sellers directly through the listing page\n"
+            message += "• Place orders or bids based on listing type\n"
+            
+            if intent["location"]:
+                message += f"\n📍 Showing materials near {intent['location'].title()}"
+            else:
+                message += "\n🔍 Want materials from a specific location? Just mention it!"
+            
+            return ChatResponse(
+                message=message,
+                suggestions=[
+                    "Show me materials in Mumbai",
+                    "I need cheaper options",
+                    "How do I contact sellers?",
+                    "Show me auction listings"
+                ],
+                listings=listings
+            )
+        else:
+            # No listings found
+            return ChatResponse(
+                message=f"I searched for materials matching your requirements but couldn't find exact matches in our current listings.\n\n💡 **Suggestions:**\n• Try searching with different keywords on the Listings page\n• Check all available categories\n• Browse by location to find nearby suppliers\n• Contact us if you need specific materials\n\nWould you like me to show you all available materials in a specific category?",
+                suggestions=[
+                    "Show all plastic materials",
+                    "Show all metal scrap",
+                    "What materials are available?",
+                    "Browse all listings"
+                ]
+            )
+    
+    # Continue with existing responses...
+    # Context-aware responses
+    if any(word in message_lower for word in ["hello", "hi", "hey", "greetings"]):
+        return ChatResponse(
+            message="Hello! 👋 I'm your waste material marketplace assistant. I can help you with:\n\n• Finding waste materials\n• Understanding how to list materials\n• Learning about auctions and bidding\n• Navigating the platform\n• Answering questions about the marketplace\n\nWhat would you like to know?",
+            suggestions=["How do I list materials?", "How does bidding work?", "What materials are available?"]
+        )
+    
+    elif any(word in message_lower for word in ["list", "sell", "create listing", "post"]):
+        return ChatResponse(
+            message="To list waste materials on our marketplace:\n\n1️⃣ **Sign up** as a seller account\n2️⃣ **Navigate** to your dashboard\n3️⃣ **Click** 'Create New Listing'\n4️⃣ **Fill in** details:\n   - Material name and description\n   - Quantity and unit\n   - Price or set as auction\n   - Location\n   - Availability dates\n\n5️⃣ **Submit** your listing for review\n\nListings can be fixed-price or auction-based. Would you like to know more about either option?",
+            suggestions=["What's the difference between fixed price and auction?", "How long does listing approval take?"]
+        )
+    
+    elif any(word in message_lower for word in ["buy", "purchase", "order", "how to buy"]):
+        return ChatResponse(
+            message="Buying waste materials is simple:\n\n**For Fixed-Price Listings:**\n1️⃣ Browse available materials\n2️⃣ Click on a listing to view details\n3️⃣ Enter desired quantity\n4️⃣ Place your order\n5️⃣ Wait for seller confirmation\n\n**For Auction Listings:**\n1️⃣ Find auction listings\n2️⃣ View current highest bid\n3️⃣ Place your bid\n4️⃣ Monitor until auction ends\n\n💡 Tip: Check the seller's company info and material quality ratings before purchasing!",
+            suggestions=["How does bidding work?", "What payment methods are accepted?"]
+        )
+    
+    elif any(word in message_lower for word in ["auction", "bid", "bidding", "how to bid"]):
+        return ChatResponse(
+            message="Our auction system allows real-time bidding:\n\n🎯 **How it works:**\n• Sellers create auction listings with a starting bidשר\n• Buyers place bids higher than the current highest bid\n• Auctions have an end time - highest这是我们 bid at that time wins\n• Real-time updates via WebSocket\n\n⚡ **Tips for bidding:**\n• Set a maximum budget beforehand\n• Bid early to establish interest\n• Monitor auctions closely near end time\n• Your bid must be higher than current highest\n\n💰 **Winning:**\nWhen auction ends, you'll be notified if you won and can proceed with payment.",
+            suggestions=["Can I retract a bid?", "What happens if I win an auction?"]
+        )
+    
+    elif any(word in message_lower for word in ["material", "materials", "what materials", "available"]):
+        return ChatResponse(
+            message="We have a wide variety of waste materials available:\n\n📦 **Categories:**\n• Agricultural/Biomass (bagasse, crop residue)\n• Industrial Ash (fly ash, bottom ash)\n• Plastic Waste (HDPE, LDPE, PP)\n• Metal Scrap (aluminum, steel, copper)\n• Paper & Cardboard\n• Construction & Demolition waste\n• Glass waste\n• Textile Waste\n• Rubber & Tires\n• Organic/Food Waste\n\n🔍 You can browse all materials using our search and filter system. Need help finding something specific?",
+            suggestions=["How do I search for materials?", "What are the most popular materials?"]
+        )
+    
+    elif any(word in message_lower for word in ["search", "filter", "find", "browse"]):
+        return ChatResponse(
+            message="Our search and filter system helps you find exactly what you need:\n\n🔍 **Search options:**\n• Material name (e.g., 'fly ash', 'plastic')\n• Location\n• Category\n• Price range\n• Listing type (fixed price or auction)\n\n💡 **Tips:**\n• Use the search bar at the top of listings page\n• Combine multiple filters for precise results\n• Check the map view for nearby materials\n• Save searches for quick access later\n\nTry it out on the Listings page!",
+            suggestions=["How do I save a search?", "Can I get notifications for new listings?"]
+        )
+    
+    elif any(word in message_lower for word in ["price", "cost", "expensive", "cheap", "pricing"]):
+        return ChatResponse(
+            message="Pricing on our marketplace:\n\n💰 **Pricing Models:**\n• **Fixed Price:** Set price per unit, shown upfront\n• **Auction:** Starting bid set, final price determined by bidding\n\n💵 **Factors affecting price:**\n• Material quality and grade\n• Quantity available (bulk discounts may apply)\n• Location (transportation costs)\n• Market demand\n• Material type and rarity\n\n📊 Prices are shown per unit (tons, kg, etc.) and total value for the lot.\n\nWould you like to know how to negotiate prices with sellers?",
+            suggestions=["How do I contact sellers?", "Are there bulk discounts?"]
+        )
+    
+    elif any(word in message_lower for word in ["contact", "seller", "message", "communicate"]):
+        return ChatResponse(
+            message="Contacting sellers:\n\n💬 **Ways to communicate:**\n• View seller company info on listing page\n• Send inquiries through the listing inquiry feature\n• Check seller ratings and reviews\n\n📧 **Inquiry feature:**\n• Click 'Contact Seller' on any listing\n• Send a message with your questions\n• Receive responses via email or dashboard notifications\n\n⭐ **Before contacting:**\n• Review the listing details thoroughly\n• Check seller's response time and ratings\n• Prepare specific questions about material quality, quantity, or logistics\n\nNeed help with something else?",
+            suggestions=["How do I see seller ratings?", "What information should I include in an inquiry?"]
+        )
+    
+    elif any(word in message_lower for word in ["account", "profile", "dashboard", "my account"]):
+        return ChatResponse(
+            message="Your account dashboard provides comprehensive insights:\n\n👤 **For Sellers:**\n• View all your listings and their status\n• Track sales and revenue\n• Manage orders and inquiries\n• See auction performance\n• Analytics and statistics\n\n🛒 **For Buyers:**\n• View your orders and purchase history\n• Track your bids and auction activity\n• Saved listings and searches\n• Inquiries you've sent\n\n🔐 **Account Settings:**\n• Update profile information\n• Change password\n• Manage notifications\n• View transaction history\n\nAccess your dashboard from the top navigation menu!",
+            suggestions=["How do I update my profile?", "What notifications can I receive?"]
+        )
+    
+    elif any(word in message_lower for word in ["help", "support", "question", "problem"]):
+        return ChatResponse(
+            message="I'm here to help! 🌟\n\n**Common topics I can assist with:**\n• Listing materials for sale\n• Browsing and buying materials\n• Understanding auctions and bidding\n• Account management\n• Searching and filtering\n• Platform navigation\n\n**If you need further assistance:**\n• Check our FAQ section (link in footer)\n• Contact support via email: support@wastemarket.com\n• Review our Help Center articles\n\nJust ask me anything about the marketplace and I'll do my best to help!",
+            suggestions=["How do I report a problem?", "Where is the FAQ section?"]
+        )
+    
+    elif any(word in message_lower for word in ["thank", "thanks", "appreciate"]):
+        return ChatResponse(
+            message="You're welcome! 😊\n\nI'm always here to help you navigate the waste material marketplace. Feel free to ask if you have any other questions!\n\nHappy trading! ♻️",
+            suggestions=["How do I get started?", "What are the benefits of using this platform?"]
+        )
+    
+    elif any(word in message_lower for word in ["benefits", "why", "advantage", "why use"]):
+        return ChatResponse(
+            message="Why use our waste material marketplace? 🌟\n\n✅ **For Sellers:**\n• Turn waste into revenue\n• Reach larger buyer network\n• Flexible pricing options\n• Easy listing management\n• Real-time analytics\n\n✅ **For Buyers:**\n• Wide variety of materials\n• Competitive pricing\n• Quality verified sellers\n• Easy search and comparison\n• Secure transactions\n\n🌍 **Environmental Impact:**\n• Promotes circular economy\n• Reduces landfill waste\n• Supports sustainable practices\n• Contributes to ESG goals\n\nReady to get started?",
+            suggestions=["How do I sign up?", "Is it free to list materials?"]
+        )
+    
+    else:
+        # Default response with helpful suggestions
+        return ChatResponse(
+            message=f"I understand you're asking about '{user_message}'. Let me help you with our waste material marketplace!\n\nI can assist you with:\n• Finding and listing materials\n• Understanding auctions and bidding\n• Navigating the platform\n• Account management\n• And much more!\n\nTry asking me something like:\n• 'How do I list materials?'\n• 'How does bidding work?'\n• 'What materials are available?'\n\nOr be more specific about what you'd like to know!",
+            suggestions=["How do I list materials?", "What materials are available?", "How does bidding work?"]
+        )
+
+
+@router.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    """
+    Chat endpoint that responds to user messages with contextual information.
+    """
+    try:
+        if not request.message or not request.message.strip():
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
+        
+        response = get_chatbot_response(request.message, request.conversation_history)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing chat message: {str(e)}")
+
+
+@router.get("/suggestions")
+async def get_suggestions():
+    """
+    Get default conversation starter suggestions.
+    """
+    return {
+        "suggestions": [
+            "How do I list materials?",
+            "What materials are available?",
+            "How does bidding work?",
+            "How do I contact sellers?",
+            "What are the benefits of this platform?"
+        ]
+    }

@@ -7,7 +7,7 @@ from app.config import settings
 from app.database import engine, Base
 
 # Import routers
-from app.routers import auth, listings, orders, auctions, dashboard, admin
+from app.routers import auth, listings, orders, auctions, dashboard, admin, chatbot
 from app.routers import websocket
 
 # Create database tables (skip in mock mode)
@@ -51,6 +51,7 @@ app.include_router(orders.router)
 app.include_router(auctions.router)
 app.include_router(dashboard.router)
 app.include_router(admin.router)
+app.include_router(chatbot.router)
 app.include_router(websocket.router)
 
 
