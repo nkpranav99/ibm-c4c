@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { dashboardAPI } from '../../lib/api'
+import { dashboardAPI, machineryAPI } from '../../lib/api'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const [stats, setStats] = useState(null)
   const [analytics, setAnalytics] = useState(null)
+  const [machineryStats, setMachineryStats] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -37,6 +38,10 @@ export default function DashboardPage() {
       if (data?.analytics) {
         setAnalytics(data.analytics)
       }
+      
+      // Load machinery stats
+      const machineryData = await machineryAPI.getStats()
+      setMachineryStats(machineryData)
     } catch (error) {
       console.error('Failed to load dashboard:', error)
     } finally {
@@ -133,6 +138,35 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
+
+          {/* Machinery Stats */}
+          {machineryStats && (
+            <div className="card mb-6">
+              <h2 className="text-xl font-semibold mb-4">🔧 Machinery & Equipment</h2>
+              <div className="grid md:grid-cols-4 gap-4 mb-4">
+                <div className="p-3 bg-purple-50 rounded">
+                  <p className="text-sm text-gray-600 mb-1">Total Machinery</p>
+                  <p className="text-2xl font-bold text-purple-600">{machineryStats.total_machinery || 0}</p>
+                </div>
+                <div className="p-3 bg-orange-50 rounded">
+                  <p className="text-sm text-gray-600 mb-1">Shutdown Companies</p>
+                  <p className="text-2xl font-bold text-orange-600">{machineryStats.shutdown_companies || 0}</p>
+                </div>
+                <div className="p-3 bg-red-50 rounded">
+                  <p className="text-sm text-gray-600 mb-1">Urgent Deals</p>
+                  <p className="text-2xl font-bold text-red-600">{machineryStats.urgent_deals_count || 0}</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded">
+                  <p className="text-sm text-gray-600 mb-1">Avg Discount</p>
+                  <p className="text-2xl font-bold text-green-600">{machineryStats.average_discount_percentage || 0}%</p>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>💰 Bundled Packages: 3 complete setups available</p>
+                <p>⚡ Total Value: ₹{(machineryStats.total_estimated_value_inr / 10000000).toFixed(1)} Cr</p>
+              </div>
+            </div>
+          )}
 
           {/* Popular Materials */}
           {popularMaterials.length > 0 && (

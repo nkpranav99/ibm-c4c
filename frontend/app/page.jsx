@@ -28,7 +28,7 @@ export default function Home() {
               <Link href="/signup" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
                 List Waste Material
               </Link>
-              <Link href="/listings" className="btn-secondary border-white text-white hover:bg-white/10">
+              <Link href="/listings" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
                 Browse Materials
               </Link>
             </div>
@@ -41,27 +41,27 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="card text-center">
-              <div className="text-5xl mb-4">📋</div>
-              <h3 className="text-xl font-semibold mb-2">List Your Waste</h3>
+            <Link href="/signup" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📋</div>
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">List Your Waste</h3>
               <p className="text-gray-600">
                 Companies can list their waste materials with details, pricing, and availability.
               </p>
-            </div>
-            <div className="card text-center">
-              <div className="text-5xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold mb-2">Browse & Search</h3>
+            </Link>
+            <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔍</div>
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Browse & Search</h3>
               <p className="text-gray-600">
                 Buyers can search by material type, location, and price to find what they need.
               </p>
-            </div>
-            <div className="card text-center">
-              <div className="text-5xl mb-4">💰</div>
-              <h3 className="text-xl font-semibold mb-2">Buy or Bid</h3>
+            </Link>
+            <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">💰</div>
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Buy or Bid</h3>
               <p className="text-gray-600">
                 Purchase at fixed price or bid in real-time auctions for premium materials.
               </p>
-            </div>
+            </Link>
           </div>
         </div>
       </section>

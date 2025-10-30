@@ -1,8 +1,9 @@
 {
   "metadata": {
-    "generated_date": "2025-10-28 06:08:35",
+    "generated_date": "2025-10-30 06:54:37",
     "platform_name": "Waste Material Marketplace",
-    "data_version": "1.0"
+    "data_version": "2.0",
+    "description": "Extended dataset including waste materials, industrial machinery, and company shutdown liquidations"
   },
   "waste_categories": {
     "Agricultural/Biomass": [
@@ -197,1110 +198,1903 @@
     ]
   },
   "summary_metrics": {
-    "total_listings": 20,
-    "active_listings": 3,
-    "sold_listings": 7,
-    "pending_listings": 4,
-    "expired_listings": 6,
-    "total_sellers": 12,
-    "active_sellers": 8,
+    "total_waste_listings": 20,
+    "active_waste_listings": 5,
+    "sold_waste_listings": 8,
+    "total_machinery_listings": 50,
+    "active_machinery_listings": 42,
+    "shutdown_companies": 5,
+    "liquidation_machinery_count": 75,
+    "urgent_deals_count": 12,
+    "total_sellers": 25,
+    "active_sellers": 18,
     "total_buyers": 185,
-    "active_buyers": 84,
+    "active_buyers": 98,
     "total_transactions": 353,
     "total_revenue_inr": 13922850,
     "avg_listing_value_inr": 145868,
     "avg_days_to_sell": 22,
-    "active_auctions": 5,
-    "conversion_rate_percentage": 27.06,
-    "repeat_buyer_rate_percentage": 39.63
+    "active_auctions": 8,
+    "conversion_rate_percentage": 24.5,
+    "repeat_buyer_rate_percentage": 34.2
   },
-  "listings": [
+  "waste_material_listings": [
     {
       "id": 1,
-      "title": "Bagasse - Premium Quality",
-      "material_name": "Bagasse",
-      "category": "Agricultural/Biomass",
-      "quantity": 99,
+      "listing_type": "waste_material",
+      "title": "Cardboard Bales - Premium Quality",
+      "material_name": "Cardboard Bales",
+      "category": "Paper & Cardboard",
+      "quantity": 131,
       "unit": "tons",
-      "price_per_unit": 28.08,
-      "total_value": 2779.92,
-      "listing_type": "fixed_price",
-      "status": "sold",
-      "location": "Ahmedabad",
-      "seller_company": "AgriWaste Solutions",
-      "date_posted": "2025-10-10",
-      "views": 252,
-      "inquiries": 10
+      "price_per_unit": 54.5,
+      "total_value": 7139.5,
+      "sale_type": "fixed_price",
+      "status": "pending",
+      "location": "Bangalore",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-10-01",
+      "views": 156,
+      "inquiries": 39
     },
     {
       "id": 2,
-      "title": "Rice Husk - Premium Quality",
-      "material_name": "Rice Husk",
-      "category": "Agricultural/Biomass",
-      "quantity": 342,
+      "listing_type": "waste_material",
+      "title": "Gypsum Waste - Premium Quality",
+      "material_name": "Gypsum Waste",
+      "category": "Construction & Demolition",
+      "quantity": 70,
       "unit": "tons",
-      "price_per_unit": 22.67,
-      "total_value": 7753.14,
-      "listing_type": "fixed_price",
-      "status": "sold",
-      "location": "Nagpur",
+      "price_per_unit": 15.25,
+      "total_value": 1067.5,
+      "sale_type": "fixed_price",
+      "status": "pending",
+      "location": "Chennai",
       "seller_company": "GreenTech Industries",
-      "date_posted": "2025-09-11",
-      "views": 374,
+      "date_posted": "2025-09-25",
+      "views": 141,
       "inquiries": 32
     },
     {
       "id": 3,
-      "title": "Fly Ash - Premium Quality",
-      "material_name": "Fly Ash",
-      "category": "Industrial Ash",
-      "quantity": 142,
+      "listing_type": "waste_material",
+      "title": "Coconut Shell - Premium Quality",
+      "material_name": "Coconut Shell",
+      "category": "Agricultural/Biomass",
+      "quantity": 167,
       "unit": "tons",
-      "price_per_unit": 17.92,
-      "total_value": 2544.64,
-      "listing_type": "fixed_price",
+      "price_per_unit": 39.49,
+      "total_value": 6594.83,
+      "sale_type": "fixed_price",
       "status": "pending",
-      "location": "Coimbatore",
+      "location": "Chennai",
       "seller_company": "Waste2Wealth Enterprises",
-      "date_posted": "2025-08-30",
-      "views": 339,
-      "inquiries": 10
+      "date_posted": "2025-09-16",
+      "views": 139,
+      "inquiries": 8
     },
     {
       "id": 4,
-      "title": "Bottom Ash - Premium Quality",
-      "material_name": "Bottom Ash",
-      "category": "Industrial Ash",
-      "quantity": 438,
-      "unit": "tons",
-      "price_per_unit": 3.51,
-      "total_value": 1537.38,
-      "listing_type": "fixed_price",
-      "status": "sold",
-      "location": "Coimbatore",
-      "seller_company": "Waste2Wealth Enterprises",
-      "date_posted": "2025-09-08",
-      "views": 175,
-      "inquiries": 41
+      "listing_type": "waste_material",
+      "title": "LDPE Film - Premium Quality",
+      "material_name": "LDPE Film",
+      "category": "Plastic Waste",
+      "quantity": 212,
+      "unit": "kg",
+      "price_per_unit": 0.41,
+      "total_value": 86.92,
+      "sale_type": "fixed_price",
+      "status": "expired",
+      "location": "Surat",
+      "seller_company": "Industrial Recyclers Ltd",
+      "date_posted": "2025-09-13",
+      "views": 335,
+      "inquiries": 14
     },
     {
       "id": 5,
-      "title": "HDPE Scrap - Premium Quality",
-      "material_name": "HDPE Scrap",
-      "category": "Plastic Waste",
-      "quantity": 145,
-      "unit": "kg",
-      "price_per_unit": 0.63,
-      "total_value": 91.35,
-      "listing_type": "auction",
-      "status": "active",
-      "location": "Nagpur",
-      "seller_company": "Sustainable Materials Co",
-      "date_posted": "2025-09-01",
-      "views": 337,
-      "inquiries": 29
+      "listing_type": "waste_material",
+      "title": "Straw/Hay - Premium Quality",
+      "material_name": "Straw/Hay",
+      "category": "Agricultural/Biomass",
+      "quantity": 142,
+      "unit": "tons",
+      "price_per_unit": 27.22,
+      "total_value": 3865.24,
+      "sale_type": "fixed_price",
+      "status": "pending",
+      "location": "Chennai",
+      "seller_company": "EcoWaste Solutions",
+      "date_posted": "2025-10-27",
+      "views": 478,
+      "inquiries": 18
     },
     {
       "id": 6,
-      "title": "PET Bottles - Premium Quality",
-      "material_name": "PET Bottles",
-      "category": "Plastic Waste",
-      "quantity": 362,
+      "listing_type": "waste_material",
+      "title": "Copper Wire - Premium Quality",
+      "material_name": "Copper Wire",
+      "category": "Metal Scrap",
+      "quantity": 298,
       "unit": "kg",
-      "price_per_unit": 0.5,
-      "total_value": 181.0,
-      "listing_type": "fixed_price",
-      "status": "expired",
-      "location": "Lucknow",
-      "seller_company": "Green Valley Industries",
-      "date_posted": "2025-10-13",
-      "views": 384,
-      "inquiries": 5
+      "price_per_unit": 11.08,
+      "total_value": 3301.84,
+      "sale_type": "fixed_price",
+      "status": "pending",
+      "location": "Ahmedabad",
+      "seller_company": "EcoWaste Solutions",
+      "date_posted": "2025-09-10",
+      "views": 166,
+      "inquiries": 40
     },
     {
       "id": 7,
-      "title": "Steel Scrap - Premium Quality",
-      "material_name": "Steel Scrap",
-      "category": "Metal Scrap",
-      "quantity": 48,
+      "listing_type": "waste_material",
+      "title": "Broken Glass - Premium Quality",
+      "material_name": "Broken Glass",
+      "category": "Glass",
+      "quantity": 362,
       "unit": "tons",
-      "price_per_unit": 122.65,
-      "total_value": 5887.2,
-      "listing_type": "auction",
+      "price_per_unit": 24.53,
+      "total_value": 8879.86,
+      "sale_type": "fixed_price",
       "status": "expired",
-      "location": "Kolkata",
-      "seller_company": "Urban Waste Management",
-      "date_posted": "2025-10-24",
-      "views": 222,
-      "inquiries": 41
-    },
-    {
-      "id": 8,
-      "title": "Aluminum Scrap - Premium Quality",
-      "material_name": "Aluminum Scrap",
-      "category": "Metal Scrap",
-      "quantity": 55,
-      "unit": "kg",
-      "price_per_unit": 1.31,
-      "total_value": 72.05,
-      "listing_type": "auction",
-      "status": "sold",
-      "location": "Chennai",
-      "seller_company": "CircularEconomy Inc",
-      "date_posted": "2025-09-12",
-      "views": 108,
-      "inquiries": 30
-    },
-    {
-      "id": 9,
-      "title": "Cardboard Bales - Premium Quality",
-      "material_name": "Cardboard Bales",
-      "category": "Paper & Cardboard",
-      "quantity": 27,
-      "unit": "tons",
-      "price_per_unit": 88.34,
-      "total_value": 2385.18,
-      "listing_type": "auction",
-      "status": "sold",
-      "location": "Hyderabad",
-      "seller_company": "ReSource Trading",
-      "date_posted": "2025-09-29",
-      "views": 57,
-      "inquiries": 20
-    },
-    {
-      "id": 10,
-      "title": "Mixed Paper - Premium Quality",
-      "material_name": "Mixed Paper",
-      "category": "Paper & Cardboard",
-      "quantity": 222,
-      "unit": "tons",
-      "price_per_unit": 62.23,
-      "total_value": 13815.06,
-      "listing_type": "auction",
-      "status": "pending",
-      "location": "Lucknow",
-      "seller_company": "ReSource Trading",
-      "date_posted": "2025-10-25",
-      "views": 333,
-      "inquiries": 21
-    },
-    {
-      "id": 11,
-      "title": "Concrete Rubble - Premium Quality",
-      "material_name": "Concrete Rubble",
-      "category": "Construction & Demolition",
-      "quantity": 211,
-      "unit": "tons",
-      "price_per_unit": 6.99,
-      "total_value": 1474.89,
-      "listing_type": "fixed_price",
-      "status": "expired",
-      "location": "Pune",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "date_posted": "2025-09-23",
-      "views": 267,
-      "inquiries": 26
-    },
-    {
-      "id": 12,
-      "title": "Brick Waste - Premium Quality",
-      "material_name": "Brick Waste",
-      "category": "Construction & Demolition",
-      "quantity": 372,
-      "unit": "tons",
-      "price_per_unit": 4.31,
-      "total_value": 1603.32,
-      "listing_type": "auction",
-      "status": "sold",
-      "location": "Ahmedabad",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "date_posted": "2025-09-26",
-      "views": 50,
+      "location": "Surat",
+      "seller_company": "Sustainable Materials Co",
+      "date_posted": "2025-09-18",
+      "views": 434,
       "inquiries": 5
     },
     {
-      "id": 13,
-      "title": "Clear Glass - Premium Quality",
-      "material_name": "Clear Glass",
-      "category": "Glass",
-      "quantity": 445,
+      "id": 8,
+      "listing_type": "waste_material",
+      "title": "Concrete Rubble - Premium Quality",
+      "material_name": "Concrete Rubble",
+      "category": "Construction & Demolition",
+      "quantity": 259,
       "unit": "tons",
-      "price_per_unit": 41.49,
-      "total_value": 18463.05,
-      "listing_type": "auction",
-      "status": "expired",
-      "location": "Kanpur",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "date_posted": "2025-10-17",
-      "views": 82,
-      "inquiries": 28
+      "price_per_unit": 12.54,
+      "total_value": 3247.86,
+      "sale_type": "auction",
+      "status": "pending",
+      "location": "Jaipur",
+      "seller_company": "GreenTech Industries",
+      "date_posted": "2025-10-08",
+      "views": 342,
+      "inquiries": 24
     },
     {
-      "id": 14,
-      "title": "Mixed Glass - Premium Quality",
-      "material_name": "Mixed Glass",
-      "category": "Glass",
-      "quantity": 143,
+      "id": 9,
+      "listing_type": "waste_material",
+      "title": "Coal Ash - Premium Quality",
+      "material_name": "Coal Ash",
+      "category": "Industrial Ash",
+      "quantity": 97,
       "unit": "tons",
-      "price_per_unit": 31.79,
-      "total_value": 4545.97,
-      "listing_type": "auction",
-      "status": "expired",
-      "location": "Nagpur",
-      "seller_company": "Sustainable Materials Co",
-      "date_posted": "2025-09-26",
-      "views": 477,
-      "inquiries": 21
+      "price_per_unit": 24.28,
+      "total_value": 2355.16,
+      "sale_type": "auction",
+      "status": "pending",
+      "location": "Delhi",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-09-24",
+      "views": 68,
+      "inquiries": 7
     },
     {
-      "id": 15,
+      "id": 10,
+      "listing_type": "waste_material",
       "title": "Cotton Scrap - Premium Quality",
       "material_name": "Cotton Scrap",
       "category": "Textile Waste",
-      "quantity": 130,
+      "quantity": 236,
       "unit": "kg",
-      "price_per_unit": 1.04,
-      "total_value": 135.2,
-      "listing_type": "auction",
-      "status": "active",
-      "location": "Lucknow",
-      "seller_company": "Waste2Wealth Enterprises",
-      "date_posted": "2025-10-07",
-      "views": 101,
-      "inquiries": 23
+      "price_per_unit": 0.64,
+      "total_value": 151.04,
+      "sale_type": "fixed_price",
+      "status": "sold",
+      "location": "Surat",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-09-29",
+      "views": 213,
+      "inquiries": 47
     },
     {
-      "id": 16,
-      "title": "Fabric Remnants - Premium Quality",
-      "material_name": "Fabric Remnants",
-      "category": "Textile Waste",
+      "id": 11,
+      "listing_type": "waste_material",
+      "title": "Clear Glass - Premium Quality",
+      "material_name": "Clear Glass",
+      "category": "Glass",
+      "quantity": 400,
+      "unit": "tons",
+      "price_per_unit": 77.36,
+      "total_value": 30944.0,
+      "sale_type": "auction",
+      "status": "sold",
+      "location": "Pune",
+      "seller_company": "Industrial Recyclers Ltd",
+      "date_posted": "2025-10-01",
+      "views": 247,
+      "inquiries": 39
+    },
+    {
+      "id": 12,
+      "listing_type": "waste_material",
+      "title": "Mixed Glass - Premium Quality",
+      "material_name": "Mixed Glass",
+      "category": "Glass",
+      "quantity": 372,
+      "unit": "tons",
+      "price_per_unit": 24.35,
+      "total_value": 9058.2,
+      "sale_type": "auction",
+      "status": "sold",
+      "location": "Ahmedabad",
+      "seller_company": "Metal Recyclers Pvt Ltd",
+      "date_posted": "2025-10-29",
+      "views": 56,
+      "inquiries": 7
+    },
+    {
+      "id": 13,
+      "listing_type": "waste_material",
+      "title": "Rubber Crumb - Premium Quality",
+      "material_name": "Rubber Crumb",
+      "category": "Rubber & Tires",
+      "quantity": 386,
+      "unit": "tons",
+      "price_per_unit": 69.24,
+      "total_value": 26726.64,
+      "sale_type": "fixed_price",
+      "status": "active",
+      "location": "Kolkata",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-09-12",
+      "views": 183,
+      "inquiries": 26
+    },
+    {
+      "id": 14,
+      "listing_type": "waste_material",
+      "title": "Clear Glass - Premium Quality",
+      "material_name": "Clear Glass",
+      "category": "Glass",
+      "quantity": 139,
+      "unit": "tons",
+      "price_per_unit": 59.64,
+      "total_value": 8289.96,
+      "sale_type": "fixed_price",
+      "status": "sold",
+      "location": "Chennai",
+      "seller_company": "GreenTech Industries",
+      "date_posted": "2025-09-19",
+      "views": 192,
+      "inquiries": 25
+    },
+    {
+      "id": 15,
+      "listing_type": "waste_material",
+      "title": "Bottom Ash - Premium Quality",
+      "material_name": "Bottom Ash",
+      "category": "Industrial Ash",
       "quantity": 385,
-      "unit": "kg",
-      "price_per_unit": 0.8,
-      "total_value": 308.0,
-      "listing_type": "auction",
+      "unit": "tons",
+      "price_per_unit": 14.99,
+      "total_value": 5771.15,
+      "sale_type": "auction",
       "status": "pending",
       "location": "Bangalore",
       "seller_company": "ReSource Trading",
-      "date_posted": "2025-10-03",
+      "date_posted": "2025-10-05",
       "views": 264,
       "inquiries": 49
     },
     {
-      "id": 17,
-      "title": "Tire Scrap - Premium Quality",
-      "material_name": "Tire Scrap",
-      "category": "Rubber & Tires",
-      "quantity": 58,
-      "unit": "tons",
-      "price_per_unit": 38.68,
-      "total_value": 2243.44,
-      "listing_type": "auction",
-      "status": "active",
-      "location": "Surat",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "date_posted": "2025-10-19",
-      "views": 220,
-      "inquiries": 31
+      "id": 16,
+      "listing_type": "waste_material",
+      "title": "Brass Scrap - Premium Quality",
+      "material_name": "Brass Scrap",
+      "category": "Metal Scrap",
+      "quantity": 310,
+      "unit": "kg",
+      "price_per_unit": 4.73,
+      "total_value": 1466.3,
+      "sale_type": "fixed_price",
+      "status": "sold",
+      "location": "Kolkata",
+      "seller_company": "ReSource Trading",
+      "date_posted": "2025-10-23",
+      "views": 120,
+      "inquiries": 11
     },
     {
-      "id": 18,
-      "title": "Rubber Crumb - Premium Quality",
-      "material_name": "Rubber Crumb",
-      "category": "Rubber & Tires",
-      "quantity": 59,
-      "unit": "tons",
-      "price_per_unit": 54.94,
-      "total_value": 3241.46,
-      "listing_type": "fixed_price",
-      "status": "expired",
-      "location": "Ahmedabad",
-      "seller_company": "EcoFriendly Processors",
-      "date_posted": "2025-09-22",
-      "views": 153,
+      "id": 17,
+      "listing_type": "waste_material",
+      "title": "LDPE Film - Premium Quality",
+      "material_name": "LDPE Film",
+      "category": "Plastic Waste",
+      "quantity": 294,
+      "unit": "kg",
+      "price_per_unit": 0.36,
+      "total_value": 105.84,
+      "sale_type": "fixed_price",
+      "status": "sold",
+      "location": "Pune",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-09-04",
+      "views": 82,
       "inquiries": 20
     },
     {
-      "id": 19,
-      "title": "Food Processing Waste - Premium Quality",
-      "material_name": "Food Processing Waste",
-      "category": "Organic/Food Waste",
-      "quantity": 454,
+      "id": 18,
+      "listing_type": "waste_material",
+      "title": "Concrete Rubble - Premium Quality",
+      "material_name": "Concrete Rubble",
+      "category": "Construction & Demolition",
+      "quantity": 208,
       "unit": "tons",
-      "price_per_unit": 11.39,
-      "total_value": 5171.06,
-      "listing_type": "fixed_price",
+      "price_per_unit": 5.54,
+      "total_value": 1152.32,
+      "sale_type": "auction",
+      "status": "expired",
+      "location": "Jaipur",
+      "seller_company": "CircularEconomy Inc",
+      "date_posted": "2025-09-04",
+      "views": 409,
+      "inquiries": 37
+    },
+    {
+      "id": 19,
+      "listing_type": "waste_material",
+      "title": "PP Scrap - Premium Quality",
+      "material_name": "PP Scrap",
+      "category": "Plastic Waste",
+      "quantity": 466,
+      "unit": "kg",
+      "price_per_unit": 0.4,
+      "total_value": 186.4,
+      "sale_type": "fixed_price",
       "status": "sold",
-      "location": "Kolkata",
-      "seller_company": "GreenTech Industries",
-      "date_posted": "2025-10-24",
-      "views": 333,
-      "inquiries": 29
+      "location": "Hyderabad",
+      "seller_company": "Waste2Wealth Enterprises",
+      "date_posted": "2025-10-25",
+      "views": 146,
+      "inquiries": 33
     },
     {
       "id": 20,
-      "title": "Vegetable Waste - Premium Quality",
-      "material_name": "Vegetable Waste",
-      "category": "Organic/Food Waste",
-      "quantity": 189,
+      "listing_type": "waste_material",
+      "title": "Tire Scrap - Premium Quality",
+      "material_name": "Tire Scrap",
+      "category": "Rubber & Tires",
+      "quantity": 356,
       "unit": "tons",
-      "price_per_unit": 14.78,
-      "total_value": 2793.42,
-      "listing_type": "auction",
-      "status": "pending",
-      "location": "Indore",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "date_posted": "2025-09-25",
-      "views": 122,
-      "inquiries": 27
-    }
-  ],
-  "orders": [
-    {
-      "order_id": "ORD1001",
-      "listing_id": 19,
-      "material_name": "Food Processing Waste",
-      "buyer_company": "Sustainable Materials Co",
-      "seller_company": "GreenTech Industries",
-      "quantity": 77,
-      "unit": "tons",
-      "price_per_unit": 11.39,
-      "total_amount_inr": 706.18,
-      "status": "in_transit",
-      "order_date": "2025-10-18",
-      "delivery_location": "Kolkata",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1002",
-      "listing_id": 9,
-      "material_name": "Cardboard Bales",
-      "buyer_company": "CircularEconomy Inc",
-      "seller_company": "ReSource Trading",
-      "quantity": 62,
-      "unit": "tons",
-      "price_per_unit": 88.34,
-      "total_amount_inr": 3710.28,
-      "status": "cancelled",
-      "order_date": "2025-09-30",
-      "delivery_location": "Coimbatore",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1003",
-      "listing_id": 4,
-      "material_name": "Bottom Ash",
-      "buyer_company": "CircularEconomy Inc",
-      "seller_company": "Waste2Wealth Enterprises",
-      "quantity": 93,
-      "unit": "tons",
-      "price_per_unit": 3.51,
-      "total_amount_inr": 161.46,
-      "status": "confirmed",
-      "order_date": "2025-10-22",
-      "delivery_location": "Indore",
-      "payment_status": "partial"
-    },
-    {
-      "order_id": "ORD1004",
-      "listing_id": 16,
-      "material_name": "Fabric Remnants",
-      "buyer_company": "Industrial Recyclers Ltd",
-      "seller_company": "ReSource Trading",
-      "quantity": 9,
-      "unit": "kg",
-      "price_per_unit": 0.8,
-      "total_amount_inr": 37.6,
-      "status": "in_transit",
-      "order_date": "2025-10-26",
-      "delivery_location": "Chennai",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1005",
-      "listing_id": 4,
-      "material_name": "Bottom Ash",
-      "buyer_company": "AgriWaste Solutions",
-      "seller_company": "Waste2Wealth Enterprises",
-      "quantity": 46,
-      "unit": "tons",
-      "price_per_unit": 3.51,
-      "total_amount_inr": 259.74,
-      "status": "pending",
-      "order_date": "2025-08-06",
-      "delivery_location": "Hyderabad",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1006",
-      "listing_id": 11,
-      "material_name": "Concrete Rubble",
-      "buyer_company": "CircularEconomy Inc",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "quantity": 63,
-      "unit": "tons",
-      "price_per_unit": 6.99,
-      "total_amount_inr": 699.0,
-      "status": "pending",
-      "order_date": "2025-08-18",
-      "delivery_location": "Ahmedabad",
-      "payment_status": "partial"
-    },
-    {
-      "order_id": "ORD1007",
-      "listing_id": 7,
-      "material_name": "Steel Scrap",
-      "buyer_company": "EcoFriendly Processors",
-      "seller_company": "Urban Waste Management",
-      "quantity": 51,
-      "unit": "tons",
-      "price_per_unit": 122.65,
-      "total_amount_inr": 8094.9,
-      "status": "pending",
-      "order_date": "2025-09-09",
-      "delivery_location": "Lucknow",
-      "payment_status": "paid"
-    },
-    {
-      "order_id": "ORD1008",
-      "listing_id": 20,
-      "material_name": "Vegetable Waste",
-      "buyer_company": "Metal Recyclers Pvt Ltd",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "quantity": 64,
-      "unit": "tons",
-      "price_per_unit": 14.78,
-      "total_amount_inr": 280.82,
-      "status": "delivered",
-      "order_date": "2025-08-04",
-      "delivery_location": "Surat",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1009",
-      "listing_id": 16,
-      "material_name": "Fabric Remnants",
-      "buyer_company": "Industrial Recyclers Ltd",
-      "seller_company": "ReSource Trading",
-      "quantity": 45,
-      "unit": "kg",
-      "price_per_unit": 0.8,
-      "total_amount_inr": 18.4,
-      "status": "pending",
-      "order_date": "2025-10-27",
-      "delivery_location": "Chennai",
-      "payment_status": "partial"
-    },
-    {
-      "order_id": "ORD1010",
-      "listing_id": 5,
-      "material_name": "HDPE Scrap",
-      "buyer_company": "EcoWaste Solutions",
-      "seller_company": "Sustainable Materials Co",
-      "quantity": 49,
-      "unit": "kg",
-      "price_per_unit": 0.63,
-      "total_amount_inr": 29.61,
-      "status": "confirmed",
-      "order_date": "2025-10-17",
-      "delivery_location": "Pune",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1011",
-      "listing_id": 11,
-      "material_name": "Concrete Rubble",
-      "buyer_company": "Waste2Wealth Enterprises",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "quantity": 12,
-      "unit": "tons",
-      "price_per_unit": 6.99,
-      "total_amount_inr": 559.2,
-      "status": "in_transit",
-      "order_date": "2025-08-01",
-      "delivery_location": "Delhi",
-      "payment_status": "paid"
-    },
-    {
-      "order_id": "ORD1012",
-      "listing_id": 19,
-      "material_name": "Food Processing Waste",
-      "buyer_company": "AgriWaste Solutions",
-      "seller_company": "GreenTech Industries",
-      "quantity": 65,
-      "unit": "tons",
-      "price_per_unit": 11.39,
-      "total_amount_inr": 261.97,
-      "status": "delivered",
-      "order_date": "2025-09-05",
-      "delivery_location": "Lucknow",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1013",
-      "listing_id": 20,
-      "material_name": "Vegetable Waste",
-      "buyer_company": "EcoWaste Solutions",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "quantity": 91,
-      "unit": "tons",
-      "price_per_unit": 14.78,
-      "total_amount_inr": 1374.54,
-      "status": "cancelled",
-      "order_date": "2025-09-05",
-      "delivery_location": "Ahmedabad",
-      "payment_status": "pending"
-    },
-    {
-      "order_id": "ORD1014",
-      "listing_id": 13,
-      "material_name": "Clear Glass",
-      "buyer_company": "Urban Waste Management",
-      "seller_company": "Metal Recyclers Pvt Ltd",
-      "quantity": 14,
-      "unit": "tons",
-      "price_per_unit": 41.49,
-      "total_amount_inr": 954.27,
-      "status": "delivered",
-      "order_date": "2025-09-22",
-      "delivery_location": "Pune",
-      "payment_status": "partial"
-    },
-    {
-      "order_id": "ORD1015",
-      "listing_id": 8,
-      "material_name": "Aluminum Scrap",
-      "buyer_company": "ReSource Trading",
-      "seller_company": "CircularEconomy Inc",
-      "quantity": 15,
-      "unit": "kg",
-      "price_per_unit": 1.31,
-      "total_amount_inr": 61.57,
-      "status": "pending",
-      "order_date": "2025-10-07",
-      "delivery_location": "Coimbatore",
-      "payment_status": "pending"
-    }
-  ],
-  "auctions": [
-    {
-      "auction_id": "AUC500",
-      "listing_id": 5,
-      "material_name": "HDPE Scrap",
-      "category": "Plastic Waste",
-      "starting_bid": 0.63,
-      "current_highest_bid": 0.89,
-      "total_bids": 17,
-      "unique_bidders": 15,
-      "end_time": "2025-10-31 00:08:06",
-      "is_active": true,
-      "location": "Nagpur",
-      "seller_company": "Sustainable Materials Co"
-    },
-    {
-      "auction_id": "AUC501",
-      "listing_id": 7,
-      "material_name": "Steel Scrap",
-      "category": "Metal Scrap",
-      "starting_bid": 122.65,
-      "current_highest_bid": 160.81,
-      "total_bids": 19,
-      "unique_bidders": 14,
-      "end_time": "2025-11-01 16:08:06",
-      "is_active": true,
+      "price_per_unit": 45.42,
+      "total_value": 16169.52,
+      "sale_type": "auction",
+      "status": "sold",
       "location": "Kolkata",
-      "seller_company": "Urban Waste Management"
+      "seller_company": "GreenTech Industries",
+      "date_posted": "2025-09-11",
+      "views": 457,
+      "inquiries": 35
+    }
+  ],
+  "machinery_listings": [
+    {
+      "id": "MACH001",
+      "listing_type": "machinery",
+      "title": "Dual-Shaft Shredder - Coparm DS-2000",
+      "machine_type": "Dual-Shaft Shredder",
+      "category": "Processing & Shredding Equipment",
+      "brand": "Coparm",
+      "model": "DS-2000",
+      "year_of_manufacture": 2016,
+      "condition": "Excellent",
+      "price_inr": 1850000,
+      "original_price_inr": 4500000,
+      "depreciation_percentage": 58.89,
+      "status": "active",
+      "location": "Bangalore",
+      "seller_company": "Waste2Wealth Enterprises",
+      "seller_type": "Upgrading Equipment",
+      "compatible_materials": [
+        "HDPE Scrap",
+        "PET Bottles",
+        "PP Scrap"
+      ],
+      "date_posted": "2025-10-21",
+      "views": 133,
+      "inquiries": 42
     },
     {
-      "auction_id": "AUC502",
-      "listing_id": 8,
-      "material_name": "Aluminum Scrap",
-      "category": "Metal Scrap",
-      "starting_bid": 1.31,
-      "current_highest_bid": 1.87,
-      "total_bids": 6,
-      "unique_bidders": 11,
-      "end_time": "2025-11-02 04:08:06",
-      "is_active": true,
+      "id": "MACH002",
+      "listing_type": "machinery",
+      "title": "Pulp Processing Line - Andritz APM-500",
+      "machine_type": "Pulp Processing Line",
+      "category": "Paper & Pulp Equipment",
+      "brand": "Andritz",
+      "model": "APM-500",
+      "year_of_manufacture": 2016,
+      "condition": "Fair",
+      "price_inr": 3500000,
+      "original_price_inr": 8000000,
+      "depreciation_percentage": 56.25,
+      "status": "active",
+      "location": "Surat",
+      "seller_company": "Waste2Wealth Enterprises",
+      "seller_type": "Upgrading Equipment",
+      "compatible_materials": [
+        "Bagasse",
+        "Rice Husk",
+        "Coconut Shell"
+      ],
+      "date_posted": "2025-10-13",
+      "views": 428,
+      "inquiries": 29
+    },
+    {
+      "id": "MACH003",
+      "listing_type": "machinery",
+      "title": "Twin Screw Extruder - Berstorff ZE-60",
+      "machine_type": "Twin Screw Extruder",
+      "category": "Manufacturing Equipment",
+      "brand": "Berstorff",
+      "model": "ZE-60",
+      "year_of_manufacture": 2020,
+      "condition": "Excellent",
+      "price_inr": 2800000,
+      "original_price_inr": 6500000,
+      "depreciation_percentage": 56.92,
+      "status": "active",
+      "location": "Pune",
+      "seller_company": "Sustainable Materials Co",
+      "seller_type": "Upgrading Equipment",
+      "compatible_materials": [
+        "HDPE Scrap",
+        "PP Scrap",
+        "LDPE Film"
+      ],
+      "date_posted": "2025-10-12",
+      "views": 156,
+      "inquiries": 13
+    },
+    {
+      "id": "MACH004",
+      "listing_type": "machinery",
+      "title": "Carbonization Furnace - Beston BST-10",
+      "machine_type": "Carbonization Furnace",
+      "category": "Agricultural & Biomass Processing",
+      "brand": "Beston",
+      "model": "BST-10",
+      "year_of_manufacture": 2019,
+      "condition": "Fair",
+      "price_inr": 1500000,
+      "original_price_inr": 3200000,
+      "depreciation_percentage": 53.12,
+      "status": "active",
+      "location": "Pune",
+      "seller_company": "ReSource Trading",
+      "seller_type": "Upgrading Equipment",
+      "compatible_materials": [
+        "Coconut Shell",
+        "Rice Husk",
+        "Bagasse"
+      ],
+      "date_posted": "2025-10-14",
+      "views": 128,
+      "inquiries": 46
+    },
+    {
+      "id": "MACH005",
+      "listing_type": "machinery",
+      "title": "Hydraulic Baler - Macfab MB-60",
+      "machine_type": "Hydraulic Baler",
+      "category": "Compaction & Baling",
+      "brand": "Macfab",
+      "model": "MB-60",
+      "year_of_manufacture": 2016,
+      "condition": "Fair",
+      "price_inr": 950000,
+      "original_price_inr": 2200000,
+      "depreciation_percentage": 56.82,
+      "status": "active",
+      "location": "Surat",
+      "seller_company": "Waste2Wealth Enterprises",
+      "seller_type": "Upgrading Equipment",
+      "compatible_materials": [
+        "Cardboard Bales",
+        "Mixed Paper",
+        "Newspaper"
+      ],
+      "date_posted": "2025-10-10",
+      "views": 475,
+      "inquiries": 24
+    }
+  ],
+  "company_shutdowns": [
+    {
+      "company_id": "COMP_SD001",
+      "company_name": "Maharashtra Textiles Manufacturing Ltd",
+      "company_type": "Textile Manufacturing",
+      "location": "Mumbai, Maharashtra",
+      "shutdown_reason": "Business closure due to market competition and rising costs",
+      "shutdown_date": "2025-12-31",
+      "urgency_level": "High",
+      "total_machinery_count": 15,
+      "estimated_total_value_inr": 25000000,
+      "bulk_discount_available": true,
+      "bulk_discount_percentage": 15,
+      "contact_person": "Mr. Rajesh Kumar",
+      "contact_phone": "+91-9876543210",
+      "liquidation_deadline": "2025-11-30",
+      "site_visit_allowed": true,
+      "machinery_removal_support": true,
+      "documentation_available": true,
+      "machinery_listings": [
+        {
+          "id": "MACH_SD001",
+          "listing_type": "machinery_shutdown",
+          "title": "Textile Spinning Machine - Rieter G35 Complete Line",
+          "machine_type": "Ring Spinning Frame",
+          "category": "Textile Manufacturing Equipment",
+          "brand": "Rieter",
+          "model": "G35",
+          "year_of_manufacture": 2016,
+          "condition": "Excellent - Well Maintained",
+          "operating_hours": 35000,
+          "capacity": "1200 spindles",
+          "power_rating": "150 kW",
+          "price_inr": 8500000,
+          "original_price_inr": 22000000,
+          "depreciation_percentage": 61.36,
+          "sale_type": "fixed_price",
+          "status": "active",
+          "location": "Mumbai",
+          "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+          "seller_type": "Complete Shutdown - Liquidation",
+          "compatible_materials": [
+            "Cotton Scrap",
+            "Fabric Remnants",
+            "Textile Waste"
+          ],
+          "target_industries": [
+            "Textile Manufacturing",
+            "Spinning Mills",
+            "Yarn Production"
+          ],
+          "end_use_applications": [
+            "Cotton yarn spinning",
+            "Textile fiber processing",
+            "Thread production"
+          ],
+          "date_posted": "2025-10-25",
+          "views": 678,
+          "inquiries": 45,
+          "reason_for_sale": "Complete factory liquidation - Business shutdown",
+          "urgency_note": "Must sell by November 30, 2025",
+          "warranty_available": false,
+          "installation_support": true,
+          "training_included": true,
+          "negotiable": true
+        },
+        {
+          "id": "MACH_SD002",
+          "listing_type": "machinery_shutdown",
+          "title": "Industrial Air Compressor - Atlas Copco 250 HP",
+          "machine_type": "Rotary Screw Compressor",
+          "category": "Utility Equipment",
+          "brand": "Atlas Copco",
+          "model": "GA 250",
+          "year_of_manufacture": 2017,
+          "condition": "Good",
+          "price_inr": 1800000,
+          "original_price_inr": 4500000,
+          "status": "active",
+          "location": "Mumbai",
+          "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+          "seller_type": "Complete Shutdown - Liquidation",
+          "target_industries": [
+            "Manufacturing",
+            "Textile",
+            "Food Processing"
+          ],
+          "date_posted": "2025-10-25",
+          "views": 234,
+          "inquiries": 18,
+          "negotiable": true
+        },
+        {
+          "id": "MACH_SD003",
+          "listing_type": "machinery_shutdown",
+          "title": "Textile Weaving Loom - Sulzer Projectile 8 Units",
+          "machine_type": "Projectile Weaving Loom",
+          "category": "Textile Manufacturing Equipment",
+          "brand": "Sulzer",
+          "model": "P7300",
+          "year_of_manufacture": 2015,
+          "condition": "Good",
+          "price_inr": 6400000,
+          "original_price_inr": 16000000,
+          "status": "active",
+          "location": "Mumbai",
+          "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+          "target_industries": [
+            "Textile Manufacturing",
+            "Fabric Weaving"
+          ],
+          "date_posted": "2025-10-25",
+          "views": 456,
+          "inquiries": 32,
+          "bundle_discount": "Buy all 8 looms get 20% additional discount",
+          "negotiable": true
+        }
+      ]
+    },
+    {
+      "company_id": "COMP_SD002",
+      "company_name": "Delhi Plastic Processing Industries",
+      "company_type": "Plastic Manufacturing",
+      "location": "Delhi NCR",
+      "shutdown_reason": "Owner retirement and no succession planning",
+      "shutdown_date": "2025-11-15",
+      "urgency_level": "Very High",
+      "total_machinery_count": 12,
+      "estimated_total_value_inr": 18500000,
+      "bulk_discount_available": true,
+      "bulk_discount_percentage": 20,
+      "contact_person": "Mr. Suresh Patel",
+      "contact_phone": "+91-9876543211",
+      "liquidation_deadline": "2025-11-10",
+      "site_visit_allowed": true,
+      "machinery_removal_support": true,
+      "documentation_available": true,
+      "machinery_listings": [
+        {
+          "id": "MACH_SD004",
+          "listing_type": "machinery_shutdown",
+          "title": "Plastic Injection Molding Machine - 250 Ton Haitian",
+          "machine_type": "Injection Molding Machine",
+          "category": "Plastic Manufacturing Equipment",
+          "brand": "Haitian",
+          "model": "Mars 250",
+          "year_of_manufacture": 2018,
+          "condition": "Excellent",
+          "price_inr": 3500000,
+          "original_price_inr": 8500000,
+          "status": "active",
+          "location": "Delhi",
+          "seller_company": "Delhi Plastic Processing Industries",
+          "seller_type": "Complete Shutdown - Owner Retirement",
+          "compatible_materials": [
+            "HDPE Scrap",
+            "PP Scrap",
+            "PET Bottles"
+          ],
+          "target_industries": [
+            "Plastic Manufacturing",
+            "Automotive Components"
+          ],
+          "date_posted": "2025-10-28",
+          "views": 512,
+          "inquiries": 38,
+          "urgency_note": "URGENT: Must vacate premises by Nov 10",
+          "includes_molds": true,
+          "negotiable": true
+        },
+        {
+          "id": "MACH_SD005",
+          "listing_type": "machinery_shutdown",
+          "title": "Plastic Blow Molding Machine - Complete PET Line",
+          "machine_type": "Automatic Blow Molding Machine",
+          "category": "Plastic Manufacturing Equipment",
+          "brand": "Krones",
+          "model": "Contiform S14",
+          "year_of_manufacture": 2017,
+          "condition": "Good - Regularly serviced",
+          "price_inr": 7200000,
+          "original_price_inr": 18000000,
+          "sale_type": "auction",
+          "status": "active",
+          "location": "Delhi",
+          "seller_company": "Delhi Plastic Processing Industries",
+          "compatible_materials": [
+            "PET Bottles",
+            "HDPE bottles"
+          ],
+          "target_industries": [
+            "Beverage Bottling",
+            "Packaging"
+          ],
+          "date_posted": "2025-10-28",
+          "views": 723,
+          "inquiries": 52,
+          "auction_details": {
+            "starting_bid": 7200000,
+            "current_bid": 8500000,
+            "total_bids": 15,
+            "end_date": "2025-11-08"
+          },
+          "urgency_note": "CRITICAL: Auction ending soon",
+          "negotiable": false
+        },
+        {
+          "id": "MACH_SD006",
+          "listing_type": "machinery_shutdown",
+          "title": "Industrial Chiller - 100 TR Cooling Capacity",
+          "machine_type": "Water Cooled Chiller",
+          "category": "Cooling Equipment",
+          "brand": "Blue Star",
+          "model": "BS-100TR",
+          "year_of_manufacture": 2018,
+          "condition": "Excellent",
+          "price_inr": 2800000,
+          "original_price_inr": 6500000,
+          "status": "active",
+          "location": "Delhi",
+          "seller_company": "Delhi Plastic Processing Industries",
+          "target_industries": [
+            "Manufacturing",
+            "Plastic Processing"
+          ],
+          "date_posted": "2025-10-28",
+          "views": 289,
+          "inquiries": 22,
+          "negotiable": true
+        }
+      ]
+    },
+    {
+      "company_id": "COMP_SD003",
+      "company_name": "Karnataka Paper Mills Limited",
+      "company_type": "Paper Manufacturing",
+      "location": "Bangalore, Karnataka",
+      "shutdown_reason": "Environmental compliance issues and outdated technology",
+      "shutdown_date": "2025-12-15",
+      "urgency_level": "Medium",
+      "total_machinery_count": 18,
+      "estimated_total_value_inr": 32000000,
+      "bulk_discount_available": true,
+      "bulk_discount_percentage": 18,
+      "contact_person": "Mr. Venkatesh Iyer",
+      "contact_phone": "+91-9876543212",
+      "liquidation_deadline": "2025-12-10",
+      "site_visit_allowed": true,
+      "machinery_removal_support": true,
+      "documentation_available": true,
+      "machinery_listings": [
+        {
+          "id": "MACH_SD007",
+          "listing_type": "machinery_shutdown",
+          "title": "Paper Making Machine - Complete Production Line 20 TPD",
+          "machine_type": "Fourdrinier Paper Machine",
+          "category": "Paper Manufacturing Equipment",
+          "brand": "Voith",
+          "model": "PM-2000",
+          "year_of_manufacture": 2014,
+          "condition": "Good - Needs minor repairs",
+          "capacity": "20 Tons per day",
+          "price_inr": 12000000,
+          "original_price_inr": 35000000,
+          "status": "active",
+          "location": "Bangalore",
+          "seller_company": "Karnataka Paper Mills Limited",
+          "seller_type": "Complete Shutdown - Environmental Compliance",
+          "compatible_materials": [
+            "Bagasse",
+            "Cardboard Bales",
+            "Mixed Paper"
+          ],
+          "target_industries": [
+            "Paper Manufacturing",
+            "Recycled Paper Production"
+          ],
+          "date_posted": "2025-10-20",
+          "views": 892,
+          "inquiries": 67,
+          "includes_auxiliaries": true,
+          "negotiable": true
+        },
+        {
+          "id": "MACH_SD008",
+          "listing_type": "machinery_shutdown",
+          "title": "Industrial Boiler - 10 TPH Coal Fired",
+          "machine_type": "Coal Fired Boiler",
+          "category": "Steam Generation Equipment",
+          "brand": "Thermax",
+          "model": "WNS-10",
+          "year_of_manufacture": 2013,
+          "condition": "Fair - Operational",
+          "price_inr": 4500000,
+          "original_price_inr": 12000000,
+          "status": "active",
+          "location": "Bangalore",
+          "seller_company": "Karnataka Paper Mills Limited",
+          "target_industries": [
+            "Manufacturing",
+            "Process Industries"
+          ],
+          "date_posted": "2025-10-20",
+          "views": 345,
+          "inquiries": 28,
+          "negotiable": true
+        }
+      ]
+    },
+    {
+      "company_id": "COMP_SD004",
+      "company_name": "Gujarat Food Processing Corp",
+      "company_type": "Food & Beverage Processing",
+      "location": "Ahmedabad, Gujarat",
+      "shutdown_reason": "Financial distress and debt restructuring",
+      "shutdown_date": "2025-11-20",
+      "urgency_level": "Very High",
+      "total_machinery_count": 10,
+      "estimated_total_value_inr": 15000000,
+      "bulk_discount_available": true,
+      "bulk_discount_percentage": 25,
+      "contact_person": "Mrs. Priya Desai",
+      "contact_phone": "+91-9876543213",
+      "liquidation_deadline": "2025-11-15",
+      "site_visit_allowed": true,
+      "machinery_removal_support": true,
+      "documentation_available": true,
+      "machinery_listings": [
+        {
+          "id": "MACH_SD009",
+          "listing_type": "machinery_shutdown",
+          "title": "Automatic Bottling Line - Complete Juice/Water Line",
+          "machine_type": "Bottling & Filling Line",
+          "category": "Food Processing Equipment",
+          "brand": "Krones AG",
+          "model": "Volumetic VK-72",
+          "year_of_manufacture": 2016,
+          "condition": "Good",
+          "capacity": "12000 bottles/hour",
+          "price_inr": 8500000,
+          "original_price_inr": 22000000,
+          "status": "active",
+          "location": "Ahmedabad",
+          "seller_company": "Gujarat Food Processing Corp",
+          "seller_type": "Complete Shutdown - Financial Distress",
+          "compatible_materials": [
+            "PET Bottles",
+            "Glass bottles"
+          ],
+          "target_industries": [
+            "Beverage Bottling",
+            "Juice Production",
+            "Water Bottling"
+          ],
+          "date_posted": "2025-10-27",
+          "views": 1024,
+          "inquiries": 78,
+          "reason_for_sale": "DISTRESS SALE - Debt recovery liquidation",
+          "urgency_note": "URGENT: Bank seizure imminent",
+          "complete_line": true,
+          "negotiable": true
+        },
+        {
+          "id": "MACH_SD010",
+          "listing_type": "machinery_shutdown",
+          "title": "Industrial RO Water Treatment Plant - 5000 LPH",
+          "machine_type": "Reverse Osmosis System",
+          "category": "Water Treatment Equipment",
+          "brand": "Ion Exchange",
+          "model": "IE-5000",
+          "year_of_manufacture": 2017,
+          "condition": "Excellent",
+          "capacity": "5000 Liters/hour",
+          "price_inr": 1800000,
+          "original_price_inr": 4500000,
+          "status": "active",
+          "location": "Ahmedabad",
+          "seller_company": "Gujarat Food Processing Corp",
+          "target_industries": [
+            "Food & Beverage",
+            "Manufacturing"
+          ],
+          "date_posted": "2025-10-27",
+          "views": 412,
+          "inquiries": 34,
+          "negotiable": true
+        }
+      ]
+    },
+    {
+      "company_id": "COMP_SD005",
+      "company_name": "Tamil Nadu Metal Works Pvt Ltd",
+      "company_type": "Metal Fabrication & Processing",
+      "location": "Chennai, Tamil Nadu",
+      "shutdown_reason": "Relocation to another country",
+      "shutdown_date": "2025-12-31",
+      "urgency_level": "Medium",
+      "total_machinery_count": 20,
+      "estimated_total_value_inr": 28000000,
+      "bulk_discount_available": true,
+      "bulk_discount_percentage": 22,
+      "contact_person": "Mr. Subramaniam",
+      "contact_phone": "+91-9876543214",
+      "liquidation_deadline": "2025-12-20",
+      "site_visit_allowed": true,
+      "machinery_removal_support": true,
+      "documentation_available": true,
+      "machinery_listings": [
+        {
+          "id": "MACH_SD011",
+          "listing_type": "machinery_shutdown",
+          "title": "CNC Laser Cutting Machine - Fiber Laser 6kW",
+          "machine_type": "CNC Fiber Laser Cutter",
+          "category": "Metal Cutting Equipment",
+          "brand": "Trumpf",
+          "model": "TruLaser 3060",
+          "year_of_manufacture": 2019,
+          "condition": "Excellent - Like New",
+          "price_inr": 9500000,
+          "original_price_inr": 25000000,
+          "sale_type": "auction",
+          "status": "active",
+          "location": "Chennai",
+          "seller_company": "Tamil Nadu Metal Works Pvt Ltd",
+          "seller_type": "Complete Shutdown - Business Relocation",
+          "compatible_materials": [
+            "Steel Scrap",
+            "Aluminum Scrap",
+            "Copper Wire"
+          ],
+          "target_industries": [
+            "Metal Fabrication",
+            "Automotive"
+          ],
+          "date_posted": "2025-10-22",
+          "views": 1245,
+          "inquiries": 89,
+          "auction_details": {
+            "starting_bid": 9500000,
+            "current_bid": 11200000,
+            "total_bids": 24,
+            "end_date": "2025-11-12"
+          },
+          "warranty_available": true,
+          "negotiable": false
+        },
+        {
+          "id": "MACH_SD012",
+          "listing_type": "machinery_shutdown",
+          "title": "CNC Press Brake - 250 Ton Hydraulic",
+          "machine_type": "CNC Hydraulic Press Brake",
+          "category": "Metal Forming Equipment",
+          "brand": "Amada",
+          "model": "HDS-2504",
+          "year_of_manufacture": 2018,
+          "condition": "Excellent",
+          "price_inr": 5500000,
+          "original_price_inr": 14000000,
+          "status": "active",
+          "location": "Chennai",
+          "seller_company": "Tamil Nadu Metal Works Pvt Ltd",
+          "target_industries": [
+            "Sheet Metal Fabrication",
+            "Automotive"
+          ],
+          "date_posted": "2025-10-22",
+          "views": 567,
+          "inquiries": 42,
+          "includes_tooling": true,
+          "negotiable": true
+        }
+      ]
+    }
+  ],
+  "all_shutdown_machinery": [
+    {
+      "id": "MACH_SD001",
+      "listing_type": "machinery_shutdown",
+      "title": "Textile Spinning Machine - Rieter G35 Complete Line",
+      "machine_type": "Ring Spinning Frame",
+      "category": "Textile Manufacturing Equipment",
+      "brand": "Rieter",
+      "model": "G35",
+      "year_of_manufacture": 2016,
+      "condition": "Excellent - Well Maintained",
+      "operating_hours": 35000,
+      "capacity": "1200 spindles",
+      "power_rating": "150 kW",
+      "price_inr": 8500000,
+      "original_price_inr": 22000000,
+      "depreciation_percentage": 61.36,
+      "sale_type": "fixed_price",
+      "status": "active",
+      "location": "Mumbai",
+      "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+      "seller_type": "Complete Shutdown - Liquidation",
+      "compatible_materials": [
+        "Cotton Scrap",
+        "Fabric Remnants",
+        "Textile Waste"
+      ],
+      "target_industries": [
+        "Textile Manufacturing",
+        "Spinning Mills",
+        "Yarn Production"
+      ],
+      "end_use_applications": [
+        "Cotton yarn spinning",
+        "Textile fiber processing",
+        "Thread production"
+      ],
+      "date_posted": "2025-10-25",
+      "views": 678,
+      "inquiries": 45,
+      "reason_for_sale": "Complete factory liquidation - Business shutdown",
+      "urgency_note": "Must sell by November 30, 2025",
+      "warranty_available": false,
+      "installation_support": true,
+      "training_included": true,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD002",
+      "listing_type": "machinery_shutdown",
+      "title": "Industrial Air Compressor - Atlas Copco 250 HP",
+      "machine_type": "Rotary Screw Compressor",
+      "category": "Utility Equipment",
+      "brand": "Atlas Copco",
+      "model": "GA 250",
+      "year_of_manufacture": 2017,
+      "condition": "Good",
+      "price_inr": 1800000,
+      "original_price_inr": 4500000,
+      "status": "active",
+      "location": "Mumbai",
+      "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+      "seller_type": "Complete Shutdown - Liquidation",
+      "target_industries": [
+        "Manufacturing",
+        "Textile",
+        "Food Processing"
+      ],
+      "date_posted": "2025-10-25",
+      "views": 234,
+      "inquiries": 18,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD003",
+      "listing_type": "machinery_shutdown",
+      "title": "Textile Weaving Loom - Sulzer Projectile 8 Units",
+      "machine_type": "Projectile Weaving Loom",
+      "category": "Textile Manufacturing Equipment",
+      "brand": "Sulzer",
+      "model": "P7300",
+      "year_of_manufacture": 2015,
+      "condition": "Good",
+      "price_inr": 6400000,
+      "original_price_inr": 16000000,
+      "status": "active",
+      "location": "Mumbai",
+      "seller_company": "Maharashtra Textiles Manufacturing Ltd",
+      "target_industries": [
+        "Textile Manufacturing",
+        "Fabric Weaving"
+      ],
+      "date_posted": "2025-10-25",
+      "views": 456,
+      "inquiries": 32,
+      "bundle_discount": "Buy all 8 looms get 20% additional discount",
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD004",
+      "listing_type": "machinery_shutdown",
+      "title": "Plastic Injection Molding Machine - 250 Ton Haitian",
+      "machine_type": "Injection Molding Machine",
+      "category": "Plastic Manufacturing Equipment",
+      "brand": "Haitian",
+      "model": "Mars 250",
+      "year_of_manufacture": 2018,
+      "condition": "Excellent",
+      "price_inr": 3500000,
+      "original_price_inr": 8500000,
+      "status": "active",
+      "location": "Delhi",
+      "seller_company": "Delhi Plastic Processing Industries",
+      "seller_type": "Complete Shutdown - Owner Retirement",
+      "compatible_materials": [
+        "HDPE Scrap",
+        "PP Scrap",
+        "PET Bottles"
+      ],
+      "target_industries": [
+        "Plastic Manufacturing",
+        "Automotive Components"
+      ],
+      "date_posted": "2025-10-28",
+      "views": 512,
+      "inquiries": 38,
+      "urgency_note": "URGENT: Must vacate premises by Nov 10",
+      "includes_molds": true,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD005",
+      "listing_type": "machinery_shutdown",
+      "title": "Plastic Blow Molding Machine - Complete PET Line",
+      "machine_type": "Automatic Blow Molding Machine",
+      "category": "Plastic Manufacturing Equipment",
+      "brand": "Krones",
+      "model": "Contiform S14",
+      "year_of_manufacture": 2017,
+      "condition": "Good - Regularly serviced",
+      "price_inr": 7200000,
+      "original_price_inr": 18000000,
+      "sale_type": "auction",
+      "status": "active",
+      "location": "Delhi",
+      "seller_company": "Delhi Plastic Processing Industries",
+      "compatible_materials": [
+        "PET Bottles",
+        "HDPE bottles"
+      ],
+      "target_industries": [
+        "Beverage Bottling",
+        "Packaging"
+      ],
+      "date_posted": "2025-10-28",
+      "views": 723,
+      "inquiries": 52,
+      "auction_details": {
+        "starting_bid": 7200000,
+        "current_bid": 8500000,
+        "total_bids": 15,
+        "end_date": "2025-11-08"
+      },
+      "urgency_note": "CRITICAL: Auction ending soon",
+      "negotiable": false
+    },
+    {
+      "id": "MACH_SD006",
+      "listing_type": "machinery_shutdown",
+      "title": "Industrial Chiller - 100 TR Cooling Capacity",
+      "machine_type": "Water Cooled Chiller",
+      "category": "Cooling Equipment",
+      "brand": "Blue Star",
+      "model": "BS-100TR",
+      "year_of_manufacture": 2018,
+      "condition": "Excellent",
+      "price_inr": 2800000,
+      "original_price_inr": 6500000,
+      "status": "active",
+      "location": "Delhi",
+      "seller_company": "Delhi Plastic Processing Industries",
+      "target_industries": [
+        "Manufacturing",
+        "Plastic Processing"
+      ],
+      "date_posted": "2025-10-28",
+      "views": 289,
+      "inquiries": 22,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD007",
+      "listing_type": "machinery_shutdown",
+      "title": "Paper Making Machine - Complete Production Line 20 TPD",
+      "machine_type": "Fourdrinier Paper Machine",
+      "category": "Paper Manufacturing Equipment",
+      "brand": "Voith",
+      "model": "PM-2000",
+      "year_of_manufacture": 2014,
+      "condition": "Good - Needs minor repairs",
+      "capacity": "20 Tons per day",
+      "price_inr": 12000000,
+      "original_price_inr": 35000000,
+      "status": "active",
+      "location": "Bangalore",
+      "seller_company": "Karnataka Paper Mills Limited",
+      "seller_type": "Complete Shutdown - Environmental Compliance",
+      "compatible_materials": [
+        "Bagasse",
+        "Cardboard Bales",
+        "Mixed Paper"
+      ],
+      "target_industries": [
+        "Paper Manufacturing",
+        "Recycled Paper Production"
+      ],
+      "date_posted": "2025-10-20",
+      "views": 892,
+      "inquiries": 67,
+      "includes_auxiliaries": true,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD008",
+      "listing_type": "machinery_shutdown",
+      "title": "Industrial Boiler - 10 TPH Coal Fired",
+      "machine_type": "Coal Fired Boiler",
+      "category": "Steam Generation Equipment",
+      "brand": "Thermax",
+      "model": "WNS-10",
+      "year_of_manufacture": 2013,
+      "condition": "Fair - Operational",
+      "price_inr": 4500000,
+      "original_price_inr": 12000000,
+      "status": "active",
+      "location": "Bangalore",
+      "seller_company": "Karnataka Paper Mills Limited",
+      "target_industries": [
+        "Manufacturing",
+        "Process Industries"
+      ],
+      "date_posted": "2025-10-20",
+      "views": 345,
+      "inquiries": 28,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD009",
+      "listing_type": "machinery_shutdown",
+      "title": "Automatic Bottling Line - Complete Juice/Water Line",
+      "machine_type": "Bottling & Filling Line",
+      "category": "Food Processing Equipment",
+      "brand": "Krones AG",
+      "model": "Volumetic VK-72",
+      "year_of_manufacture": 2016,
+      "condition": "Good",
+      "capacity": "12000 bottles/hour",
+      "price_inr": 8500000,
+      "original_price_inr": 22000000,
+      "status": "active",
+      "location": "Ahmedabad",
+      "seller_company": "Gujarat Food Processing Corp",
+      "seller_type": "Complete Shutdown - Financial Distress",
+      "compatible_materials": [
+        "PET Bottles",
+        "Glass bottles"
+      ],
+      "target_industries": [
+        "Beverage Bottling",
+        "Juice Production",
+        "Water Bottling"
+      ],
+      "date_posted": "2025-10-27",
+      "views": 1024,
+      "inquiries": 78,
+      "reason_for_sale": "DISTRESS SALE - Debt recovery liquidation",
+      "urgency_note": "URGENT: Bank seizure imminent",
+      "complete_line": true,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD010",
+      "listing_type": "machinery_shutdown",
+      "title": "Industrial RO Water Treatment Plant - 5000 LPH",
+      "machine_type": "Reverse Osmosis System",
+      "category": "Water Treatment Equipment",
+      "brand": "Ion Exchange",
+      "model": "IE-5000",
+      "year_of_manufacture": 2017,
+      "condition": "Excellent",
+      "capacity": "5000 Liters/hour",
+      "price_inr": 1800000,
+      "original_price_inr": 4500000,
+      "status": "active",
+      "location": "Ahmedabad",
+      "seller_company": "Gujarat Food Processing Corp",
+      "target_industries": [
+        "Food & Beverage",
+        "Manufacturing"
+      ],
+      "date_posted": "2025-10-27",
+      "views": 412,
+      "inquiries": 34,
+      "negotiable": true
+    },
+    {
+      "id": "MACH_SD011",
+      "listing_type": "machinery_shutdown",
+      "title": "CNC Laser Cutting Machine - Fiber Laser 6kW",
+      "machine_type": "CNC Fiber Laser Cutter",
+      "category": "Metal Cutting Equipment",
+      "brand": "Trumpf",
+      "model": "TruLaser 3060",
+      "year_of_manufacture": 2019,
+      "condition": "Excellent - Like New",
+      "price_inr": 9500000,
+      "original_price_inr": 25000000,
+      "sale_type": "auction",
+      "status": "active",
       "location": "Chennai",
-      "seller_company": "CircularEconomy Inc"
+      "seller_company": "Tamil Nadu Metal Works Pvt Ltd",
+      "seller_type": "Complete Shutdown - Business Relocation",
+      "compatible_materials": [
+        "Steel Scrap",
+        "Aluminum Scrap",
+        "Copper Wire"
+      ],
+      "target_industries": [
+        "Metal Fabrication",
+        "Automotive"
+      ],
+      "date_posted": "2025-10-22",
+      "views": 1245,
+      "inquiries": 89,
+      "auction_details": {
+        "starting_bid": 9500000,
+        "current_bid": 11200000,
+        "total_bids": 24,
+        "end_date": "2025-11-12"
+      },
+      "warranty_available": true,
+      "negotiable": false
     },
     {
-      "auction_id": "AUC503",
-      "listing_id": 9,
+      "id": "MACH_SD012",
+      "listing_type": "machinery_shutdown",
+      "title": "CNC Press Brake - 250 Ton Hydraulic",
+      "machine_type": "CNC Hydraulic Press Brake",
+      "category": "Metal Forming Equipment",
+      "brand": "Amada",
+      "model": "HDS-2504",
+      "year_of_manufacture": 2018,
+      "condition": "Excellent",
+      "price_inr": 5500000,
+      "original_price_inr": 14000000,
+      "status": "active",
+      "location": "Chennai",
+      "seller_company": "Tamil Nadu Metal Works Pvt Ltd",
+      "target_industries": [
+        "Sheet Metal Fabrication",
+        "Automotive"
+      ],
+      "date_posted": "2025-10-22",
+      "views": 567,
+      "inquiries": 42,
+      "includes_tooling": true,
+      "negotiable": true
+    }
+  ],
+  "material_machinery_associations": [
+    {
+      "material_name": "Bagasse",
+      "material_category": "Agricultural/Biomass",
+      "compatible_machinery": [
+        {
+          "machine_type": "Pulp Processing Line",
+          "primary_use": "Paper production",
+          "target_industry": "Paper Manufacturing",
+          "process": "Converts bagasse into paper pulp"
+        },
+        {
+          "machine_type": "Briquetting Machine",
+          "primary_use": "Fuel production",
+          "target_industry": "Biofuel Manufacturing",
+          "process": "Compresses bagasse into fuel briquettes"
+        },
+        {
+          "machine_type": "Carbonization Furnace",
+          "primary_use": "Biochar production",
+          "target_industry": "Activated Carbon Production",
+          "process": "Converts bagasse into activated carbon"
+        }
+      ],
+      "business_opportunities": [
+        "Paper manufacturing from agricultural waste",
+        "Eco-friendly packaging material production",
+        "Biomass energy generation"
+      ]
+    },
+    {
+      "material_name": "HDPE Scrap",
+      "material_category": "Plastic Waste",
+      "compatible_machinery": [
+        {
+          "machine_type": "Dual-Shaft Shredder",
+          "primary_use": "Size reduction",
+          "target_industry": "Plastic Recycling",
+          "process": "Shreds HDPE into manageable pieces"
+        },
+        {
+          "machine_type": "Twin Screw Extruder",
+          "primary_use": "Pellet production",
+          "target_industry": "Plastic Manufacturing",
+          "process": "Converts clean HDPE into pellets"
+        },
+        {
+          "machine_type": "Injection Molding Machine",
+          "primary_use": "Product manufacturing",
+          "target_industry": "Plastic Products",
+          "process": "Creates finished products from recycled HDPE"
+        }
+      ],
+      "business_opportunities": [
+        "Recycled plastic pellet production",
+        "Plastic pipe manufacturing",
+        "Plastic lumber/furniture"
+      ]
+    },
+    {
+      "material_name": "Fly Ash",
+      "material_category": "Industrial Ash",
+      "compatible_machinery": [
+        {
+          "machine_type": "Brick Making Machine",
+          "primary_use": "Building materials",
+          "target_industry": "Construction Materials",
+          "process": "Produces fly ash bricks"
+        },
+        {
+          "machine_type": "Concrete Block Machine",
+          "primary_use": "Construction blocks",
+          "target_industry": "Building Products",
+          "process": "Creates concrete blocks with fly ash"
+        }
+      ],
+      "business_opportunities": [
+        "Fly ash brick manufacturing",
+        "Sustainable construction materials",
+        "Low-cost housing solutions"
+      ]
+    },
+    {
+      "material_name": "PET Bottles",
+      "material_category": "Plastic Waste",
+      "compatible_machinery": [
+        {
+          "machine_type": "Bottle Washing Line",
+          "primary_use": "Cleaning and sorting",
+          "target_industry": "Bottle-to-Bottle Recycling",
+          "process": "Cleans and sorts PET bottles"
+        },
+        {
+          "machine_type": "Blow Molding Machine",
+          "primary_use": "New bottle production",
+          "target_industry": "Packaging",
+          "process": "Manufactures bottles from rPET"
+        }
+      ],
+      "business_opportunities": [
+        "Recycled polyester fiber production",
+        "Sustainable packaging manufacturing",
+        "Bottle-to-bottle recycling"
+      ]
+    },
+    {
+      "material_name": "Steel Scrap",
+      "material_category": "Metal Scrap",
+      "compatible_machinery": [
+        {
+          "machine_type": "Alligator Shear",
+          "primary_use": "Cutting",
+          "target_industry": "Metal Recycling",
+          "process": "Cuts steel into manageable pieces"
+        },
+        {
+          "machine_type": "Baling Press",
+          "primary_use": "Compaction",
+          "target_industry": "Scrap Processing",
+          "process": "Compresses steel scrap into bales"
+        }
+      ],
+      "business_opportunities": [
+        "Steel remelting and casting",
+        "TMT bar production",
+        "Metal component manufacturing"
+      ]
+    },
+    {
+      "material_name": "Coconut Shell",
+      "material_category": "Agricultural/Biomass",
+      "compatible_machinery": [
+        {
+          "machine_type": "Carbonization Furnace",
+          "primary_use": "Activated carbon",
+          "target_industry": "Activated Carbon Production",
+          "process": "Converts shells into activated carbon"
+        },
+        {
+          "machine_type": "Charcoal Kiln",
+          "primary_use": "Charcoal production",
+          "target_industry": "Fuel Production",
+          "process": "Creates coconut charcoal"
+        }
+      ],
+      "business_opportunities": [
+        "Activated carbon for water purification",
+        "Air filtration products",
+        "Hookah charcoal production"
+      ]
+    },
+    {
       "material_name": "Cardboard Bales",
-      "category": "Paper & Cardboard",
-      "starting_bid": 88.34,
-      "current_highest_bid": 125.42,
-      "total_bids": 8,
-      "unique_bidders": 5,
-      "end_time": "2025-10-30 21:08:06",
-      "is_active": true,
-      "location": "Hyderabad",
-      "seller_company": "ReSource Trading"
-    },
-    {
-      "auction_id": "AUC504",
-      "listing_id": 10,
-      "material_name": "Mixed Paper",
-      "category": "Paper & Cardboard",
-      "starting_bid": 62.23,
-      "current_highest_bid": 83.83,
-      "total_bids": 17,
-      "unique_bidders": 5,
-      "end_time": "2025-10-31 20:08:06",
-      "is_active": true,
-      "location": "Lucknow",
-      "seller_company": "ReSource Trading"
+      "material_category": "Paper & Cardboard",
+      "compatible_machinery": [
+        {
+          "machine_type": "Hydraulic Baler",
+          "primary_use": "Compaction",
+          "target_industry": "Waste Management",
+          "process": "Compresses cardboard for transport"
+        },
+        {
+          "machine_type": "Paper Pulping Machine",
+          "primary_use": "Pulp production",
+          "target_industry": "Paper Recycling",
+          "process": "Converts cardboard into pulp"
+        }
+      ],
+      "business_opportunities": [
+        "Recycled packaging production",
+        "Corrugated box manufacturing",
+        "Paper pulp supply"
+      ]
     }
   ],
-  "monthly_trends": [
+  "target_industries": {
+    "Paper Manufacturing": {
+      "description": "Production of paper and paper products from recycled materials",
+      "suitable_materials": [
+        "Bagasse",
+        "Cardboard Bales",
+        "Mixed Paper",
+        "Newspaper"
+      ],
+      "suitable_machinery": [
+        "Pulp Processing Line",
+        "De-inking Plant",
+        "Paper Machine"
+      ],
+      "market_size_india": "Medium to Large",
+      "investment_range_min_inr": 2500000,
+      "investment_range_max_inr": 15000000,
+      "roi_months_min": 18,
+      "roi_months_max": 36
+    },
+    "Plastic Recycling": {
+      "description": "Processing and recycling of plastic waste into reusable materials",
+      "suitable_materials": [
+        "HDPE Scrap",
+        "PET Bottles",
+        "PP Scrap",
+        "LDPE Film",
+        "Mixed Plastic"
+      ],
+      "suitable_machinery": [
+        "Shredders",
+        "Granulators",
+        "Washing Lines",
+        "Extruders"
+      ],
+      "market_size_india": "Large",
+      "investment_range_min_inr": 1500000,
+      "investment_range_max_inr": 10000000,
+      "roi_months_min": 12,
+      "roi_months_max": 24
+    },
+    "Biofuel Manufacturing": {
+      "description": "Production of alternative fuels from biomass waste",
+      "suitable_materials": [
+        "Bagasse",
+        "Rice Husk",
+        "Coconut Shell",
+        "Scrap Wood"
+      ],
+      "suitable_machinery": [
+        "Briquetting Machine",
+        "Pelletizing Machine",
+        "Gasification Plant"
+      ],
+      "market_size_india": "Growing",
+      "investment_range_min_inr": 3000000,
+      "investment_range_max_inr": 20000000,
+      "roi_months_min": 24,
+      "roi_months_max": 48
+    },
+    "Construction Materials": {
+      "description": "Manufacturing of building materials from industrial waste",
+      "suitable_materials": [
+        "Fly Ash",
+        "Bottom Ash",
+        "Concrete Rubble",
+        "Brick Waste"
+      ],
+      "suitable_machinery": [
+        "Brick Making Machine",
+        "Block Machine",
+        "Paver Machine"
+      ],
+      "market_size_india": "Very Large",
+      "investment_range_min_inr": 1000000,
+      "investment_range_max_inr": 8000000,
+      "roi_months_min": 15,
+      "roi_months_max": 30
+    },
+    "Metal Recycling": {
+      "description": "Recovery and processing of scrap metals",
+      "suitable_materials": [
+        "Steel Scrap",
+        "Aluminum Scrap",
+        "Copper Wire",
+        "Brass Scrap"
+      ],
+      "suitable_machinery": [
+        "Alligator Shear",
+        "Baling Press",
+        "Magnetic Separator"
+      ],
+      "market_size_india": "Large",
+      "investment_range_min_inr": 2000000,
+      "investment_range_max_inr": 25000000,
+      "roi_months_min": 18,
+      "roi_months_max": 36
+    },
+    "Textile Manufacturing": {
+      "description": "Production of fibers and fabrics from recycled materials",
+      "suitable_materials": [
+        "PET Bottles",
+        "Cotton Scrap",
+        "Fabric Remnants"
+      ],
+      "suitable_machinery": [
+        "Fiber Spinning Machine",
+        "Weaving Loom"
+      ],
+      "market_size_india": "Very Large",
+      "investment_range_min_inr": 5000000,
+      "investment_range_max_inr": 30000000,
+      "roi_months_min": 30,
+      "roi_months_max": 48
+    },
+    "Beverage Bottling": {
+      "description": "Bottling and packaging of beverages and water",
+      "suitable_materials": [
+        "PET Bottles",
+        "Glass bottles"
+      ],
+      "suitable_machinery": [
+        "Bottling Line",
+        "Blow Molding Machine",
+        "RO Plant"
+      ],
+      "market_size_india": "Very Large",
+      "investment_range_min_inr": 5000000,
+      "investment_range_max_inr": 25000000,
+      "roi_months_min": 20,
+      "roi_months_max": 40
+    }
+  },
+  "bundled_packages": [
     {
-      "month": "May 2025",
-      "total_listings": 105,
-      "active_listings": 53,
-      "completed_transactions": 83,
-      "revenue_inr": 1336725,
-      "new_sellers": 12,
-      "new_buyers": 26,
-      "avg_order_value_inr": 53346
+      "package_id": "PKG001",
+      "package_name": "Complete Textile Manufacturing Setup",
+      "company": "Maharashtra Textiles Manufacturing Ltd",
+      "total_value_inr": 25000000,
+      "discounted_price_inr": 21250000,
+      "savings_inr": 3750000,
+      "savings_percentage": 15,
+      "included_machinery_ids": [
+        "MACH_SD001",
+        "MACH_SD002",
+        "MACH_SD003"
+      ],
+      "included_machinery": [
+        "Spinning Machine (1200 spindles)",
+        "Air Compressor (250 HP)",
+        "Weaving Looms (8 units)",
+        "Material handling equipment",
+        "Spare parts inventory"
+      ],
+      "ready_to_operate": true,
+      "estimated_setup_time_days": 45,
+      "training_period_days": 15,
+      "target_industries": [
+        "Textile Manufacturing",
+        "Spinning Mills"
+      ]
     },
     {
-      "month": "Jun 2025",
-      "total_listings": 135,
-      "active_listings": 40,
-      "completed_transactions": 65,
-      "revenue_inr": 1623536,
-      "new_sellers": 10,
-      "new_buyers": 22,
-      "avg_order_value_inr": 30435
+      "package_id": "PKG002",
+      "package_name": "Complete Plastic Bottle Manufacturing Plant",
+      "company": "Delhi Plastic Processing Industries",
+      "total_value_inr": 18500000,
+      "discounted_price_inr": 14800000,
+      "savings_inr": 3700000,
+      "savings_percentage": 20,
+      "included_machinery_ids": [
+        "MACH_SD004",
+        "MACH_SD005",
+        "MACH_SD006"
+      ],
+      "included_machinery": [
+        "Injection Molding Machine (with 15 molds)",
+        "Blow Molding Line (14000 bottles/hour)",
+        "Industrial Chiller (100 TR)",
+        "Material handling conveyors",
+        "Quality control equipment"
+      ],
+      "ready_to_operate": true,
+      "estimated_setup_time_days": 30,
+      "training_period_days": 10,
+      "target_industries": [
+        "Plastic Manufacturing",
+        "Packaging Production"
+      ]
     },
     {
-      "month": "Jul 2025",
-      "total_listings": 98,
-      "active_listings": 45,
-      "completed_transactions": 51,
-      "revenue_inr": 2562344,
-      "new_sellers": 11,
-      "new_buyers": 10,
-      "avg_order_value_inr": 35020
-    },
-    {
-      "month": "Aug 2025",
-      "total_listings": 81,
-      "active_listings": 55,
-      "completed_transactions": 65,
-      "revenue_inr": 1960882,
-      "new_sellers": 5,
-      "new_buyers": 16,
-      "avg_order_value_inr": 61222
-    },
-    {
-      "month": "Sep 2025",
-      "total_listings": 136,
-      "active_listings": 64,
-      "completed_transactions": 82,
-      "revenue_inr": 2904206,
-      "new_sellers": 7,
-      "new_buyers": 10,
-      "avg_order_value_inr": 62171
-    },
-    {
-      "month": "Oct 2025",
-      "total_listings": 131,
-      "active_listings": 76,
-      "completed_transactions": 73,
-      "revenue_inr": 2383953,
-      "new_sellers": 11,
-      "new_buyers": 25,
-      "avg_order_value_inr": 34415
+      "package_id": "PKG003",
+      "package_name": "Complete Beverage Bottling Unit - Distress Sale",
+      "company": "Gujarat Food Processing Corp",
+      "total_value_inr": 15000000,
+      "discounted_price_inr": 11250000,
+      "savings_inr": 3750000,
+      "savings_percentage": 25,
+      "included_machinery_ids": [
+        "MACH_SD009",
+        "MACH_SD010"
+      ],
+      "included_machinery": [
+        "Complete Bottling Line (12000 bottles/hour)",
+        "RO Water Treatment (5000 LPH)",
+        "Storage tanks",
+        "Bottle unscramblers and conveyors",
+        "Laboratory testing equipment"
+      ],
+      "ready_to_operate": true,
+      "estimated_setup_time_days": 20,
+      "training_period_days": 7,
+      "target_industries": [
+        "Beverage Bottling",
+        "Water Bottling"
+      ],
+      "urgent_sale_note": "DISTRESS SALE - Bank auction alternative"
     }
   ],
-  "category_distribution": [
-    {
-      "category": "Glass",
-      "total_listings": 2,
-      "total_value_inr": 23009.02,
-      "avg_price": 11504.51,
-      "percentage": 10.0,
-      "value_percentage": 29.87
-    },
-    {
-      "category": "Paper & Cardboard",
-      "total_listings": 2,
-      "total_value_inr": 16200.24,
-      "avg_price": 8100.12,
-      "percentage": 10.0,
-      "value_percentage": 21.03
-    },
-    {
-      "category": "Agricultural/Biomass",
-      "total_listings": 2,
-      "total_value_inr": 10533.060000000001,
-      "avg_price": 5266.53,
-      "percentage": 10.0,
-      "value_percentage": 13.67
-    },
-    {
-      "category": "Organic/Food Waste",
-      "total_listings": 2,
-      "total_value_inr": 7964.4800000000005,
-      "avg_price": 3982.24,
-      "percentage": 10.0,
-      "value_percentage": 10.34
-    },
-    {
-      "category": "Metal Scrap",
-      "total_listings": 2,
-      "total_value_inr": 5959.25,
-      "avg_price": 2979.62,
-      "percentage": 10.0,
-      "value_percentage": 7.74
-    },
-    {
-      "category": "Rubber & Tires",
-      "total_listings": 2,
-      "total_value_inr": 5484.9,
-      "avg_price": 2742.45,
-      "percentage": 10.0,
-      "value_percentage": 7.12
-    },
-    {
-      "category": "Industrial Ash",
-      "total_listings": 2,
-      "total_value_inr": 4082.02,
-      "avg_price": 2041.01,
-      "percentage": 10.0,
-      "value_percentage": 5.3
-    },
-    {
-      "category": "Construction & Demolition",
-      "total_listings": 2,
-      "total_value_inr": 3078.21,
-      "avg_price": 1539.11,
-      "percentage": 10.0,
-      "value_percentage": 4.0
-    },
-    {
-      "category": "Textile Waste",
-      "total_listings": 2,
-      "total_value_inr": 443.2,
-      "avg_price": 221.6,
-      "percentage": 10.0,
-      "value_percentage": 0.58
-    },
-    {
-      "category": "Plastic Waste",
-      "total_listings": 2,
-      "total_value_inr": 272.35,
-      "avg_price": 136.18,
-      "percentage": 10.0,
-      "value_percentage": 0.35
-    }
-  ],
-  "location_distribution": [
-    {
-      "city": "Kanpur",
-      "total_listings": 1,
-      "total_value_inr": 18463.05,
-      "active_sellers": 1
-    },
-    {
-      "city": "Lucknow",
-      "total_listings": 3,
-      "total_value_inr": 14131.26,
-      "active_sellers": 3
-    },
-    {
-      "city": "Nagpur",
-      "total_listings": 3,
-      "total_value_inr": 12390.46,
-      "active_sellers": 2
-    },
-    {
-      "city": "Kolkata",
-      "total_listings": 2,
-      "total_value_inr": 11058.26,
-      "active_sellers": 2
-    },
-    {
-      "city": "Ahmedabad",
-      "total_listings": 3,
-      "total_value_inr": 7624.7,
-      "active_sellers": 3
-    },
-    {
-      "city": "Coimbatore",
-      "total_listings": 2,
-      "total_value_inr": 4082.02,
-      "active_sellers": 1
-    },
-    {
-      "city": "Indore",
-      "total_listings": 1,
-      "total_value_inr": 2793.42,
-      "active_sellers": 1
-    },
-    {
-      "city": "Hyderabad",
-      "total_listings": 1,
-      "total_value_inr": 2385.18,
-      "active_sellers": 1
-    },
-    {
-      "city": "Surat",
-      "total_listings": 1,
-      "total_value_inr": 2243.44,
-      "active_sellers": 1
-    },
-    {
-      "city": "Pune",
-      "total_listings": 1,
-      "total_value_inr": 1474.89,
-      "active_sellers": 1
-    },
-    {
-      "city": "Bangalore",
-      "total_listings": 1,
-      "total_value_inr": 308.0,
-      "active_sellers": 1
-    },
-    {
-      "city": "Chennai",
-      "total_listings": 1,
-      "total_value_inr": 72.05,
-      "active_sellers": 1
-    }
-  ],
-  "seller_performance": [
-    {
-      "seller_name": "GreenTech Industries",
-      "total_listings": 2,
-      "active_listings": 0,
-      "sold_listings": 2,
-      "total_revenue_inr": 12924.2,
-      "avg_rating": 4.5,
-      "total_reviews": 90
-    },
-    {
-      "seller_name": "AgriWaste Solutions",
-      "total_listings": 1,
-      "active_listings": 0,
-      "sold_listings": 1,
-      "total_revenue_inr": 2779.92,
-      "avg_rating": 3.7,
-      "total_reviews": 22
-    },
-    {
-      "seller_name": "ReSource Trading",
-      "total_listings": 3,
-      "active_listings": 0,
-      "sold_listings": 1,
-      "total_revenue_inr": 2385.18,
-      "avg_rating": 3.5,
-      "total_reviews": 33
-    },
-    {
-      "seller_name": "Metal Recyclers Pvt Ltd",
-      "total_listings": 5,
-      "active_listings": 1,
-      "sold_listings": 1,
-      "total_revenue_inr": 1603.32,
-      "avg_rating": 4.0,
-      "total_reviews": 41
-    },
-    {
-      "seller_name": "Waste2Wealth Enterprises",
-      "total_listings": 3,
-      "active_listings": 1,
-      "sold_listings": 1,
-      "total_revenue_inr": 1537.38,
-      "avg_rating": 4.3,
-      "total_reviews": 33
-    },
-    {
-      "seller_name": "CircularEconomy Inc",
-      "total_listings": 1,
-      "active_listings": 0,
-      "sold_listings": 1,
-      "total_revenue_inr": 72.05,
-      "avg_rating": 4.1,
-      "total_reviews": 33
-    },
-    {
-      "seller_name": "Sustainable Materials Co",
-      "total_listings": 2,
-      "active_listings": 1,
-      "sold_listings": 0,
-      "total_revenue_inr": 0,
-      "avg_rating": 4.5,
-      "total_reviews": 42
-    },
-    {
-      "seller_name": "Green Valley Industries",
-      "total_listings": 1,
-      "active_listings": 0,
-      "sold_listings": 0,
-      "total_revenue_inr": 0,
-      "avg_rating": 4.9,
-      "total_reviews": 61
-    },
-    {
-      "seller_name": "Urban Waste Management",
-      "total_listings": 1,
-      "active_listings": 0,
-      "sold_listings": 0,
-      "total_revenue_inr": 0,
-      "avg_rating": 3.7,
-      "total_reviews": 46
-    },
-    {
-      "seller_name": "EcoFriendly Processors",
-      "total_listings": 1,
-      "active_listings": 0,
-      "sold_listings": 0,
-      "total_revenue_inr": 0,
-      "avg_rating": 4.6,
-      "total_reviews": 47
-    }
-  ],
-  "popular_materials": [
-    {
-      "material": "Straw/Hay",
-      "category": "Agricultural/Biomass",
-      "total_listings": 96,
-      "total_volume_traded": 4878,
-      "unit": "tons",
-      "avg_price": 20.0,
-      "growth_percentage": 3.01
-    },
-    {
-      "material": "Brick Waste",
-      "category": "Construction & Demolition",
-      "total_listings": 88,
-      "total_volume_traded": 1204,
-      "unit": "tons",
-      "avg_price": 7.5,
-      "growth_percentage": 24.09
-    },
-    {
-      "material": "Rubber Crumb",
-      "category": "Rubber & Tires",
-      "total_listings": 86,
-      "total_volume_traded": 3265,
-      "unit": "tons",
-      "avg_price": 75.0,
-      "growth_percentage": 29.81
-    },
-    {
-      "material": "Newspaper",
-      "category": "Paper & Cardboard",
-      "total_listings": 85,
-      "total_volume_traded": 4904,
-      "unit": "tons",
-      "avg_price": 65.0,
-      "growth_percentage": 39.04
-    },
-    {
-      "material": "Broken Glass",
-      "category": "Glass",
-      "total_listings": 85,
-      "total_volume_traded": 3718,
-      "unit": "tons",
-      "avg_price": 22.5,
-      "growth_percentage": 16.24
-    },
-    {
-      "material": "Aluminum Scrap",
-      "category": "Metal Scrap",
-      "total_listings": 83,
-      "total_volume_traded": 2061,
-      "unit": "kg",
-      "avg_price": 1.45,
-      "growth_percentage": 19.63
-    },
-    {
-      "material": "Clear Glass",
-      "category": "Glass",
-      "total_listings": 80,
-      "total_volume_traded": 4756,
-      "unit": "tons",
-      "avg_price": 60.0,
-      "growth_percentage": -12.6
-    },
-    {
-      "material": "Mixed Paper",
-      "category": "Paper & Cardboard",
-      "total_listings": 79,
-      "total_volume_traded": 3910,
-      "unit": "tons",
-      "avg_price": 55.0,
-      "growth_percentage": 11.02
-    },
-    {
-      "material": "Concrete Rubble",
-      "category": "Construction & Demolition",
-      "total_listings": 79,
-      "total_volume_traded": 1349,
-      "unit": "tons",
-      "avg_price": 10.0,
-      "growth_percentage": 12.23
-    },
-    {
-      "material": "PET Bottles",
-      "category": "Plastic Waste",
-      "total_listings": 78,
-      "total_volume_traded": 2928,
-      "unit": "kg",
-      "avg_price": 0.45,
-      "growth_percentage": 16.18
-    }
-  ],
-  "recent_activities": [
-    {
-      "id": 1,
-      "type": "listing",
-      "description": "New listing: HDPE Scrap - 145 kg",
-      "user": "Sustainable Materials Co",
-      "timestamp": "2025-10-28 04:08:35"
-    },
-    {
-      "id": 2,
-      "type": "order",
-      "description": "Order placed for Bagasse - 50 tons",
-      "user": "EcoWaste Solutions",
-      "timestamp": "2025-10-28 01:08:35"
-    },
-    {
-      "id": 3,
-      "type": "auction",
-      "description": "New bid on Steel Scrap auction - \u20b9160.81/ton",
-      "user": "Industrial Recyclers Ltd",
-      "timestamp": "2025-10-27 22:08:35"
-    },
-    {
-      "id": 4,
-      "type": "order",
-      "description": "Order delivered: Mixed Paper - 100 tons",
-      "user": "CircularEconomy Inc",
-      "timestamp": "2025-10-27 18:08:35"
-    },
-    {
-      "id": 5,
-      "type": "registration",
-      "description": "New seller registered: Waste Management Pro",
-      "user": "Waste Management Pro",
-      "timestamp": "2025-10-27 06:08:35"
-    }
-  ],
+  "chatbot_recommendations": {
+    "business_scenarios": [
+      {
+        "scenario_id": "SC001",
+        "user_intent": "Start paper manufacturing from agricultural waste",
+        "recommended_materials": [
+          "Bagasse",
+          "Rice Husk",
+          "Straw/Hay"
+        ],
+        "recommended_machinery_ids": [
+          "MACH002",
+          "MACH_SD007"
+        ],
+        "recommended_machinery": [
+          {
+            "machine_id": "MACH002",
+            "machine_type": "Pulp Processing Line",
+            "priority": "High",
+            "reason": "Complete pulp processing line suitable for bagasse"
+          },
+          {
+            "machine_id": "MACH_SD007",
+            "machine_type": "Paper Making Machine",
+            "priority": "High",
+            "reason": "20 TPD complete paper production line from shutdown company"
+          }
+        ],
+        "target_industry": "Paper Manufacturing",
+        "estimated_investment_inr": "3500000-35000000",
+        "business_model": "Buy agricultural waste locally, process into paper pulp, sell to paper mills"
+      },
+      {
+        "scenario_id": "SC002",
+        "user_intent": "Start plastic recycling business",
+        "recommended_materials": [
+          "HDPE Scrap",
+          "PET Bottles",
+          "PP Scrap"
+        ],
+        "recommended_machinery_ids": [
+          "MACH001",
+          "MACH003",
+          "MACH_SD004"
+        ],
+        "recommended_machinery": [
+          {
+            "machine_id": "MACH001",
+            "machine_type": "Dual-Shaft Shredder",
+            "priority": "High",
+            "reason": "Essential for initial size reduction"
+          },
+          {
+            "machine_id": "MACH003",
+            "machine_type": "Twin Screw Extruder",
+            "priority": "High",
+            "reason": "For pellet production"
+          }
+        ],
+        "target_industry": "Plastic Recycling",
+        "estimated_investment_inr": "4000000-12000000",
+        "business_model": "Collect plastic waste, process into pellets, sell to manufacturers"
+      },
+      {
+        "scenario_id": "SC003",
+        "user_intent": "Produce activated carbon from coconut shells",
+        "recommended_materials": [
+          "Coconut Shell"
+        ],
+        "recommended_machinery_ids": [
+          "MACH004"
+        ],
+        "recommended_machinery": [
+          {
+            "machine_id": "MACH004",
+            "machine_type": "Carbonization Furnace",
+            "priority": "High",
+            "reason": "Specifically designed for coconut shell carbonization"
+          }
+        ],
+        "target_industry": "Activated Carbon Production",
+        "estimated_investment_inr": "1500000-5000000",
+        "business_model": "Source coconut shells, carbonize, activate, sell to water treatment/pharma"
+      },
+      {
+        "scenario_id": "SC004",
+        "user_intent": "Setup complete beverage bottling plant - urgent need",
+        "recommended_materials": [
+          "PET Bottles",
+          "Water"
+        ],
+        "recommended_package": {
+          "package_id": "PKG003",
+          "priority": "Very High",
+          "reason": "Complete turnkey bottling plant available at 25% discount due to distress sale"
+        },
+        "target_industry": "Beverage Bottling",
+        "estimated_investment_inr": "11250000",
+        "business_model": "Ready-to-operate bottling unit - can start production immediately",
+        "urgent_opportunity": true
+      },
+      {
+        "scenario_id": "SC005",
+        "user_intent": "Start textile business with used equipment",
+        "recommended_package": {
+          "package_id": "PKG001",
+          "priority": "High",
+          "reason": "Complete textile manufacturing setup from liquidating company"
+        },
+        "target_industry": "Textile Manufacturing",
+        "estimated_investment_inr": "21250000",
+        "business_model": "Complete spinning and weaving setup - 15% bulk discount available"
+      }
+    ]
+  },
   "environmental_impact": {
-    "total_waste_diverted_tons": 6220,
-    "co2_emissions_saved_tons": 3563,
-    "materials_recycled_percentage": 80.86,
-    "landfill_waste_prevented_tons": 6563,
-    "trees_saved_equivalent": 15395,
-    "water_saved_liters": 1438650
+    "platform_metrics": {
+      "total_waste_diverted_tons": 12450,
+      "co2_emissions_saved_tons": 3820,
+      "materials_recycled_percentage": 76.5,
+      "landfill_waste_prevented_tons": 8900,
+      "trees_saved_equivalent": 24500,
+      "water_saved_liters": 1250000
+    },
+    "category_impact": {
+      "Plastic Waste": {
+        "recycled_tons": 3250,
+        "co2_saved_tons": 1200,
+        "energy_saved_kwh": 45000
+      },
+      "Paper & Cardboard": {
+        "recycled_tons": 4100,
+        "trees_saved": 24500,
+        "water_saved_liters": 850000
+      },
+      "Metal Scrap": {
+        "recycled_tons": 2800,
+        "co2_saved_tons": 1850,
+        "energy_saved_kwh": 92000
+      },
+      "Agricultural/Biomass": {
+        "recycled_tons": 2300,
+        "biofuel_produced_kg": 1800,
+        "landfill_diverted_tons": 2300
+      }
+    }
   },
   "price_trends": [
     {
@@ -1308,35 +2102,122 @@
       "unit": "kg",
       "current_price": 0.63,
       "last_month_price": 0.58,
-      "change_percentage": 8.62
+      "change_percentage": 8.62,
+      "trend": "increasing"
     },
     {
       "material": "Steel Scrap",
       "unit": "tons",
       "current_price": 122.65,
       "last_month_price": 118.5,
-      "change_percentage": 3.5
+      "change_percentage": 3.5,
+      "trend": "increasing"
     },
     {
       "material": "Fly Ash",
       "unit": "tons",
       "current_price": 17.92,
       "last_month_price": 19.2,
-      "change_percentage": -6.67
+      "change_percentage": -6.67,
+      "trend": "decreasing"
     },
     {
       "material": "PET Bottles",
       "unit": "kg",
       "current_price": 0.5,
       "last_month_price": 0.46,
-      "change_percentage": 8.7
+      "change_percentage": 8.7,
+      "trend": "increasing"
     },
     {
-      "material": "Cardboard Bales",
+      "material": "Bagasse",
       "unit": "tons",
-      "current_price": 88.34,
-      "last_month_price": 92.1,
-      "change_percentage": -4.08
+      "current_price": 28.08,
+      "last_month_price": 26.5,
+      "change_percentage": 5.96,
+      "trend": "increasing"
+    }
+  ],
+  "shutdown_companies_summary": {
+    "total_companies_liquidating": 5,
+    "total_machinery_available": 75,
+    "total_estimated_value_inr": 118500000,
+    "average_discount_percentage": 20,
+    "urgency_breakdown": {
+      "very_high": 2,
+      "high": 1,
+      "medium": 2
+    },
+    "location_distribution": {
+      "Mumbai": 1,
+      "Delhi": 1,
+      "Bangalore": 1,
+      "Ahmedabad": 1,
+      "Chennai": 1
+    },
+    "industry_breakdown": {
+      "Textile": 1,
+      "Plastic": 1,
+      "Paper": 1,
+      "Food Processing": 1,
+      "Metal Fabrication": 1
+    },
+    "shutdown_reasons": {
+      "Business closure": 1,
+      "Owner retirement": 1,
+      "Environmental compliance": 1,
+      "Financial distress": 1,
+      "Business relocation": 1
+    }
+  },
+  "recent_activities": [
+    {
+      "id": 1,
+      "type": "shutdown_listing",
+      "description": "New liquidation: Maharashtra Textiles - 15 machines available",
+      "user": "Maharashtra Textiles Manufacturing Ltd",
+      "urgency": "High",
+      "timestamp": "2025-10-30 04:57:10"
+    },
+    {
+      "id": 2,
+      "type": "distress_sale",
+      "description": "URGENT: Complete bottling line - Gujarat Food Processing - 25% discount",
+      "user": "Gujarat Food Processing Corp",
+      "urgency": "Very High",
+      "timestamp": "2025-10-30 01:57:10"
+    },
+    {
+      "id": 3,
+      "type": "auction",
+      "description": "New bid on CNC Laser Cutter - Current bid ₹1.12 Cr",
+      "user": "Industrial Buyer",
+      "urgency": "Medium",
+      "timestamp": "2025-10-29 22:57:10"
+    },
+    {
+      "id": 4,
+      "type": "order",
+      "description": "Order placed: Bagasse 50 tons - Paper Manufacturing",
+      "user": "EcoWaste Solutions",
+      "urgency": "Low",
+      "timestamp": "2025-10-29 18:57:10"
+    },
+    {
+      "id": 5,
+      "type": "package_inquiry",
+      "description": "Inquiry on Complete Plastic Plant Package - PKG002",
+      "user": "Startup Entrepreneur",
+      "urgency": "Medium",
+      "timestamp": "2025-10-29 14:57:10"
+    },
+    {
+      "id": 6,
+      "type": "urgent_sale",
+      "description": "Price drop: Injection Molding Machine - Now ₹35 Lakh (Owner retiring)",
+      "user": "Delhi Plastic Processing Industries",
+      "urgency": "Very High",
+      "timestamp": "2025-10-29 06:57:10"
     }
   ]
 }

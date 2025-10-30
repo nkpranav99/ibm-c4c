@@ -8,6 +8,13 @@ from app.config import settings
 # Import routers
 from app.routers import auth, listings, dashboard, chatbot
 
+# Import machinery router
+try:
+    from app.routers import machinery
+    INCLUDE_MACHINERY = True
+except Exception:
+    INCLUDE_MACHINERY = False
+
 # Conditional imports for routers that may not work with JSON storage yet
 try:
     from app.routers import orders
@@ -68,6 +75,9 @@ app.include_router(auth.router)
 app.include_router(listings.router)
 app.include_router(dashboard.router)
 app.include_router(chatbot.router)
+
+if INCLUDE_MACHINERY:
+    app.include_router(machinery.router)
 
 if INCLUDE_ORDERS:
     app.include_router(orders.router)

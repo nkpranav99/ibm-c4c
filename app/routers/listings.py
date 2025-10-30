@@ -27,11 +27,11 @@ def get_listings(
         with open(mock_path, "r") as f:
             master_data = json.load(f)
         
-        listings = master_data.get("listings", [])
+        listings = master_data.get("waste_material_listings", [])
         
-        # For demo/POC: Show active and pending listings (more products to showcase)
-        # You can change this to just "active" for production
-        listings = [l for l in listings if l.get("status") in ["active", "pending"]]
+        # For demo/POC: Show ALL listings to showcase all 20 materials
+        # No filtering - show everything including expired listings
+        # In production, you would filter: listings = [l for l in listings if l.get("status") == "active"]
         
         # Apply filters
         if search:
@@ -50,7 +50,7 @@ def get_listings(
             listings = [l for l in listings if location_lower in l.get("location", "").lower()]
         
         if listing_type:
-            listings = [l for l in listings if l.get("listing_type") == listing_type]
+            listings = [l for l in listings if l.get("sale_type") == listing_type]
         
         if min_price is not None:
             listings = [l for l in listings if l.get("price_per_unit", 0) >= min_price]
@@ -71,7 +71,7 @@ def get_listings(
                 "quantity_unit": listing.get("unit"),
                 "price": listing.get("price_per_unit"),
                 "total_value": listing.get("total_value"),
-                "listing_type": listing.get("listing_type"),
+                "listing_type": listing.get("sale_type"),  # sale_type instead of listing_type
                 "status": listing.get("status"),
                 "location": listing.get("location"),
                 "images": [],
@@ -94,7 +94,7 @@ def get_listing(listing_id: int):
         with open(mock_path, "r") as f:
             master_data = json.load(f)
         
-        listings = master_data.get("listings", [])
+        listings = master_data.get("waste_material_listings", [])
         listing = next((l for l in listings if l.get("id") == listing_id), None)
         
         if not listing:
@@ -111,7 +111,7 @@ def get_listing(listing_id: int):
             "quantity_unit": listing.get("unit"),
             "price": listing.get("price_per_unit"),
             "total_value": listing.get("total_value"),
-            "listing_type": listing.get("listing_type"),
+            "listing_type": listing.get("sale_type"),  # sale_type instead of listing_type
             "status": listing.get("status"),
             "location": listing.get("location"),
             "images": [],

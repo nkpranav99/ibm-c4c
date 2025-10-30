@@ -92,6 +92,73 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
     return []
 
 
+# Material associations - materials that can be used together for various applications
+MATERIAL_ASSOCIATIONS = {
+    # Composite Construction Materials
+    "composite_construction": {
+        "materials": ["Fly Ash", "Bottom Ash", "Concrete Rubble", "Brick Waste"],
+        "use": "Create eco-friendly construction blocks and building materials",
+        "ratio": "60% Ash + 25% Concrete + 15% Brick Waste"
+    },
+    # Bio-Composite Materials
+    "bio_composite": {
+        "materials": ["Bagasse", "Rice Husk", "Straw/Hay", "Coconut Shell"],
+        "use": "Produce bio-composite boards, particle boards, and insulation materials",
+        "ratio": "Mix in 2:1:1 ratio for optimal strength",
+        "for_business": ["bio_composite"]
+    },
+    # Biomass for Biofuel (corrected)
+    "biomass_biofuel": {
+        "materials": ["Bagasse", "Rice Husk", "Straw/Hay", "Coconut Shell", "Food Processing Waste"],
+        "use": "Convert to biofuel, briquettes, or biomass pellets for energy generation",
+        "ratio": "Equal parts for balanced carbon and energy content",
+        "for_business": ["biofuel_energy"]
+    },
+    # Plastic-Aluminum Composites
+    "plastic_aluminum": {
+        "materials": ["HDPE Scrap", "PP Scrap", "Aluminum Scrap"],
+        "use": "Manufacture composite materials for automotive and packaging industries",
+        "ratio": "80% Plastic + 20% Aluminum for lightweight products"
+    },
+    # Paper-Plastic Composites
+    "paper_plastic": {
+        "materials": ["Cardboard Bales", "Mixed Paper", "PET Bottles", "LDPE Film"],
+        "use": "Create recycled packaging materials and composite boards",
+        "ratio": "70% Paper + 30% Plastic for water resistance"
+    },
+    # Construction Mix
+    "construction_mix": {
+        "materials": ["Fly Ash", "Steel Scrap", "Concrete Rubble"],
+        "use": "Produce reinforced concrete and structural elements",
+        "ratio": "10% Fly Ash + 5% Steel reinforcement + 85% Concrete aggregate"
+    },
+    # Organic Fertilizer Mix
+    "organic_compost": {
+        "materials": ["Food Processing Waste", "Vegetable Waste", "Bagasse", "Rice Husk"],
+        "use": "Generate compost through aerobic decomposition for organic farming",
+        "ratio": "40% Food waste + 30% Vegetable + 20% Bagasse + 10% Rice Husk",
+        "for_business": ["organic_fertilizer"]
+    },
+    # Textile Fiber Composites
+    "textile_fiber": {
+        "materials": ["Cotton Scrap", "Fabric Remnants", "PET Bottles"],
+        "use": "Create recycled fiber composites for automotive and furniture",
+        "ratio": "50% Cotton + 30% Fabric + 20% PET fibers"
+    },
+    # Glass-Metal Composites
+    "glass_metal": {
+        "materials": ["Mixed Glass", "Clear Glass", "Aluminum Scrap", "Steel Scrap"],
+        "use": "Produce reflective materials and composite surfaces",
+        "ratio": "30% Glass + 40% Aluminum + 30% Steel"
+    },
+    # Rubber Composite
+    "rubber_composite": {
+        "materials": ["Tire Scrap", "Rubber Crumb", "Steel Scrap"],
+        "use": "Manufacture rubberized asphalt and composite flooring",
+        "ratio": "60% Rubber + 40% Steel reinforcement"
+    },
+}
+
 def extract_business_intent(message: str) -> dict:
     """
     Extract business idea and requirements from user message.
@@ -102,7 +169,7 @@ def extract_business_intent(message: str) -> dict:
     # Business idea mapping with related materials
     business_map = {
         "plastic_recycling": {
-            "keywords": ["plastic", "polymer", "recycling", "hdpe", "ldpe", "pp", "pet", "pvc"],
+            "keywords": ["plastic", "polymer", "recycling", "hdpe", "ldpe", "pp", "pet", "pvc", "plastic recycling", "recycle plastic"],
             "materials": ["HDPE Scrap", "PET Bottles", "PP Scrap", "LDPE Film"],
             "category": "Plastic Waste",
             "use": "Recycle into pellets, sheets, or new products like containers, bags, pipes"
@@ -259,6 +326,24 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
                     limit=5
                 )
                 all_listings.extend(listings)
+                
+                # Check for material associations
+                association_applicable = None
+                for assoc_name, assoc_data in MATERIAL_ASSOCIATIONS.items():
+                    materials_in_assoc = set([m.lower() for m in assoc_data["materials"]])
+                    materials_requested = set([m.lower() for m in business["materials"]])
+                    if materials_requested.intersection(materials_in_assoc):
+                        association_applicable = assoc_data
+                        break
+                
+                if association_applicable:
+                    response_parts.append(f"### 🔗 **Material Combination Suggestion**\n\n")
+                    response_parts.append(f"**Compatible Materials:**\n")
+                    for mat in association_applicable["materials"]:
+                        response_parts.append(f"• {mat}\n")
+                    response_parts.append(f"\n**Best Use:** {association_applicable['use']}\n\n")
+                    response_parts.append(f"**Optimal Ratio:** {association_applicable['ratio']}\n\n")
+                    response_parts.append("💡 **Pro Tip:** Using these materials together will create more valuable composite products!\n\n")
                 
                 if listings:
                     response_parts.append("**📦 Available raw materials on our platform:**\n\n")

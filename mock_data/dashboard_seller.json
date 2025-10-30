@@ -1,20 +1,22 @@
 {
-  "total_listings": 12,
-  "active_listings": 7,
-  "sold_listings": 3,
-  "total_sales": 48250,
+  "total_listings": 20,
+  "active_listings": 3,
+  "sold_listings": 7,
+  "pending_listings": 4,
+  "expired_listings": 6,
+  "total_sales": 77019,
   "pending_orders": 2,
-  "active_auctions": 1,
+  "active_auctions": 3,
   "recent_listings": [
-    { "id": 101, "title": "Steel Scrap - Grade A", "status": "active", "created_at": "2025-10-15T10:30:00Z" },
-    { "id": 102, "title": "Mixed Plastics Bale", "status": "inactive", "created_at": "2025-10-13T14:10:00Z" },
-    { "id": 103, "title": "Copper Wire Offcuts", "status": "sold", "created_at": "2025-10-12T09:20:00Z" }
+    { "id": 1, "title": "Bagasse - Premium Quality", "status": "sold", "created_at": "2025-10-10T00:00:00Z" },
+    { "id": 2, "title": "Rice Husk - Premium Quality", "status": "sold", "created_at": "2025-09-11T00:00:00Z" },
+    { "id": 3, "title": "Fly Ash - Premium Quality", "status": "pending", "created_at": "2025-08-30T00:00:00Z" },
+    { "id": 4, "title": "Bottom Ash - Premium Quality", "status": "sold", "created_at": "2025-09-08T00:00:00Z" },
+    { "id": 5, "title": "HDPE Scrap - Premium Quality", "status": "active", "created_at": "2025-09-01T00:00:00Z" }
   ],
   "recent_orders": [
-    { "id": 9001, "quantity": 5, "total_price": 2500, "status": "pending", "created_at": "2025-10-16T08:00:00Z" },
-    { "id": 9002, "quantity": 12, "total_price": 7800, "status": "pending", "created_at": "2025-10-15T16:45:00Z" }
+    { "id": 9001, "quantity": 77, "total_price": 706.18, "status": "in_transit", "created_at": "2025-10-18T00:00:00Z" },
+    { "id": 9002, "quantity": 93, "total_price": 161.46, "status": "confirmed", "created_at": "2025-10-22T00:00:00Z" },
+    { "id": 9003, "quantity": 49, "total_price": 29.61, "status": "confirmed", "created_at": "2025-10-17T00:00:00Z" }
   ]
 }
-
-
-
