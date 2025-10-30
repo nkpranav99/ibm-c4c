@@ -4,15 +4,34 @@ from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
-from app.database import engine, Base
 
 # Import routers
-from app.routers import auth, listings, orders, auctions, dashboard, admin, chatbot
-from app.routers import websocket
+from app.routers import auth, listings, dashboard, chatbot
 
-# Create database tables (skip in mock mode)
-if not getattr(settings, "DISABLE_DB", False):
-    Base.metadata.create_all(bind=engine)
+# Conditional imports for routers that may not work with JSON storage yet
+try:
+    from app.routers import orders
+    INCLUDE_ORDERS = True
+except Exception:
+    INCLUDE_ORDERS = False
+
+try:
+    from app.routers import auctions
+    INCLUDE_AUCTIONS = True
+except Exception:
+    INCLUDE_AUCTIONS = False
+
+try:
+    from app.routers import admin
+    INCLUDE_ADMIN = True
+except Exception:
+    INCLUDE_ADMIN = False
+
+try:
+    from app.routers import websocket
+    INCLUDE_WEBSOCKET = True
+except Exception:
+    INCLUDE_WEBSOCKET = False
 
 app = FastAPI(
     title="Waste Material Marketplace API",
@@ -44,15 +63,20 @@ app.add_middleware(
 # Mount uploads directory
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-# Include routers
+# Include routers (only ones that work with JSON storage)
 app.include_router(auth.router)
 app.include_router(listings.router)
-app.include_router(orders.router)
-app.include_router(auctions.router)
 app.include_router(dashboard.router)
-app.include_router(admin.router)
 app.include_router(chatbot.router)
-app.include_router(websocket.router)
+
+if INCLUDE_ORDERS:
+    app.include_router(orders.router)
+if INCLUDE_AUCTIONS:
+    app.include_router(auctions.router)
+if INCLUDE_ADMIN:
+    app.include_router(admin.router)
+if INCLUDE_WEBSOCKET:
+    app.include_router(websocket.router)
 
 
 @app.get("/")

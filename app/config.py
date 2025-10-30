@@ -3,8 +3,8 @@ from typing import Optional, List
 
 
 class Settings(BaseSettings):
-    # Database
-    DATABASE_URL: str = "postgresql+psycopg2://postgres@/waste_marketplace?host=/var/run/postgresql/"
+    # Database (disabled - using JSON file storage instead)
+    DATABASE_URL: str = "sqlite:///./waste_marketplace.db"  # Not used
     DISABLE_DB: bool = True
 
 

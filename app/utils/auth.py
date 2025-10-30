@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Dict
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from app.config import settings
-from app.database import get_db
-from app.models.user import User
+from app.utils.mock_storage import get_user_by_email
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
@@ -32,7 +30,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -46,26 +44,28 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except JWTError:
         raise credentials_exception
     
-    user = db.query(User).filter(User.email == email).first()
+    user = get_user_by_email(email)
     if user is None:
         raise credentials_exception
     return user
 
 
-def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
-    if not current_user.is_active:
+def get_current_active_user(current_user: Dict = Depends(get_current_user)) -> Dict:
+    if not current_user.get('is_active', True):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
-def get_admin_user(current_user: User = Depends(get_current_active_user)) -> User:
-    if current_user.role.value != "admin":
+def get_admin_user(current_user: Dict = Depends(get_current_active_user)) -> Dict:
+    role = current_user.get('role')
+    if role != "admin":
         raise HTTPException(status_code=403, detail="Not enough permissions")
     return current_user
 
 
-def get_seller_user(current_user: User = Depends(get_current_active_user)) -> User:
-    if current_user.role.value not in ["seller", "admin"]:
+def get_seller_user(current_user: Dict = Depends(get_current_active_user)) -> Dict:
+    role = current_user.get('role')
+    if role not in ["seller", "admin"]:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     return current_user
 

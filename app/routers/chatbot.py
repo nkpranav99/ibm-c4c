@@ -92,6 +92,93 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
     return []
 
 
+def extract_business_intent(message: str) -> dict:
+    """
+    Extract business idea and requirements from user message.
+    Returns dict with business type, keywords, location, and required materials.
+    """
+    message_lower = message.lower()
+    
+    # Business idea mapping with related materials
+    business_map = {
+        "plastic_recycling": {
+            "keywords": ["plastic", "polymer", "recycling", "hdpe", "ldpe", "pp", "pet", "pvc"],
+            "materials": ["HDPE Scrap", "PET Bottles", "PP Scrap", "LDPE Film"],
+            "category": "Plastic Waste",
+            "use": "Recycle into pellets, sheets, or new products like containers, bags, pipes"
+        },
+        "paper_products": {
+            "keywords": ["paper", "cardboard", "packaging", "printing"],
+            "materials": ["Cardboard Bales", "Mixed Paper", "Newspaper"],
+            "category": "Paper & Cardboard",
+            "use": "Make packaging boxes, tissue paper, or recycled paper products"
+        },
+        "construction_materials": {
+            "keywords": ["construction", "concrete", "cement", "building"],
+            "materials": ["Fly Ash", "Bottom Ash", "Concrete Rubble", "Brick Waste"],
+            "category": "Industrial Ash",
+            "use": "Use as additives in concrete, or process into building blocks"
+        },
+        "biofuel_energy": {
+            "keywords": ["biofuel", "biomass", "energy", "fuel"],
+            "materials": ["Bagasse", "Rice Husk", "Straw/Hay", "Coconut Shell"],
+            "category": "Agricultural/Biomass",
+            "use": "Convert to biofuel, briquettes, or biomass pellets for energy generation"
+        },
+        "textile_manufacturing": {
+            "keywords": ["textile", "fabric", "clothing", "garment"],
+            "materials": ["Cotton Scrap", "Textile Waste"],
+            "category": "Textile Waste",
+            "use": "Recycle into new fabrics, insulation material, or stuffing"
+        },
+        "metal_refining": {
+            "keywords": ["metal", "steel", "aluminum", "copper", "smelting"],
+            "materials": ["Steel Scrap", "Aluminum Scrap", "Copper Wire", "Brass Scrap"],
+            "category": "Metal Scrap",
+            "use": "Smelt and refine into pure metals for manufacturing"
+        },
+        "glass_production": {
+            "keywords": ["glass", "glassware", "bottles"],
+            "materials": ["Clear Glass", "Mixed Glass"],
+            "category": "Glass",
+            "use": "Melt and remold into new glass products or use as aggregate"
+        },
+        "rubber_production": {
+            "keywords": ["rubber", "tire", "mat"],
+            "materials": ["Rubber Crumb", "Tire Waste"],
+            "category": "Rubber & Tires",
+            "use": "Process into rubber mats, flooring, or raw rubber material"
+        }
+    }
+    
+    # Extract location if mentioned
+    locations = ["mumbai", "delhi", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad", 
+                 "coimbatore", "nagpur", "surat", "jaipur", "lucknow", "kanpur", "kochi"]
+    location = None
+    for loc in locations:
+        if loc in message_lower:
+            location = loc
+            break
+    
+    # Find matching business types
+    matched_businesses = []
+    for business_type, details in business_map.items():
+        if any(keyword in message_lower for keyword in details["keywords"]):
+            matched_businesses.append({
+                "type": business_type,
+                "keywords": details["keywords"],
+                "materials": details["materials"],
+                "category": details["category"],
+                "use": details["use"]
+            })
+    
+    return {
+        "businesses": matched_businesses,
+        "location": location,
+        "keywords": [kw for biz in matched_businesses for kw in biz["keywords"]] if matched_businesses else []
+    }
+
+
 def extract_manufacturing_intent(message: str) -> dict:
     """
     Extract manufacturing type and requirements from user message.
@@ -143,6 +230,96 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
     Generate intelligent responses based on user queries about the waste marketplace.
     """
     message_lower = user_message.lower()
+    
+    # Check for BUSINESS IDEA intent first
+    business_indicators = [
+        "business idea", "start business", "business venture", "entrepreneurship",
+        "want to start", "planning to start", "new business", "looking to start"
+    ]
+    
+    if any(indicator in message_lower for indicator in business_indicators):
+        # Extract business intent
+        intent = extract_business_intent(user_message)
+        
+        if intent["businesses"]:
+            # Generate comprehensive business advice
+            response_parts = []
+            response_parts.append("🎯 **Perfect! I can help you start your business!**\n\n")
+            
+            all_listings = []
+            for business in intent["businesses"][:3]:  # Limit to 3 businesses
+                business_type_name = business["type"].replace("_", " ").title()
+                response_parts.append(f"## 💼 {business_type_name}\n\n")
+                response_parts.append(f"**How to use these materials:**\n{business['use']}\n\n")
+                
+                # Search for available materials
+                listings = search_listings_by_keywords(
+                    [mat.lower() for mat in business["materials"]],
+                    intent["location"],
+                    limit=5
+                )
+                all_listings.extend(listings)
+                
+                if listings:
+                    response_parts.append("**📦 Available raw materials on our platform:**\n\n")
+                    total_cost = 0
+                    
+                    for idx, listing in enumerate(listings, 1):
+                        quantity = listing.get('quantity', 0)
+                        price = listing.get('price', 0)
+                        total_value = listing.get('total_value', 0)
+                        unit = listing.get('quantity_unit', 'units')
+                        
+                        response_parts.append(f"**{idx}. {listing['title']}**\n")
+                        response_parts.append(f"   • Material: {listing['material_name']}\n")
+                        response_parts.append(f"   • Available: {quantity} {unit}\n")
+                        response_parts.append(f"   • Price: ₹{price:.2f}/{unit}\n")
+                        response_parts.append(f"   • **Lot Value: ₹{total_value:.2f}**\n")
+                        response_parts.append(f"   • Location: {listing['location']}\n")
+                        response_parts.append(f"   • Seller: {listing.get('seller_company', 'N/A')}\n")
+                        response_parts.append(f"\n")
+                        
+                        # Add to total cost (using lot value for simplicity)
+                        total_cost += total_value
+                    
+                    response_parts.append(f"---\n")
+                    response_parts.append(f"### 💰 **TOTAL ESTIMATED COST: ₹{total_cost:.2f}**\n\n")
+                    response_parts.append(f"💡 **This includes all available materials above.**\n\n")
+                else:
+                    response_parts.append(f"⚠️ No materials currently available in this category.\n\n")
+            
+            if intent["location"]:
+                response_parts.append(f"📍 Filtered for location: **{intent['location'].title()}**\n\n")
+            
+            response_parts.append("**🚀 Next Steps:**\n")
+            response_parts.append("1. Review the materials and costs above\n")
+            response_parts.append("2. Contact sellers directly through the listing page\n")
+            response_parts.append("3. Negotiate bulk pricing if ordering multiple materials\n")
+            response_parts.append("4. Plan your manufacturing process based on material specifications\n\n")
+            
+            response_parts.append("Want more specific guidance? Ask about manufacturing processes or material requirements!")
+            
+            return ChatResponse(
+                message="".join(response_parts),
+                suggestions=[
+                    "Tell me about manufacturing processes",
+                    "What equipment do I need?",
+                    "Show materials in different location",
+                    "How to calculate ROI?"
+                ],
+                listings=all_listings if all_listings else []
+            )
+        else:
+            # Business idea but couldn't identify specific type
+            return ChatResponse(
+                message="I'd love to help you start your business! 🌟\n\nTo give you the best raw material recommendations and cost estimates, please tell me:\n\n1️⃣ **What type of business do you want to start?**\n   (e.g., plastic recycling, paper products, biofuel, construction, etc.)\n\n2️⃣ **What location are you interested in?**\n   (e.g., Mumbai, Delhi, Bangalore)\n\n3️⃣ **Any specific requirements?**\n   (e.g., quantity, quality, certification needs)\n\nOnce I know this, I can suggest the perfect raw materials and calculate total costs! 💰",
+                suggestions=[
+                    "I want to start a plastic recycling business",
+                    "Biofuel business ideas",
+                    "Construction material business",
+                    "What businesses can I start with waste?"
+                ]
+            )
     
     # Check for manufacturing/manufacturing unit/raw material intent
     manufacturing_indicators = [
