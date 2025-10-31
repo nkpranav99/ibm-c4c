@@ -3,138 +3,288 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { listingsAPI } from '../../../lib/api'
 
-export default function LiveAuctionsPage() {
-  const [auctions, setAuctions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const searchParams = useSearchParams()
-  const highlightedId = searchParams?.get('highlight')
+import { auctionsAPI } from '../../../lib/api'
 
-  useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        setLoading(true)
-        const data = await listingsAPI.getAll({ listing_type: 'auction' })
-        setAuctions(Array.isArray(data) ? data : [])
-      } catch (err) {
-        setError('Unable to fetch live auctions right now. Please try again later.')
-      } finally {
-        setLoading(false)
-      }
-    }
+const formatCurrency = (value) => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return '—'
+  }
 
-    fetchAuctions()
-  }, [])
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(Number(value))
+}
 
-  const activeAuctions = useMemo(
-    () => auctions.filter((auction) => auction.listing_type === 'auction'),
-    [auctions]
-  )
+const getTimeRemaining = (endTime) => {
+  if (!endTime) return 'Time unavailable'
+  const end = new Date(endTime)
+  const now = new Date()
+  const diffMs = end.getTime() - now.getTime()
+
+  if (Number.isNaN(diffMs)) return 'Time unavailable'
+  if (diffMs <= 0) return 'Auction closed'
+
+  const diffMinutes = Math.floor(diffMs / 60000)
+  const days = Math.floor(diffMinutes / (60 * 24))
+  const hours = Math.floor((diffMinutes % (60 * 24)) / 60)
+  const minutes = diffMinutes % 60
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m`
+  }
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`
+  }
+  return `${minutes}m`
+}
+
+const AuctionCard = ({ auction, isHighlighted }) => {
+  const timeRemaining = getTimeRemaining(auction.end_time)
+  const progress = (() => {
+    const start = Number(auction.starting_bid) || 0
+    const current = Number(auction.current_highest_bid) || start
+    if (!start) return 0
+    const target = auction.buy_now_price ? Number(auction.buy_now_price) : start * 1.4
+    const value = Math.min(1, Math.max(0, (current - start) / (target - start)))
+    return Math.round(value * 100)
+  })()
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">Live Auction Marketplace</h1>
-          <p className="text-lg max-w-2xl">
-            Track real-time bidding activity across premium waste material lots. Submit competitive bids and
-            secure the resources your operations need before the timer runs out.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/listings" className="btn-secondary bg-white text-orange-600 hover:text-orange-700">
-              Back to Listings
-            </Link>
+    <div
+      id={`auction-${auction.listing_id}`}
+      className={[
+        'relative rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow',
+        'hover:shadow-lg',
+        isHighlighted ? 'ring-2 ring-primary-500 ring-offset-2' : '',
+      ].join(' ')}
+    >
+      {auction.featured && (
+        <div className="absolute left-4 top-4 rounded-full bg-primary-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+          Featured lot
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4 p-6 lg:flex-row lg:items-stretch">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm uppercase tracking-wide text-gray-500">Lot #{auction.id}</p>
+              <h2 className="text-xl font-semibold text-gray-900">{auction.listing_title || auction.material_name}</h2>
+              {auction.material_name && (
+                <p className="text-sm text-gray-600">{auction.material_name} • {auction.category}</p>
+              )}
+            </div>
+            <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-800">{timeRemaining}</span>
+          </div>
+
+          <div className="mt-4 grid gap-6 sm:grid-cols-3">
+            <div>
+              <p className="text-sm text-gray-500">Current highest bid</p>
+              <p className="text-lg font-bold text-gray-900">{formatCurrency(auction.current_highest_bid || auction.starting_bid)}</p>
+              <p className="text-xs text-gray-500">Starting bid {formatCurrency(auction.starting_bid)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Bid activity</p>
+              <p className="text-lg font-bold text-gray-900">{auction.bid_count || 0} bids</p>
+              <p className="text-xs text-gray-500">Watchers {auction.watchers || 0}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Lot size</p>
+              <p className="text-lg font-bold text-gray-900">
+                {auction.quantity} {auction.quantity_unit}
+              </p>
+              <p className="text-xs text-gray-500">Location: {auction.location}</p>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
+              <span>Progress toward reserve</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-gray-200">
+              <div
+                className="h-2 rounded-full bg-primary-500 transition-all"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-            <p className="mt-4 text-gray-600">Fetching live auctions...</p>
+        <div className="flex w-full flex-col justify-between rounded-lg bg-primary-50 p-5 lg:w-60">
+          <div>
+            <p className="text-sm font-semibold text-primary-900">Selling company</p>
+            <p className="text-sm text-primary-700">{auction.seller_company || 'Marketplace Seller'}</p>
+            {auction.seller_contact && (
+              <p className="mt-1 text-xs text-primary-600">{auction.seller_contact}</p>
+            )}
           </div>
-        ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">{error}</div>
-        ) : activeAuctions.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No live auctions at the moment</h2>
-            <p className="text-gray-600 mb-4">Check back soon for new opportunities or browse fixed-price listings.</p>
-            <Link href="/listings" className="btn-primary">
-              Browse Listings
+          <div className="mt-4 flex flex-col gap-2">
+            <Link
+              href={`/listing/${auction.listing_id}`}
+              className="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-700"
+            >
+              View listing details
             </Link>
+            {auction.buy_now_price && (
+              <div className="rounded-lg border border-primary-200 bg-white px-3 py-2 text-center text-xs text-primary-700">
+                Buy-now guidance {formatCurrency(auction.buy_now_price)}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {activeAuctions.map((auction) => {
-              const unitPrice = auction.price || auction.price_per_unit || 0
-              const syntheticCurrentBid = Number((unitPrice * 1.08).toFixed(2))
-              const syntheticBids = Math.max(auction.views || 0, 12)
-
-              return (
-                <div
-                  key={auction.id}
-                  className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border ${
-                    highlightedId && Number(highlightedId) === auction.id
-                      ? 'border-orange-500 ring-2 ring-orange-200'
-                      : 'border-transparent'
-                  }`}
-                >
-                  <div className="aspect-video bg-gradient-to-br from-orange-100 to-red-100 relative">
-                    {auction.images && auction.images.length > 0 ? (
-                      <img src={auction.images[0]} alt={auction.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl">🔥</div>
-                    )}
-                    <div className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-white/90 text-orange-600 shadow">
-                      Live Auction
-                    </div>
-                    <div className="absolute bottom-3 right-3 px-3 py-1 text-xs bg-black/60 text-white rounded-full">
-                      {syntheticBids} bids placed
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-1">{auction.title}</h2>
-                      <p className="text-sm text-gray-500">Material: {auction.material_name}</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
-                        <p className="font-medium text-gray-700">Current Bid</p>
-                        <p className="text-lg font-bold text-orange-600">₹{syntheticCurrentBid.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-700">Quantity</p>
-                        <p>{auction.quantity?.toLocaleString()} {auction.quantity_unit}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-700">Location</p>
-                        <p>📍 {auction.location}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-700">Seller</p>
-                        <p>{auction.seller_company || 'Verified Seller'}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">
-                        Ends in approximately {Math.max(1, (auction.views || 6) % 24)} hours
-                      </span>
-                      <Link href={`/listing/${auction.id}`} className="btn-primary text-sm">
-                        Place a Bid
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )
 }
 
+export default function LiveAuctionsPage() {
+  const [auctions, setAuctions] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const searchParams = useSearchParams()
+  const highlightParam = searchParams?.get('highlight')
+
+  useEffect(() => {
+    let mounted = true
+
+    const loadAuctions = async () => {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const data = await auctionsAPI.getActive()
+        if (!mounted) return
+        setAuctions(Array.isArray(data) ? data : [])
+      } catch (err) {
+        if (!mounted) return
+        const message = err?.response?.data?.detail || err?.message || 'Failed to load auctions'
+        setError(message)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+
+    loadAuctions()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!highlightParam) return
+    const targetId = `auction-${highlightParam}`
+    const el = document.getElementById(targetId)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlightParam, auctions])
+
+  const metrics = useMemo(() => {
+    if (!Array.isArray(auctions) || auctions.length === 0) {
+      return {
+        total: 0,
+        totalValue: 0,
+        avgBids: 0,
+        closingSoon: 0,
+      }
+    }
+
+    const total = auctions.length
+    const totalValue = auctions.reduce(
+      (sum, auction) => sum + Number(auction.current_highest_bid || auction.starting_bid || 0),
+      0
+    )
+    const avgBids = auctions.reduce((sum, auction) => sum + Number(auction.bid_count || 0), 0) / total
+    const closingSoon = auctions.filter((auction) => {
+      const time = auction.end_time ? new Date(auction.end_time).getTime() - Date.now() : 0
+      return time > 0 && time <= 1000 * 60 * 60 * 4
+    }).length
+
+    return {
+      total,
+      totalValue,
+      avgBids: Number.isFinite(avgBids) ? avgBids : 0,
+      closingSoon,
+    }
+  }, [auctions])
+
+  if (loading) {
+    return <div className="py-16 text-center text-gray-600">Loading live auctions…</div>
+  }
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Live Auctions</h1>
+          <p className="text-gray-600">
+            Track real-time bidding activity across the waste materials marketplace. Listings update as bids arrive.
+          </p>
+        </div>
+        <Link
+          href="/listings?focus=bids"
+          className="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-700"
+        >
+          Browse all auction listings
+        </Link>
+      </div>
+
+      {error && (
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+          <p className="font-semibold">Unable to load auctions</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-500">Active lots</p>
+          <p className="text-2xl font-bold text-gray-900">{metrics.total}</p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-500">Value on the block</p>
+          <p className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.totalValue)}</p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-500">Average bids</p>
+          <p className="text-2xl font-bold text-gray-900">{metrics.avgBids.toFixed(1)}</p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-500">Closing within 4h</p>
+          <p className="text-2xl font-bold text-gray-900">{metrics.closingSoon}</p>
+        </div>
+      </div>
+
+      {Array.isArray(auctions) && auctions.length > 0 ? (
+        <div className="grid gap-6">
+          {auctions.map((auction) => (
+            <AuctionCard
+              key={auction.id}
+              auction={auction}
+              isHighlighted={highlightParam && String(auction.listing_id) === String(highlightParam)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+          <h2 className="text-xl font-semibold text-gray-800">No active auctions right now</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Check back soon or explore marketplace listings to schedule the next auction lot.
+          </p>
+          <Link
+            href="/listings"
+            className="mt-4 inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-700"
+          >
+            Explore listings
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
 
