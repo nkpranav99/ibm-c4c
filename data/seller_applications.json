@@ -16,7 +16,8 @@
     "listing_price": 30.0,
     "listing_sale_type": "fixed_price",
     "listing_location": "Margao",
-    "listing_condition": "good",
+    "listing_condition": "used",
+    "listing_category_type": "raw_material",
     "status": "pending",
     "listing_id": 21,
     "listing_status": "pending",
@@ -29,7 +30,7 @@
       "quantity_unit": "tons",
       "price": 30.0,
       "location": "Margao",
-      "condition": "good"
+      "condition": "used"
     },
     "created_at": "2025-10-31T18:47:27.280675",
     "updated_at": null

@@ -89,6 +89,12 @@ export default function ListingsPage() {
 
   useEffect(() => {
     if (!searchParams) return
+    const tabParam = searchParams.get('tab')
+    if (tabParam === 'machinery') {
+      setActiveTab('machinery')
+    } else if (tabParam === 'materials') {
+      setActiveTab('materials')
+    }
     const focusParam = searchParams.get('focus') || ''
     const idsParam = searchParams.get('ids') || ''
     const extractedIds = idsParam
@@ -498,21 +504,29 @@ export default function ListingsPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
-            {listings.map((item) => {
+            {listings.map((item, index) => {
               const focusMatch = isFocusMatch(item)
               const highlightActive = highlightIdSet.size > 0
-              const cardBaseClasses = 'bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group'
+              const cardBaseClasses = 'bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-transparent'
               const focusClasses = focusMatch
                 ? ' bg-primary-100/80 border border-primary-200 shadow-lg'
                 : highlightActive
                   ? ' opacity-70'
                   : ''
 
+              const detailHref =
+                activeTab === 'materials'
+                  ? `/listing/${item.id}`
+                  : item?.id
+                    ? `/machinery/${encodeURIComponent(item.id)}`
+                    : '/listings?tab=machinery'
+
               return (
                 <Link
-                  key={item.id}
-                  href={activeTab === 'materials' ? `/listing/${item.id}` : '#'}
-                  className={`${cardBaseClasses}${focusClasses}`}
+                  key={item.id ?? item.title ?? index}
+                  href={detailHref}
+                  prefetch={false}
+                  className={`${cardBaseClasses}${focusClasses} ${activeTab === 'machinery' ? 'hover:border-purple-400' : ''}`}
                 >
                 {/* Image/Placeholder */}
                 <div className="aspect-video bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden">
