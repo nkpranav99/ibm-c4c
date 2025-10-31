@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { authAPI } from '../../lib/api'
+import { isMockAuthEnabled, registerMockUser } from '../../lib/mockAuth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -14,16 +15,38 @@ export default function SignupPage() {
     role: 'buyer',
   })
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const router = useRouter()
+  const useMockAuth = isMockAuthEnabled()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     
     try {
+      if (useMockAuth) {
+        registerMockUser(formData)
+        setSuccess('Account created successfully. You can now log in with your credentials.')
+        setTimeout(() => router.push('/login'), 800)
+        return
+      }
+
       await authAPI.register(formData)
       router.push('/login')
     } catch (err) {
+      if (!useMockAuth) {
+        try {
+          registerMockUser(formData)
+          setSuccess('Registration successful. You can now log in with your credentials.')
+          setTimeout(() => router.push('/login'), 800)
+          return
+        } catch (mockError) {
+          setError(mockError?.message || 'Registration failed. Please try again.')
+          return
+        }
+      }
+
       setError(err?.response?.data?.detail || 'Registration failed. Please try again.')
     }
   }
@@ -47,6 +70,11 @@ export default function SignupPage() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              {success}
             </div>
           )}
           

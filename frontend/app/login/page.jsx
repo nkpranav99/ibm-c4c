@@ -18,9 +18,9 @@ export default function LoginPage() {
     
     try {
       await login({ username: email, password })
-      router.push('/dashboard')
+      router.push('/')
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Login failed. Please try again.')
+      setError(err?.response?.data?.detail || err?.message || 'Login failed. Please try again.')
     }
   }
 

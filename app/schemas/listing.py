@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import datetime
 from app.models.listing import ListingType, ListingStatus
 
@@ -46,4 +46,18 @@ class ListingResponse(ListingBase):
 
     class Config:
         from_attributes = True
+
+
+class ListingSubmission(BaseModel):
+    title: str
+    material_name: str
+    category: str
+    quantity: float
+    unit: str
+    price_per_unit: float
+    sale_type: Literal['fixed_price', 'auction'] = 'fixed_price'
+    location: str
+    description: Optional[str] = None
+    seller_company: Optional[str] = None
+    images: Optional[List[str]] = []
 

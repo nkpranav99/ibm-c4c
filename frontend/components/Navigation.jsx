@@ -10,6 +10,9 @@ export default function Navigation() {
   const router = useRouter()
   const pathname = usePathname()
 
+  const displayName = user?.username || user?.email?.split('@')[0] || user?.email || 'Member'
+  const secondaryLine = user?.company_name && user?.company_name !== displayName ? user.company_name : null
+
   const handleLogout = () => {
     logout()
     router.push('/')
@@ -25,11 +28,14 @@ export default function Navigation() {
             </Link>
             {isAuthenticated && (
               <>
-                <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
-                  Browse Materials
-                </Link>
                 <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 transition">
                   Dashboard
+                </Link>
+                <Link href="/auctions/live" className="text-gray-700 hover:text-primary-600 transition">
+                  Live Auctions
+                </Link>
+                <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
+                  Browse Materials
                 </Link>
                 {user?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-primary-600 transition">
@@ -43,9 +49,10 @@ export default function Navigation() {
           <div className="flex items-center space-x-4">
             {isAuthenticated && pathname !== '/login' && pathname !== '/signup' ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  {user?.company_name || user?.username}
-                </span>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-700">{displayName}</p>
+                  {secondaryLine && <p className="text-xs text-gray-500">{secondaryLine}</p>}
+                </div>
                 <button
                   onClick={handleLogout}
                   className="btn-secondary text-sm px-4 py-2"
