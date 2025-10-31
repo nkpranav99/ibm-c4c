@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { dashboardAPI, machineryAPI, ordersAPI } from '../../lib/api'
+import { dashboardAPI, machineryAPI, ordersAPI, sellerAPI } from '../../lib/api'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [sellerListings, setSellerListings] = useState([])
   const [buyerOrderListingIds, setBuyerOrderListingIds] = useState([])
   const [buyerBidListingIds, setBuyerBidListingIds] = useState([])
+  const [sellerInsights, setSellerInsights] = useState(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -52,6 +53,14 @@ export default function DashboardPage() {
           setSellerListings(Array.isArray(sellerListingData) ? sellerListingData : [])
         } catch (err) {
           console.error('Failed to load seller listings for highlight:', err)
+        }
+
+        try {
+          const insightsData = data?.insights || (await sellerAPI.getInsights())
+          setSellerInsights(insightsData)
+        } catch (err) {
+          console.error('Failed to load seller insights:', err)
+          setSellerInsights(null)
         }
       }
 
@@ -110,6 +119,9 @@ export default function DashboardPage() {
   const conversionRate = summaryMetrics.conversion_rate_percentage ?? null
   const avgDaysToSell = summaryMetrics.avg_days_to_sell ?? null
   const repeatBuyerRate = summaryMetrics.repeat_buyer_rate_percentage ?? null
+
+  const sellerTotalItemsSold = sellerInsights?.total_items_sold ?? 0
+  const sellerTotalRevenue = sellerInsights?.total_revenue ?? totalRevenue
 
   const buyerActiveOrders = (orders.length > 0
     ? orders.filter((order) => ['pending', 'in_transit', 'confirmed', 'processing'].includes((order.status || '').toLowerCase())).length
@@ -174,16 +186,16 @@ export default function DashboardPage() {
           {/* Summary Metrics */}
           <div className="grid md:grid-cols-4 gap-6 mb-8">
             <div className="card bg-primary-50">
-              <p className="text-sm text-gray-600 mb-1">Total Listings</p>
-              <p className="text-3xl font-bold text-primary-600">{summaryMetrics.total_listings || stats?.total_listings || 0}</p>
+              <p className="text-sm text-gray-600 mb-1">Items Sold</p>
+              <p className="text-3xl font-bold text-primary-600">{sellerTotalItemsSold.toLocaleString()}</p>
             </div>
             <div className="card bg-green-50">
               <p className="text-sm text-gray-600 mb-1">Active Listings</p>
-              <p className="text-3xl font-bold text-green-600">{summaryMetrics.active_listings || stats?.active_listings || 0}</p>
+              <p className="text-3xl font-bold text-green-600">{sellerInsights?.total_listings ?? summaryMetrics.active_listings ?? stats?.active_listings ?? 0}</p>
             </div>
             <div className="card bg-blue-50">
               <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-              <p className="text-3xl font-bold text-blue-600">₹{totalRevenue.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-blue-600">₹{sellerTotalRevenue.toLocaleString()}</p>
             </div>
             <Link
               href={sellerOrdersLink}
@@ -245,6 +257,65 @@ export default function DashboardPage() {
                     Refresh Listings →
                   </Link>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {sellerInsights && sellerInsights.buyer_breakdown && sellerInsights.buyer_breakdown.length > 0 && (
+            <div className="card mb-8">
+              <h2 className="text-xl font-semibold mb-4">Top Buyers</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-2 text-left font-medium text-gray-600">Buyer</th>
+                      <th className="px-4 py-2 text-left font-medium text-gray-600">Orders</th>
+                      <th className="px-4 py-2 text-left font-medium text-gray-600">Quantity</th>
+                      <th className="px-4 py-2 text-left font-medium text-gray-600">Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {sellerInsights.buyer_breakdown.slice(0, 5).map((buyer) => (
+                      <tr key={buyer.buyer_id}>
+                        <td className="px-4 py-3">
+                          <div className="font-medium text-gray-900">{buyer.buyer_name || 'Unknown buyer'}</div>
+                          {buyer.buyer_company && (
+                            <div className="text-xs text-gray-500">{buyer.buyer_company}</div>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">{buyer.orders}</td>
+                        <td className="px-4 py-3 text-gray-700">{Number(buyer.total_quantity || 0).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-gray-700">₹{Number(buyer.total_spent || 0).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {sellerInsights && sellerInsights.listing_breakdown && sellerInsights.listing_breakdown.length > 0 && (
+            <div className="card mb-8">
+              <h2 className="text-xl font-semibold mb-4">Listing Performance</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                {sellerInsights.listing_breakdown.map((listing) => (
+                  <div key={listing.listing_id} className="border border-gray-100 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-900">{listing.title}</h3>
+                      <span className="text-xs uppercase text-gray-500">{listing.status}</span>
+                    </div>
+                    <div className="mt-3 text-sm text-gray-600">
+                      <p>Category: {listing.category_type || listing.listing_type || '—'}</p>
+                      <p>Orders: {listing.total_orders}</p>
+                      <p>
+                        Quantity sold: {Number(listing.quantity_sold || 0).toLocaleString()}
+                        {listing.quantity_unit ? ` ${listing.quantity_unit}` : ''}
+                      </p>
+                      <p>Revenue: ₹{Number(listing.revenue || 0).toLocaleString()}</p>
+                      <p>Condition: {listing.condition || '—'}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

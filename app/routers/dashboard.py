@@ -4,6 +4,8 @@ from app.config import settings
 import json
 from pathlib import Path
 
+from app.utils import mock_storage
+
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 
 
@@ -27,6 +29,18 @@ def get_seller_dashboard(current_user = Depends(get_mock_or_current_user)):
             data["analytics"] = master
         except Exception:
             pass
+
+    seller_id = current_user.get('id') if isinstance(current_user, dict) else None
+    if not seller_id:
+        seller_id = 1
+
+    insights = mock_storage.compute_seller_insights(seller_id)
+    data["insights"] = insights
+    if isinstance(data.get("analytics"), dict):
+        data["analytics"]["seller_insights"] = insights
+    else:
+        data["analytics"] = {"seller_insights": insights}
+
     return data
 
 

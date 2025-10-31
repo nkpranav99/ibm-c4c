@@ -6,7 +6,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
 
 # Import routers
-from app.routers import auth, listings, dashboard, chatbot
+from app.routers import auth, listings, dashboard, chatbot, seller
 
 # Import machinery router
 try:
@@ -75,6 +75,7 @@ app.include_router(auth.router)
 app.include_router(listings.router)
 app.include_router(dashboard.router)
 app.include_router(chatbot.router)
+app.include_router(seller.router)
 
 if INCLUDE_MACHINERY:
     app.include_router(machinery.router)

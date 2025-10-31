@@ -35,6 +35,8 @@ def format_listing(listing: dict) -> dict:
         "price": listing.get("price_per_unit"),
         "total_value": listing.get("total_value"),
         "listing_type": listing.get("sale_type"),
+        "sale_type": listing.get("sale_type"),
+        "category_type": listing.get("category_type", "raw_material"),
         "status": listing.get("status"),
         "location": listing.get("location"),
         "images": listing.get("images", []),
@@ -44,6 +46,7 @@ def format_listing(listing: dict) -> dict:
         "inquiries": listing.get("inquiries", 0),
         "availability_from": listing.get("availability_from", listing.get("date_posted")),
         "availability_to": listing.get("availability_to", "2026-12-31T00:00:00Z"),
+        "condition": listing.get("condition"),
     }
 
 

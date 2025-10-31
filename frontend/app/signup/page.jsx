@@ -113,28 +113,18 @@ export default function SignupPage() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700">Company Name</label>
+              <label className="block text-sm font-medium text-gray-700">Company Name (optional)</label>
               <input
                 type="text"
                 className="input-field mt-1"
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                placeholder="Your organisation"
               />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Role</label>
-              <select
-                className="input-field mt-1"
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              >
-                <option value="buyer">Buyer</option>
-                <option value="seller">Seller</option>
-              </select>
             </div>
           </div>
 
+          <input type="hidden" value={formData.role} readOnly />
           <div>
             <button type="submit" className="btn-primary w-full">
               Sign up
