@@ -72,9 +72,15 @@ export default function ListingDetailPage() {
       return
     }
 
+    const minimumQuantity = Math.max(1, listing?.min_order_quantity || 1)
     const quantity = parseFloat(orderQuantity)
-    if (!Number.isFinite(quantity) || quantity <= 0) {
-      setOrderMessage({ type: 'error', text: 'Please enter a valid quantity.' })
+    if (!Number.isFinite(quantity) || quantity < minimumQuantity) {
+      setOrderMessage({
+        type: 'error',
+        text: minimumQuantity > 1
+          ? `Please enter at least ${minimumQuantity} ${listing?.quantity_unit || 'units'}.`
+          : 'Please enter a valid quantity greater than zero.',
+      })
       return
     }
 
@@ -166,6 +172,7 @@ export default function ListingDetailPage() {
     return Number((fallback * 1.08).toFixed(2))
   }, [baseBid, unitPrice])
   const suggestedBid = computedCurrentBid ? (computedCurrentBid * 1.05).toFixed(2) : ''
+  const minimumQuantity = Math.max(1, listing?.min_order_quantity || 1)
 
   useEffect(() => {
     if (!bidAmount && suggestedBid) {
@@ -178,46 +185,73 @@ export default function ListingDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Left Column - Image and Description */}
-        <div>
-          <div className="aspect-video bg-primary-100 rounded-lg mb-4 overflow-hidden relative">
-            {listing.images && listing.images.length > 0 ? (
-              <img
-                src={listing.images[0]}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-6xl text-primary-500">
-                ♻️
+      <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] items-start">
+        {/* Left Column - Core Details */}
+        <div className="space-y-6">
+          <div className="card space-y-6">
+            <div className="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-primary-700">
+              {listing.category && (
+                <span className="px-2.5 py-1 bg-primary-100 rounded-full text-primary-700">{listing.category}</span>
+              )}
+              {listing.listing_type && (
+                <span className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  {listing.listing_type === 'auction' ? 'Auction Listing' : 'Fixed Price'}
+                </span>
+              )}
+              {listing.status && (
+                <span className="px-2.5 py-1 bg-green-100 text-green-700 rounded-full">{listing.status}</span>
+              )}
+            </div>
+
+            <div>
+              <h1 className="text-3xl font-bold mb-3 text-gray-900">{listing.title}</h1>
+              <p className="text-gray-600 leading-relaxed">{listing.description}</p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4 text-sm">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Material</p>
+                <p className="font-semibold text-gray-900">{listing.material_name}</p>
               </div>
-            )}
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Quantity</p>
+                <p className="font-semibold text-gray-900">{listing.quantity} {listing.quantity_unit}</p>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Location</p>
+                <p className="font-semibold text-gray-900">{listing.location}</p>
+              </div>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Availability</p>
+                <p className="font-semibold text-gray-900">
+                  {new Date(listing.availability_from).toLocaleDateString()} {listing.availability_to ? `– ${new Date(listing.availability_to).toLocaleDateString()}` : ''}
+                </p>
+              </div>
+            </div>
           </div>
+
           <div className="card">
-            <h1 className="text-3xl font-bold mb-4">{listing.title}</h1>
-            <p className="text-gray-600 mb-6">{listing.description}</p>
-            
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Material:</span>
-                <span className="font-semibold">{listing.material_name}</span>
+            <h3 className="font-semibold mb-4 text-gray-900">Pricing & Deal Structure</h3>
+            <div className="grid sm:grid-cols-2 gap-4 text-sm">
+              <div className="p-3 border border-gray-100 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Price / {listing.quantity_unit || 'unit'}</p>
+                <p className="text-lg font-bold text-primary-600">
+                  ₹{listing.price?.toLocaleString() || listing.price_per_unit?.toLocaleString() || '0'}
+                </p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Quantity:</span>
-                <span className="font-semibold">{listing.quantity} {listing.quantity_unit}</span>
+              <div className="p-3 border border-gray-100 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Total Lot Value</p>
+                <p className="text-lg font-bold text-primary-600">
+                  {listing.total_value ? `₹${listing.total_value.toLocaleString()}` : 'Reach out for quote'}
+                </p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Location:</span>
-                <span className="font-semibold">{listing.location}</span>
+              <div className="p-3 border border-gray-100 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Minimum Order</p>
+                <p className="font-semibold text-gray-900">{listing.min_order_quantity ? `${listing.min_order_quantity} ${listing.quantity_unit}` : 'Flexible'}</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Available from:</span>
-                <span className="font-semibold">{new Date(listing.availability_from).toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Available to:</span>
-                <span className="font-semibold">{new Date(listing.availability_to).toLocaleDateString()}</span>
+              <div className="p-3 border border-gray-100 rounded-lg">
+                <p className="text-gray-500 uppercase text-xs">Payment Terms</p>
+                <p className="font-semibold text-gray-900">{listing.payment_terms || 'On agreement'}</p>
               </div>
             </div>
           </div>
@@ -258,7 +292,27 @@ export default function ListingDetailPage() {
                   className="input-field mb-4"
                   placeholder="Enter quantity"
                   value={orderQuantity}
-                  onChange={(e) => setOrderQuantity(e.target.value)}
+                  min={minimumQuantity}
+                  step="any"
+                  onChange={(e) => {
+                    const { value } = e.target
+                    if (value === '') {
+                      setOrderQuantity('')
+                      return
+                    }
+
+                    const parsed = parseFloat(value)
+                    if (!Number.isFinite(parsed)) {
+                      return
+                    }
+
+                    if (parsed < minimumQuantity) {
+                      setOrderQuantity(String(minimumQuantity))
+                      return
+                    }
+
+                    setOrderQuantity(value)
+                  }}
                 />
                 {estimatedOrderTotal !== null && estimatedOrderTotal > 0 && (
                   <p className="text-sm text-gray-600 mb-4">
@@ -323,28 +377,6 @@ export default function ListingDetailPage() {
                 )}
               </div>
             )}
-          </div>
-
-
-          {/* Pricing Details */}
-          <div className="card">
-            <h3 className="font-semibold mb-3">Pricing & Details</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Price per Unit:</span>
-                <span className="font-semibold">₹{listing.price?.toLocaleString() || listing.price_per_unit?.toLocaleString() || '0'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Available Quantity:</span>
-                <span className="font-semibold">{listing.quantity?.toLocaleString()} {listing.quantity_unit}</span>
-              </div>
-              {listing.total_value && (
-                <div className="flex justify-between pt-2 border-t">
-                  <span className="text-gray-900 font-semibold">Total Lot Value:</span>
-                  <span className="font-bold text-primary-600 text-lg">₹{listing.total_value.toLocaleString()}</span>
-                </div>
-              )}
-            </div>
           </div>
 
           {listing.seller_company && (

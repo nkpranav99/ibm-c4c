@@ -59,6 +59,21 @@ export default function DashboardPage() {
   const popularMaterials = analytics?.popular_materials || []
   const environmentalImpact = analytics?.environmental_impact || {}
 
+  const totalRevenue = summaryMetrics.total_revenue_inr ?? stats?.total_sales ?? 0
+  const activeOrdersCount = (orders.length > 0
+    ? orders.filter((order) => ['pending', 'in_transit', 'confirmed', 'processing'].includes((order.status || '').toLowerCase())).length
+    : stats?.pending_orders ?? 0)
+  const activeBidsCount = summaryMetrics.active_auctions ?? stats?.active_auctions ?? 0
+  const avgListingValue = summaryMetrics.avg_listing_value_inr ?? 0
+  const conversionRate = summaryMetrics.conversion_rate_percentage ?? null
+  const avgDaysToSell = summaryMetrics.avg_days_to_sell ?? null
+  const repeatBuyerRate = summaryMetrics.repeat_buyer_rate_percentage ?? null
+
+  const buyerActiveOrders = (orders.length > 0
+    ? orders.filter((order) => ['pending', 'in_transit', 'confirmed', 'processing'].includes((order.status || '').toLowerCase())).length
+    : stats?.pending_orders ?? stats?.active_orders ?? 0)
+  const buyerActiveBids = stats?.active_bids ?? activeBidsCount
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
@@ -77,13 +92,71 @@ export default function DashboardPage() {
             </div>
             <div className="card bg-blue-50">
               <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-              <p className="text-3xl font-bold text-blue-600">₹{(summaryMetrics.total_revenue_inr || stats?.total_sales || 0).toLocaleString()}</p>
+              <p className="text-3xl font-bold text-blue-600">₹{totalRevenue.toLocaleString()}</p>
             </div>
-            <div className="card bg-yellow-50">
-              <p className="text-sm text-gray-600 mb-1">Pending Orders</p>
-              <p className="text-3xl font-bold text-yellow-600">{stats?.pending_orders || 0}</p>
+            <Link
+              href="/listings?focus=orders"
+              className="card bg-yellow-50 hover:shadow-lg transition-shadow"
+            >
+              <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
+                <span>Active Orders</span>
+                <span className="text-xs text-yellow-700">View listings →</span>
+              </p>
+              <p className="text-3xl font-bold text-yellow-600">{activeOrdersCount}</p>
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
+            <Link
+              href="/listings?focus=bids"
+              className="card bg-purple-50 hover:shadow-lg transition-shadow"
+            >
+              <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
+                <span>Active Bids</span>
+                <span className="text-xs text-purple-700">Track auctions →</span>
+              </p>
+              <p className="text-3xl font-bold text-purple-600">{activeBidsCount}</p>
+            </Link>
+            <div className="card bg-indigo-50">
+              <p className="text-sm text-gray-600 mb-1">Avg Listing Value</p>
+              <p className="text-3xl font-bold text-indigo-600">₹{avgListingValue.toLocaleString()}</p>
+            </div>
+            <div className="card bg-teal-50">
+              <p className="text-sm text-gray-600 mb-1">Conversion Rate</p>
+              <p className="text-3xl font-bold text-teal-600">{conversionRate !== null ? `${conversionRate.toFixed(1)}%` : '—'}</p>
+            </div>
+            <div className="card bg-rose-50">
+              <p className="text-sm text-gray-600 mb-1">Avg Days to Sell</p>
+              <p className="text-3xl font-bold text-rose-600">{avgDaysToSell !== null ? avgDaysToSell : '—'}</p>
             </div>
           </div>
+
+          {repeatBuyerRate !== null && (
+            <div className="card mb-8 bg-sky-50 border border-sky-100">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold text-sky-900">Customer Loyalty Snapshot</h2>
+                  <p className="text-sm text-sky-700">Monitor how repeat buyers respond to your marketplace presence.</p>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-center">
+                    <p className="text-sm text-sky-600">Repeat Buyer Rate</p>
+                    <p className="text-3xl font-bold text-sky-900">{repeatBuyerRate.toFixed(1)}%</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-sky-600">Active Listings</p>
+                    <p className="text-3xl font-bold text-sky-900">{summaryMetrics.active_listings || stats?.active_listings || 0}</p>
+                  </div>
+                  <Link
+                    href="/listings"
+                    className="inline-flex items-center px-4 py-2 text-sm font-semibold text-sky-800 bg-white border border-sky-200 rounded-lg hover:bg-sky-100 transition"
+                  >
+                    Refresh Listings →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Recent Listings from Master Data */}
           <div className="card mb-6">
@@ -210,27 +283,27 @@ export default function DashboardPage() {
       ) : (
         <div>
           {/* Buyer Dashboard Metrics */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <div className="card bg-primary-50">
-              <p className="text-sm text-gray-600 mb-1">Total Orders</p>
-              <p className="text-3xl font-bold text-primary-600">{stats?.total_orders || orders.length || 0}</p>
-            </div>
-            <div className="card bg-green-50">
-              <p className="text-sm text-gray-600 mb-1">Completed</p>
-              <p className="text-3xl font-bold text-green-600">
-                {orders.filter(o => o.status === 'completed' || o.status === 'delivered').length || stats?.completed_orders || 0}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <Link
+              href="/listings?focus=orders"
+              className="card bg-primary-50 hover:shadow-lg transition-shadow"
+            >
+              <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
+                <span>Active Orders</span>
+                <span className="text-xs text-primary-700">Review listings →</span>
               </p>
-            </div>
-            <div className="card bg-blue-50">
-              <p className="text-sm text-gray-600 mb-1">Total Spent</p>
-              <p className="text-3xl font-bold text-blue-600">
-                ₹{((stats?.total_spent || orders.reduce((sum, o) => sum + (o.total_price || o.total_amount || 0), 0))).toLocaleString()}
+              <p className="text-3xl font-bold text-primary-600">{buyerActiveOrders}</p>
+            </Link>
+            <Link
+              href="/listings?focus=bids"
+              className="card bg-yellow-50 hover:shadow-lg transition-shadow"
+            >
+              <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
+                <span>Active Bids</span>
+                <span className="text-xs text-yellow-700">Track auctions →</span>
               </p>
-            </div>
-            <div className="card bg-yellow-50">
-              <p className="text-sm text-gray-600 mb-1">Active Bids</p>
-              <p className="text-3xl font-bold text-yellow-600">{stats?.active_bids || 0}</p>
-            </div>
+              <p className="text-3xl font-bold text-yellow-600">{buyerActiveBids}</p>
+            </Link>
           </div>
 
           {/* Recent Orders from Master Data */}

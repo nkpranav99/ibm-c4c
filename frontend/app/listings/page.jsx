@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { listingsAPI, machineryAPI } from '../../lib/api'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const categories = [
   'All Categories',
@@ -52,7 +53,10 @@ export default function ListingsPage() {
   const [category, setCategory] = useState('')
   const [listingType, setListingType] = useState('')
   const [activeTab, setActiveTab] = useState('materials') // 'materials' or 'machinery'
-  const [showAllButton, setShowAllButton] = useState(false)
+  const [focusContext, setFocusContext] = useState('')
+  const focusAppliedRef = useRef('')
+  const searchParams = useSearchParams()
+  const router = useRouter()
   
   // Machinery-specific filters
   const [machineCategory, setMachineCategory] = useState('')
@@ -74,6 +78,36 @@ export default function ListingsPage() {
     }
   }, [search, location, material, category, listingType, activeTab, 
       machineCategory, machineCondition, machineBrand, machineType, minPrice, maxPrice])
+
+  useEffect(() => {
+    if (!searchParams) return
+    const focusParam = searchParams.get('focus') || ''
+
+    if (!focusParam || focusAppliedRef.current === focusParam) {
+      if (!focusParam && focusContext) {
+        focusAppliedRef.current = ''
+        setFocusContext('')
+      }
+      return
+    }
+
+    focusAppliedRef.current = focusParam
+    setFocusContext(focusParam)
+    setActiveTab('materials')
+
+    if (focusParam === 'bids') {
+      setListingType('auction')
+    } else if (focusParam === 'orders') {
+      setListingType('fixed_price')
+    }
+  }, [searchParams, focusContext])
+
+  const handleClearFocus = () => {
+    focusAppliedRef.current = ''
+    setFocusContext('')
+    setListingType('')
+    router.replace('/listings', { scroll: false })
+  }
 
   const loadListings = async () => {
     try {
@@ -208,6 +242,23 @@ export default function ListingsPage() {
             </button>
           </div>
         </div>
+
+        {focusContext && (
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg border border-primary-100 bg-primary-50 px-4 py-3 text-primary-800">
+            <p className="text-sm font-medium">
+              {focusContext === 'bids'
+                ? 'Showing auction listings so you can track materials tied to your active bids.'
+                : 'Highlighting material listings aligned with your active orders.'}
+            </p>
+            <button
+              type="button"
+              onClick={handleClearFocus}
+              className="text-sm font-semibold text-primary-700 hover:underline"
+            >
+              Clear focus
+            </button>
+          </div>
+        )}
 
         {/* Enhanced Filters - Only show for materials tab */}
         {activeTab === 'materials' && (
