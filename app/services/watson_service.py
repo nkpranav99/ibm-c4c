@@ -25,9 +25,40 @@ class WatsonHybridService:
     def __init__(self):
         # Watson Orchestrate Configuration
         self.orchestrate_api_key = settings.WATSON_API_KEY
-        self.orchestrate_host = settings.WATSON_HOST_URL
         self.orchestrate_agent_id = settings.WATSON_AGENT_ID
         self.orchestrate_enabled = settings.WATSON_ENABLED
+        
+        # Store instance ID for later use
+        self.orchestrate_instance_id = settings.WATSON_INSTANCE_ID
+        
+        # Construct base URL from instance ID if provided
+        # Format: https://api.{region}.watson-orchestrate.cloud.ibm.com/instances/{instance_id}
+        if settings.WATSON_INSTANCE_ID:
+            # Determine base API URL
+            base_api_url = None
+            if settings.WATSON_HOST_URL:
+                if "/instances/" in settings.WATSON_HOST_URL:
+                    # Extract base from full URL: "https://api.au-syd.watson-orchestrate.cloud.ibm.com/instances/xxx" 
+                    # -> "https://api.au-syd.watson-orchestrate.cloud.ibm.com"
+                    base_api_url = settings.WATSON_HOST_URL.split("/instances/")[0]
+                else:
+                    # WATSON_HOST_URL is just the base URL (without /instances/)
+                    base_api_url = settings.WATSON_HOST_URL.rstrip("/")
+            
+            # Use default if base not found
+            if not base_api_url:
+                base_api_url = "https://api.au-syd.watson-orchestrate.cloud.ibm.com"
+            
+            self.orchestrate_base_url = base_api_url
+            # Construct full URL with instance ID
+            self.orchestrate_host = f"{base_api_url}/instances/{settings.WATSON_INSTANCE_ID}"
+        else:
+            # Fallback to WATSON_HOST_URL if instance_id not provided
+            if settings.WATSON_HOST_URL and "/instances/" in settings.WATSON_HOST_URL:
+                self.orchestrate_base_url = settings.WATSON_HOST_URL.split("/instances/")[0]
+            else:
+                self.orchestrate_base_url = settings.WATSON_HOST_URL or "https://api.au-syd.watson-orchestrate.cloud.ibm.com"
+            self.orchestrate_host = settings.WATSON_HOST_URL or "https://api.au-syd.watson-orchestrate.cloud.ibm.com"
         
         # Watsonx.ai Configuration
         self.watsonx_api_key = settings.WATSONX_API_KEY
@@ -38,18 +69,30 @@ class WatsonHybridService:
         
         logger.info("Watson Hybrid Service initialized")
         logger.info(f"  - Orchestrate enabled: {self.orchestrate_enabled}")
+        logger.info(f"  - Orchestrate host: {self.orchestrate_host}")
+        logger.info(f"  - Orchestrate instance ID: {settings.WATSON_INSTANCE_ID}")
         logger.info(f"  - Watsonx enabled: {self.watsonx_enabled}")
         
         # System prompt for watsonx
         self.general_prompt = """You are a helpful assistant for a waste material marketplace.
-Help users with general questions about the platform, buying, selling, auctions, and marketplace features.
-Keep responses friendly, concise, and helpful."""
+        Help users with general questions about the platform, buying, selling, auctions, and marketplace features.
+        Keep responses friendly, concise, and helpful."""
     
-    def get_iam_token(self) -> Optional[str]:
-        """Get IAM token for IBM Cloud authentication"""
-        # Use orchestrate API key if available, otherwise watsonx
-        api_key = self.orchestrate_api_key or self.watsonx_api_key
+    def get_iam_token(self, service: str = "orchestrate") -> Optional[str]:
+        """Get IAM token for IBM Cloud authentication
+        
+        Args:
+            service: 'orchestrate' or 'watsonx' - determines which API key to use
+        """
+        # Use the appropriate API key for each service
+        # This is critical - each service needs its own API key with proper permissions
+        if service == "watsonx":
+            api_key = self.watsonx_api_key
+        else:
+            api_key = self.orchestrate_api_key
+        
         if not api_key:
+            logger.warning(f"⚠️  No API key configured for {service}")
             return None
         
         try:
@@ -61,10 +104,10 @@ Keep responses friendly, concise, and helpful."""
             response = requests.post(url, data=data, timeout=10)
             if response.status_code == 200:
                 return response.json()["access_token"]
-            logger.error(f"Failed to get IAM token: {response.status_code}")
+            logger.error(f"Failed to get IAM token for {service}: {response.status_code} - {response.text[:200]}")
             return None
         except Exception as e:
-            logger.error(f"Error getting IAM token: {e}")
+            logger.error(f"Error getting IAM token for {service}: {e}")
             return None
     
     def is_data_query(self, message: str) -> bool:
@@ -94,18 +137,24 @@ Keep responses friendly, concise, and helpful."""
         try:
             logger.info("🤖 Calling Watson Orchestrate Agent")
             
-            # Try the wxochat endpoint with correct payload format
-            endpoint = f"{self.orchestrate_host}/wxochat/api/v1/chat"
             headers = {
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             }
             
+            # Use the correct endpoint from working curl command
+            # Format: /instances/{instance_id}/v1/orchestrate/runs/stream (note: /v1/ not /api/v1/)
+            endpoint = f"{self.orchestrate_host}/v1/orchestrate/runs/stream"
+            
+            # Use the working payload format from curl command
             payload = {
-                "agentId": self.orchestrate_agent_id,
-                "input": {
-                    "text": message
-                }
+                "message": {
+                    "role": "human",
+                    "content": message
+                },
+                "agent_id": self.orchestrate_agent_id,
+                "additional_parameters": {},
+                "context": {}
             }
             
             logger.info(f"📡 Endpoint: {endpoint}")
@@ -116,18 +165,70 @@ Keep responses friendly, concise, and helpful."""
             logger.info(f"📥 Response status: {response.status_code}")
             
             if response.status_code == 200:
-                result = response.json()
-                logger.info(f"📥 Response data: {json.dumps(result, indent=2)[:500]}")
-                # Extract response text from agent
-                if isinstance(result, dict):
-                    return result.get("output", {}).get("text") or str(result)
-                return str(result)
-            elif response.status_code == 404:
-                logger.warning("⚠️  Orchestrate agent not found (404) - agent may not be deployed")
+                # Handle streaming JSON lines response (NDJSON format)
+                # Each line is a JSON object representing an event
+                accumulated_text = ""
+                final_message = None
+                
+                try:
+                    # Read streaming response line by line
+                    for line in response.iter_lines():
+                        if not line:
+                            continue
+                        
+                        try:
+                            event = json.loads(line.decode('utf-8'))
+                            event_type = event.get("event", "")
+                            event_data = event.get("data", {})
+                            
+                            # Handle message.delta events - accumulate text chunks
+                            if event_type == "message.delta":
+                                delta = event_data.get("delta", {})
+                                content = delta.get("content", [])
+                                if content and isinstance(content, list) and len(content) > 0:
+                                    text_chunk = content[0].get("text", "")
+                                    if text_chunk:
+                                        accumulated_text += text_chunk
+                            
+                            # Handle message.created event - contains final complete message
+                            elif event_type == "message.created":
+                                message = event_data.get("message", {})
+                                content = message.get("content", [])
+                                if content and isinstance(content, list) and len(content) > 0:
+                                    # Extract text from content array
+                                    for content_item in content:
+                                        if isinstance(content_item, dict):
+                                            text = content_item.get("text", "")
+                                            if text:
+                                                final_message = text
+                                                break
+                            
+                            # Check for completion
+                            elif event_type == "done":
+                                break
+                                
+                        except json.JSONDecodeError:
+                            logger.warning(f"⚠️  Failed to parse JSON line: {line[:100] if line else 'empty'}")
+                            continue
+                    
+                    # Return final message if available, otherwise accumulated text
+                    if final_message:
+                        logger.info(f"✅ Success with Orchestrate Agent (final message)")
+                        return final_message
+                    elif accumulated_text:
+                        logger.info(f"✅ Success with Orchestrate Agent (accumulated text)")
+                        return accumulated_text
+                    else:
+                        logger.warning("⚠️  No message content found in stream")
+                        return None
+                except Exception as stream_error:
+                    logger.error(f"Error processing stream: {stream_error}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+                    return None
             else:
                 logger.warning(f"⚠️  Orchestrate returned {response.status_code}: {response.text[:200]}")
-            
-            return None
+                return None
         except Exception as e:
             logger.error(f"Error calling Orchestrate agent: {e}")
             import traceback
@@ -192,7 +293,7 @@ Keep responses friendly, concise, and helpful."""
             logger.info(f"📡 Watsonx Endpoint: {endpoint}")
             logger.info(f"📦 Watsonx Payload (prompt preview): {full_prompt[:200]}...")
             
-            response = requests.post(endpoint, headers=headers, json=payload, params=params, timeout=30)
+            response = requests.post(endpoint, headers=headers, json=payload, params=params, timeout=10)
             
             logger.info(f"📥 Watsonx Response status: {response.status_code}")
             
@@ -202,6 +303,13 @@ Keep responses friendly, concise, and helpful."""
                 # Extract generated text from response
                 if "results" in result and len(result["results"]) > 0:
                     return result["results"][0].get("generated_text", "")
+            elif response.status_code == 403:
+                # 403 usually means service ID doesn't have access to the project
+                error_text = response.text
+                logger.error(f"❌ Watsonx authorization failed (403)")
+                logger.error(f"   Full error: {error_text}")
+                logger.error(f"   💡 This usually means the API key's service ID is not a member of the watsonx project.")
+                logger.error(f"   💡 Solution: Add the service ID to your watsonx project members in IBM Cloud.")
             else:
                 logger.warning(f"⚠️  Watsonx returned {response.status_code}: {response.text[:200]}")
             
@@ -224,15 +332,9 @@ Keep responses friendly, concise, and helpful."""
         2. Otherwise → Use Watsonx
         3. Fallback to rules if both fail
         """
-        logger.info("=" * 60)
+        logger.info("=" * 30)
         logger.info("🤖 Watson Hybrid Service")
         logger.info(f"📝 Message: {message[:100]}...")
-        
-        # Get authentication token
-        token = self.get_iam_token()
-        if not token:
-            logger.warning("⚠️  Could not get authentication token")
-            return None
         
         # Determine query type
         is_data_query = self.is_data_query(message)
@@ -241,20 +343,30 @@ Keep responses friendly, concise, and helpful."""
         # Try Orchestrate Agent for data queries
         if is_data_query and self.orchestrate_enabled:
             logger.info("🔍 Trying Watson Orchestrate Agent first...")
-            response = self.call_orchestrate_agent(message, token)
-            if response:
-                logger.info("✅ Got response from Orchestrate Agent")
-                return response
-            logger.info("⚠️  Orchestrate failed, falling back...")
+            # Get token using orchestrate API key
+            token = self.get_iam_token(service="orchestrate")
+            if token:
+                response = self.call_orchestrate_agent(message, token)
+                if response:
+                    logger.info("✅ Got response from Orchestrate Agent")
+                    return response
+                logger.info("⚠️  Orchestrate failed, falling back...")
+            else:
+                logger.warning("⚠️  Could not get authentication token for Orchestrate")
         
         # Try Watsonx for general queries or fallback
         if self.watsonx_enabled:
             logger.info("🔍 Trying Watsonx.ai...")
-            response = self.call_watsonx(message, conversation_history or [], context_data, token)
-            if response:
-                logger.info("✅ Got response from Watsonx")
-                return response
-            logger.info("⚠️  Watsonx failed")
+            # Get token using watsonx API key (CRITICAL: must use watsonx API key, not orchestrate)
+            token = self.get_iam_token(service="watsonx")
+            if token:
+                response = self.call_watsonx(message, conversation_history or [], context_data, token)
+                if response:
+                    logger.info("✅ Got response from Watsonx")
+                    return response
+                logger.info("⚠️  Watsonx failed")
+            else:
+                logger.warning("⚠️  Could not get authentication token for Watsonx")
         
         # Both failed
         logger.warning("❌ Both services failed")

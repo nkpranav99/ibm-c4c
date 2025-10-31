@@ -27,7 +27,8 @@ class Settings(BaseSettings):
     
     # Watson Orchestrate Configuration
     WATSON_API_KEY: Optional[str] = None
-    WATSON_HOST_URL: Optional[str] = None
+    WATSON_INSTANCE_ID: Optional[str] = None  # Instance ID - will be appended to base URL
+    WATSON_HOST_URL: Optional[str] = "https://api.au-syd.watson-orchestrate.cloud.ibm.com"  # Base API URL (without /instances/)
     WATSON_AGENT_ID: Optional[str] = None
     WATSON_ENABLED: bool = False
     
