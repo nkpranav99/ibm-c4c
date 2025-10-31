@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { dashboardAPI, machineryAPI } from '../../lib/api'
+import { dashboardAPI, machineryAPI, ordersAPI } from '../../lib/api'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -13,6 +13,9 @@ export default function DashboardPage() {
   const [analytics, setAnalytics] = useState(null)
   const [machineryStats, setMachineryStats] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [sellerListings, setSellerListings] = useState([])
+  const [buyerOrderListingIds, setBuyerOrderListingIds] = useState([])
+  const [buyerBidListingIds, setBuyerBidListingIds] = useState([])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -42,6 +45,45 @@ export default function DashboardPage() {
       // Load machinery stats
       const machineryData = await machineryAPI.getStats()
       setMachineryStats(machineryData)
+
+      if (user?.role === 'seller') {
+        try {
+          const sellerListingData = await dashboardAPI.getSellerListings()
+          setSellerListings(Array.isArray(sellerListingData) ? sellerListingData : [])
+        } catch (err) {
+          console.error('Failed to load seller listings for highlight:', err)
+        }
+      }
+
+      if (user?.role === 'buyer') {
+        try {
+          const orderData = await ordersAPI.getAll()
+          setBuyerOrderListingIds(
+            Array.isArray(orderData)
+              ? orderData
+                  .map((order) => order?.listing_id)
+                  .filter((id) => id !== null && id !== undefined)
+                  .map((id) => id.toString())
+              : []
+          )
+        } catch (err) {
+          console.error('Failed to load buyer orders for highlight:', err)
+        }
+
+        try {
+          const bidData = await dashboardAPI.getMyBids()
+          setBuyerBidListingIds(
+            Array.isArray(bidData)
+              ? bidData
+                  .map((bid) => bid?.listing_id)
+                  .filter((id) => id !== null && id !== undefined)
+                  .map((id) => id.toString())
+              : []
+          )
+        } catch (err) {
+          console.error('Failed to load buyer bids for highlight:', err)
+        }
+      }
     } catch (error) {
       console.error('Failed to load dashboard:', error)
     } finally {
@@ -74,6 +116,55 @@ export default function DashboardPage() {
     : stats?.pending_orders ?? stats?.active_orders ?? 0)
   const buyerActiveBids = stats?.active_bids ?? activeBidsCount
 
+  const resolvedSellerSource = Array.isArray(sellerListings) && sellerListings.length > 0
+    ? sellerListings
+    : Array.isArray(stats?.recent_listings)
+      ? stats.recent_listings
+      : []
+
+  const sellerOrderHighlightIds = user?.role === 'seller'
+    ? resolvedSellerSource
+        .filter((listing) => {
+          if (!listing) return false
+          const status = (listing.status || '').toLowerCase()
+          const type = (listing.listing_type || listing.sale_type || '').toLowerCase()
+          if (!['active', 'pending', 'in_transit'].includes(status)) return false
+          return type !== 'auction'
+        })
+        .map((listing) => listing.id?.toString())
+        .filter(Boolean)
+    : []
+
+  const sellerBidHighlightIds = user?.role === 'seller'
+    ? resolvedSellerSource
+        .filter((listing) => {
+          if (!listing) return false
+          const type = (listing.listing_type || listing.sale_type || '').toLowerCase()
+          return type === 'auction'
+        })
+        .map((listing) => listing.id?.toString())
+        .filter(Boolean)
+    : []
+
+  const buyerOrderHighlightIdsMemo = user?.role === 'buyer' ? buyerOrderListingIds : []
+  const buyerBidHighlightIdsMemo = user?.role === 'buyer' ? buyerBidListingIds : []
+
+  const sellerOrdersLink = sellerOrderHighlightIds.length > 0
+    ? `/listings?focus=orders&ids=${encodeURIComponent(sellerOrderHighlightIds.join(','))}`
+    : '/listings?focus=orders'
+
+  const sellerBidsLink = sellerBidHighlightIds.length > 0
+    ? `/listings?focus=bids&ids=${encodeURIComponent(sellerBidHighlightIds.join(','))}`
+    : '/listings?focus=bids'
+
+  const buyerOrdersLink = buyerOrderHighlightIdsMemo.length > 0
+    ? `/listings?focus=orders&ids=${encodeURIComponent(buyerOrderHighlightIdsMemo.join(','))}`
+    : '/listings?focus=orders'
+
+  const buyerBidsLink = buyerBidHighlightIdsMemo.length > 0
+    ? `/listings?focus=bids&ids=${encodeURIComponent(buyerBidHighlightIdsMemo.join(','))}`
+    : '/listings?focus=bids'
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
@@ -95,7 +186,7 @@ export default function DashboardPage() {
               <p className="text-3xl font-bold text-blue-600">₹{totalRevenue.toLocaleString()}</p>
             </div>
             <Link
-              href="/listings?focus=orders"
+              href={sellerOrdersLink}
               className="card bg-yellow-50 hover:shadow-lg transition-shadow"
             >
               <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
@@ -108,7 +199,7 @@ export default function DashboardPage() {
 
           <div className="grid md:grid-cols-4 gap-6 mb-8">
             <Link
-              href="/listings?focus=bids"
+              href={sellerBidsLink}
               className="card bg-purple-50 hover:shadow-lg transition-shadow"
             >
               <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
@@ -285,7 +376,7 @@ export default function DashboardPage() {
           {/* Buyer Dashboard Metrics */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <Link
-              href="/listings?focus=orders"
+              href={buyerOrdersLink}
               className="card bg-primary-50 hover:shadow-lg transition-shadow"
             >
               <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">
@@ -295,7 +386,7 @@ export default function DashboardPage() {
               <p className="text-3xl font-bold text-primary-600">{buyerActiveOrders}</p>
             </Link>
             <Link
-              href="/listings?focus=bids"
+              href={buyerBidsLink}
               className="card bg-yellow-50 hover:shadow-lg transition-shadow"
             >
               <p className="text-sm text-gray-600 mb-1 flex items-center justify-between">

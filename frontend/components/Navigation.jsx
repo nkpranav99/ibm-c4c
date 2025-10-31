@@ -37,6 +37,11 @@ export default function Navigation() {
                 <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
                   Browse Materials
                 </Link>
+                {user?.role === 'buyer' && (
+                  <Link href="/orders/history" className="text-gray-700 hover:text-primary-600 transition">
+                    Order History
+                  </Link>
+                )}
                 {user?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-primary-600 transition">
                     Admin Panel

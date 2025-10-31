@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { listingsAPI, machineryAPI } from '../../lib/api'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -54,10 +54,18 @@ export default function ListingsPage() {
   const [listingType, setListingType] = useState('')
   const [activeTab, setActiveTab] = useState('materials') // 'materials' or 'machinery'
   const [focusContext, setFocusContext] = useState('')
+  const [highlightIds, setHighlightIds] = useState([])
   const focusAppliedRef = useRef('')
   const searchParams = useSearchParams()
   const router = useRouter()
   
+  const highlightIdSet = useMemo(() => new Set(highlightIds.map((id) => id.toString())), [highlightIds])
+
+  const isFocusMatch = (item) => {
+    if (!focusContext || activeTab !== 'materials' || highlightIdSet.size === 0) return false
+    return highlightIdSet.has(item.id?.toString())
+  }
+
   // Machinery-specific filters
   const [machineCategory, setMachineCategory] = useState('')
   const [machineCondition, setMachineCondition] = useState('')
@@ -82,11 +90,18 @@ export default function ListingsPage() {
   useEffect(() => {
     if (!searchParams) return
     const focusParam = searchParams.get('focus') || ''
+    const idsParam = searchParams.get('ids') || ''
+    const extractedIds = idsParam
+      .split(',')
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+    setHighlightIds(extractedIds)
 
     if (!focusParam || focusAppliedRef.current === focusParam) {
       if (!focusParam && focusContext) {
         focusAppliedRef.current = ''
         setFocusContext('')
+        setHighlightIds([])
       }
       return
     }
@@ -106,6 +121,7 @@ export default function ListingsPage() {
     focusAppliedRef.current = ''
     setFocusContext('')
     setListingType('')
+    setHighlightIds([])
     router.replace('/listings', { scroll: false })
   }
 
@@ -482,12 +498,22 @@ export default function ListingsPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
-            {listings.map((item) => (
-              <Link
-                key={item.id}
-                href={activeTab === 'materials' ? `/listing/${item.id}` : '#'}
-                className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
-              >
+            {listings.map((item) => {
+              const focusMatch = isFocusMatch(item)
+              const highlightActive = highlightIdSet.size > 0
+              const cardBaseClasses = 'bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group'
+              const focusClasses = focusMatch
+                ? ' bg-primary-100/80 border border-primary-200 shadow-lg'
+                : highlightActive
+                  ? ' opacity-70'
+                  : ''
+
+              return (
+                <Link
+                  key={item.id}
+                  href={activeTab === 'materials' ? `/listing/${item.id}` : '#'}
+                  className={`${cardBaseClasses}${focusClasses}`}
+                >
                 {/* Image/Placeholder */}
                 <div className="aspect-video bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden">
                   {activeTab === 'materials' && item.images?.length ? (
@@ -510,6 +536,11 @@ export default function ListingsPage() {
 
                   {/* Badges */}
                   <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    {focusMatch && (
+                      <span className="px-3 py-1 text-xs font-semibold rounded-full shadow bg-primary-600 text-white">
+                        Your Activity
+                      </span>
+                    )}
                     {activeTab === 'materials' ? (
                       <>
                         <span className={`px-3 py-1 text-xs font-semibold rounded-full shadow ${
@@ -675,8 +706,9 @@ export default function ListingsPage() {
 
                 {/* Hover Effect Bar */}
                 <div className="h-1 bg-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>
