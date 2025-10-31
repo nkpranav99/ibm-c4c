@@ -20,6 +20,19 @@ LISTINGS_FILE = STORAGE_DIR / "listings.json"
 ORDERS_FILE = STORAGE_DIR / "orders.json"
 AUCTIONS_FILE = STORAGE_DIR / "auctions.json"
 BIDS_FILE = STORAGE_DIR / "bids.json"
+SELLER_APPLICATIONS_FILE = STORAGE_DIR / "seller_applications.json"
+MASTER_DATA_FILE = Path(__file__).resolve().parents[2] / "mock_data" / "waste_streams_dashboard_data.json"
+# Master data helpers
+def load_master_data() -> Dict:
+    if not MASTER_DATA_FILE.exists():
+        return {}
+    with open(MASTER_DATA_FILE, 'r') as f:
+        return json.load(f)
+
+
+def save_master_data(data: Dict):
+    with open(MASTER_DATA_FILE, 'w') as f:
+        json.dump(data, f, indent=2, default=str)
 
 
 class JSONStorage:
@@ -167,6 +180,219 @@ def create_order(order_data: Dict) -> Dict:
     orders.append(new_order)
     save_orders(orders)
     return new_order
+
+
+# Seller applications storage
+def load_seller_applications() -> List[Dict]:
+    return JSONStorage.load(SELLER_APPLICATIONS_FILE)
+
+
+def save_seller_applications(applications: List[Dict]):
+    JSONStorage.save(SELLER_APPLICATIONS_FILE, applications)
+
+
+def create_seller_application(application_data: Dict) -> Dict:
+    applications = load_seller_applications()
+    new_application = {
+        'id': JSONStorage.get_next_id(applications),
+        **application_data,
+        'status': application_data.get('status', 'pending'),
+        'created_at': datetime.now().isoformat(),
+        'updated_at': None,
+    }
+    applications.append(new_application)
+    save_seller_applications(applications)
+    return new_application
+
+
+def create_listing_from_application(seller_id: int, listing_payload: Dict) -> Dict:
+    title = listing_payload.get('listing_title')
+    description = listing_payload.get('listing_description')
+    quantity = float(listing_payload.get('listing_quantity') or 0)
+    price = float(listing_payload.get('listing_price') or 0)
+    quantity_unit = listing_payload.get('listing_quantity_unit') or 'unit'
+    listing_type = listing_payload.get('listing_sale_type') or 'fixed_price'
+
+    seller_company = listing_payload.get('company_name') or listing_payload.get('marketplace_name') or "Independent Seller"
+
+    listings_store = load_listings()
+    master_data = load_master_data()
+    waste_listings = master_data.setdefault("waste_material_listings", [])
+
+    existing_ids = [item.get('id', 0) for item in waste_listings if isinstance(item.get('id'), int)]
+    existing_ids += [item.get('id', 0) for item in listings_store if isinstance(item.get('id'), int)]
+    next_id = max(existing_ids or [0]) + 1
+
+    category_type = listing_payload.get('listing_category_type') or 'raw_material'
+    date_posted = datetime.utcnow().date().isoformat()
+
+    master_entry = {
+        'id': next_id,
+        'listing_type': 'machinery' if category_type == 'machinery' else 'waste_material',
+        'category_type': category_type,
+        'title': title or listing_payload.get('listing_material_name'),
+        'material_name': listing_payload.get('listing_material_name'),
+        'category': listing_payload.get('listing_category'),
+        'quantity': quantity,
+        'unit': quantity_unit,
+        'price_per_unit': price,
+        'total_value': round(price * quantity, 2) if price and quantity else None,
+        'sale_type': listing_type,
+        'status': 'active',
+        'location': listing_payload.get('listing_location'),
+        'seller_company': seller_company,
+        'date_posted': date_posted,
+        'views': 0,
+        'inquiries': 0,
+        'condition': listing_payload.get('listing_condition'),
+    }
+
+    if description:
+        master_entry['description'] = description
+
+    waste_listings.append(master_entry)
+    save_master_data(master_data)
+
+    listing_record = {
+        'id': next_id,
+        'title': master_entry['title'],
+        'description': description or master_entry['title'],
+        'material_name': master_entry['material_name'],
+        'category': master_entry['category'],
+        'quantity': quantity,
+        'quantity_unit': quantity_unit,
+        'price': price,
+        'total_value': master_entry['total_value'],
+        'listing_type': listing_type,
+        'status': 'active',
+        'location': master_entry['location'],
+        'images': listing_payload.get('listing_images') or [],
+        'seller_id': seller_id,
+        'seller_company': seller_company,
+        'created_at': date_posted,
+        'updated_at': None,
+        'category_type': category_type,
+        'condition': listing_payload.get('listing_condition'),
+    }
+
+    listings_store.append(listing_record)
+    JSONStorage.save(LISTINGS_FILE, listings_store)
+
+    return master_entry
+
+
+def get_latest_application_for_user(user_id: int) -> Optional[Dict]:
+    applications = load_seller_applications()
+    user_apps = [app for app in applications if app.get('user_id') == user_id]
+    if not user_apps:
+        return None
+    return sorted(user_apps, key=lambda app: app.get('created_at') or '', reverse=True)[0]
+
+
+def get_orders_for_seller(seller_id: int) -> List[Dict]:
+    listings = load_listings()
+    orders = load_orders()
+    seller_listing_ids = {listing.get('id') for listing in listings if listing.get('seller_id') == seller_id}
+    if not seller_listing_ids:
+        return []
+    return [order for order in orders if order.get('listing_id') in seller_listing_ids]
+
+
+def compute_seller_insights(seller_id: int) -> Dict:
+    listings = load_listings()
+    orders = load_orders()
+    users = load_users()
+
+    seller_listing_ids = {listing.get('id') for listing in listings if listing.get('seller_id') == seller_id}
+    seller_listings = [listing for listing in listings if listing.get('id') in seller_listing_ids]
+    seller_orders = [order for order in orders if order.get('listing_id') in seller_listing_ids]
+
+    revenue_statuses = {"completed", "delivered", "confirmed"}
+
+    total_items_sold = 0.0
+    total_revenue = 0.0
+    buyers_summary: Dict[int, Dict] = {}
+
+    for order in seller_orders:
+        status_value = (order.get('status') or '').lower()
+        quantity = float(order.get('quantity') or 0)
+        amount = float(order.get('total_price') or 0)
+
+        if status_value in revenue_statuses:
+            total_items_sold += quantity
+            total_revenue += amount
+
+        buyer_id = order.get('buyer_id')
+        if buyer_id is None:
+            continue
+
+        entry = buyers_summary.setdefault(
+            buyer_id,
+            {
+                'buyer_id': buyer_id,
+                'orders': 0,
+                'total_quantity': 0.0,
+                'total_spent': 0.0,
+                'listings': set(),
+            }
+        )
+        entry['orders'] += 1
+        entry['total_quantity'] += quantity
+        entry['total_spent'] += amount
+        entry['listings'].add(order.get('listing_id'))
+
+    buyers_lookup = {user.get('id'): user for user in users}
+    buyer_breakdown = []
+    for entry in buyers_summary.values():
+        buyer_info = buyers_lookup.get(entry['buyer_id'], {})
+        buyer_breakdown.append({
+            'buyer_id': entry['buyer_id'],
+            'buyer_name': buyer_info.get('username') or buyer_info.get('email'),
+            'buyer_company': buyer_info.get('company_name'),
+            'orders': entry['orders'],
+            'total_quantity': entry['total_quantity'],
+            'total_spent': entry['total_spent'],
+            'distinct_listings': len(entry['listings']),
+        })
+
+    listing_breakdown = []
+    orders_by_listing: Dict[int, List[Dict]] = {}
+    for order in seller_orders:
+        orders_by_listing.setdefault(order.get('listing_id'), []).append(order)
+
+    for listing in seller_listings:
+        listing_orders = orders_by_listing.get(listing.get('id'), [])
+        listing_revenue = sum(
+            float(o.get('total_price') or 0)
+            for o in listing_orders
+            if (o.get('status') or '').lower() in revenue_statuses
+        )
+        listing_quantity = sum(
+            float(o.get('quantity') or 0)
+            for o in listing_orders
+            if (o.get('status') or '').lower() in revenue_statuses
+        )
+        listing_breakdown.append({
+            'listing_id': listing.get('id'),
+            'title': listing.get('title'),
+            'status': listing.get('status'),
+            'listing_type': listing.get('listing_type'),
+            'total_orders': len(listing_orders),
+            'quantity_sold': listing_quantity,
+            'revenue': listing_revenue,
+            'quantity_unit': listing.get('quantity_unit'),
+            'category_type': listing.get('category_type'),
+            'condition': listing.get('condition'),
+        })
+
+    return {
+        'total_items_sold': total_items_sold,
+        'total_revenue': total_revenue,
+        'buyer_breakdown': buyer_breakdown,
+        'listing_breakdown': listing_breakdown,
+        'total_listings': len(seller_listings),
+        'total_orders': len(seller_orders),
+    }
 
 
 # Auction storage
