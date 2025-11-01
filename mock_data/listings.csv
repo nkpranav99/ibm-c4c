@@ -1,21 +1,21 @@
 id,title,material_name,category,quantity,unit,price_per_unit,total_value,listing_type,status,location,seller_company,date_posted,views,inquiries
-1,Bagasse - Premium Quality,Bagasse,Agricultural/Biomass,99,tons,28.08,2779.92,fixed_price,sold,Ahmedabad,AgriWaste Solutions,2025-10-10,252,10
-2,Rice Husk - Premium Quality,Rice Husk,Agricultural/Biomass,342,tons,22.67,7753.14,fixed_price,sold,Nagpur,GreenTech Industries,2025-09-11,374,32
-3,Fly Ash - Premium Quality,Fly Ash,Industrial Ash,142,tons,17.92,2544.64,fixed_price,pending,Coimbatore,Waste2Wealth Enterprises,2025-08-30,339,10
-4,Bottom Ash - Premium Quality,Bottom Ash,Industrial Ash,438,tons,3.51,1537.38,fixed_price,sold,Coimbatore,Waste2Wealth Enterprises,2025-09-08,175,41
-5,HDPE Scrap - Premium Quality,HDPE Scrap,Plastic Waste,145,kg,0.63,91.35,auction,active,Nagpur,Sustainable Materials Co,2025-09-01,337,29
-6,PET Bottles - Premium Quality,PET Bottles,Plastic Waste,362,kg,0.5,181.0,fixed_price,expired,Lucknow,Green Valley Industries,2025-10-13,384,5
-7,Steel Scrap - Premium Quality,Steel Scrap,Metal Scrap,48,tons,122.65,5887.2,auction,expired,Kolkata,Urban Waste Management,2025-10-24,222,41
-8,Aluminum Scrap - Premium Quality,Aluminum Scrap,Metal Scrap,55,kg,1.31,72.05,auction,sold,Chennai,CircularEconomy Inc,2025-09-12,108,30
-9,Cardboard Bales - Premium Quality,Cardboard Bales,Paper & Cardboard,27,tons,88.34,2385.18,auction,sold,Hyderabad,ReSource Trading,2025-09-29,57,20
-10,Mixed Paper - Premium Quality,Mixed Paper,Paper & Cardboard,222,tons,62.23,13815.06,auction,pending,Lucknow,ReSource Trading,2025-10-25,333,21
-11,Concrete Rubble - Premium Quality,Concrete Rubble,Construction & Demolition,211,tons,6.99,1474.89,fixed_price,expired,Pune,Metal Recyclers Pvt Ltd,2025-09-23,267,26
-12,Brick Waste - Premium Quality,Brick Waste,Construction & Demolition,372,tons,4.31,1603.32,auction,sold,Ahmedabad,Metal Recyclers Pvt Ltd,2025-09-26,50,5
-13,Clear Glass - Premium Quality,Clear Glass,Glass,445,tons,41.49,18463.05,auction,expired,Kanpur,Metal Recyclers Pvt Ltd,2025-10-17,82,28
-14,Mixed Glass - Premium Quality,Mixed Glass,Glass,143,tons,31.79,4545.97,auction,expired,Nagpur,Sustainable Materials Co,2025-09-26,477,21
-15,Cotton Scrap - Premium Quality,Cotton Scrap,Textile Waste,130,kg,1.04,135.2,auction,active,Lucknow,Waste2Wealth Enterprises,2025-10-07,101,23
-16,Fabric Remnants - Premium Quality,Fabric Remnants,Textile Waste,385,kg,0.8,308.0,auction,pending,Bangalore,ReSource Trading,2025-10-03,264,49
-17,Tire Scrap - Premium Quality,Tire Scrap,Rubber & Tires,58,tons,38.68,2243.44,auction,active,Surat,Metal Recyclers Pvt Ltd,2025-10-19,220,31
-18,Rubber Crumb - Premium Quality,Rubber Crumb,Rubber & Tires,59,tons,54.94,3241.46,fixed_price,expired,Ahmedabad,EcoFriendly Processors,2025-09-22,153,20
-19,Food Processing Waste - Premium Quality,Food Processing Waste,Organic/Food Waste,454,tons,11.39,5171.06,fixed_price,sold,Kolkata,GreenTech Industries,2025-10-24,333,29
-20,Vegetable Waste - Premium Quality,Vegetable Waste,Organic/Food Waste,189,tons,14.78,2793.42,auction,pending,Indore,Metal Recyclers Pvt Ltd,2025-09-25,122,27
+1,Cardboard Bales - Premium Quality,Cardboard Bales,Paper & Cardboard,131,tons,54.5,7139.5,fixed_price,pending,Bangalore,Waste2Wealth Enterprises,2025-10-01,156,39
+2,Gypsum Waste - Premium Quality,Gypsum Waste,Construction & Demolition,70,tons,15.25,1067.5,fixed_price,pending,Chennai,GreenTech Industries,2025-09-25,141,32
+3,Coconut Shell - Premium Quality,Coconut Shell,Agricultural/Biomass,167,tons,39.49,6594.83,fixed_price,pending,Chennai,Waste2Wealth Enterprises,2025-09-16,139,8
+4,LDPE Film - Premium Quality,LDPE Film,Plastic Waste,212,kg,0.41,86.92,fixed_price,expired,Surat,Industrial Recyclers Ltd,2025-09-13,335,14
+5,Straw/Hay - Premium Quality,Straw/Hay,Agricultural/Biomass,142,tons,27.22,3865.24,fixed_price,pending,Chennai,EcoWaste Solutions,2025-10-27,478,18
+6,Copper Wire - Premium Quality,Copper Wire,Metal Scrap,298,kg,11.08,3301.84,fixed_price,pending,Ahmedabad,EcoWaste Solutions,2025-09-10,166,40
+7,Broken Glass - Premium Quality,Broken Glass,Glass,362,tons,24.53,8879.86,fixed_price,expired,Surat,Sustainable Materials Co,2025-09-18,434,5
+8,Concrete Rubble - Premium Quality,Concrete Rubble,Construction & Demolition,259,tons,12.54,3247.86,auction,pending,Jaipur,GreenTech Industries,2025-10-08,342,24
+9,Coal Ash - Premium Quality,Coal Ash,Industrial Ash,97,tons,24.28,2355.16,auction,pending,Delhi,ReSource Trading,2025-09-24,68,7
+10,Cotton Scrap - Premium Quality,Cotton Scrap,Textile Waste,236,kg,0.64,151.04,fixed_price,sold,Surat,ReSource Trading,2025-09-29,213,47
+11,Clear Glass - Premium Quality,Clear Glass,Glass,400,tons,77.36,30944.0,auction,sold,Pune,Industrial Recyclers Ltd,2025-10-01,247,39
+12,Mixed Glass - Premium Quality,Mixed Glass,Glass,372,tons,24.35,9058.2,auction,sold,Ahmedabad,Metal Recyclers Pvt Ltd,2025-10-29,56,7
+13,Rubber Crumb - Premium Quality,Rubber Crumb,Rubber & Tires,386,tons,69.24,26726.64,fixed_price,active,Kolkata,ReSource Trading,2025-09-12,183,26
+14,Clear Glass - Premium Quality,Clear Glass,Glass,139,tons,59.64,8289.96,fixed_price,sold,Chennai,GreenTech Industries,2025-09-19,192,25
+15,Bottom Ash - Premium Quality,Bottom Ash,Industrial Ash,385,tons,14.99,5771.15,auction,pending,Bangalore,ReSource Trading,2025-10-05,264,49
+16,Brass Scrap - Premium Quality,Brass Scrap,Metal Scrap,310,kg,4.73,1466.3,fixed_price,sold,Kolkata,ReSource Trading,2025-10-23,120,11
+17,LDPE Film - Premium Quality,LDPE Film,Plastic Waste,294,kg,0.36,105.84,fixed_price,sold,Pune,Waste2Wealth Enterprises,2025-09-04,82,20
+18,Concrete Rubble - Premium Quality,Concrete Rubble,Construction & Demolition,208,tons,5.54,1152.32,auction,expired,Jaipur,CircularEconomy Inc,2025-09-04,409,37
+19,PP Scrap - Premium Quality,PP Scrap,Plastic Waste,466,kg,0.4,186.4,fixed_price,sold,Hyderabad,Waste2Wealth Enterprises,2025-10-25,146,33
+20,Tire Scrap - Premium Quality,Tire Scrap,Rubber & Tires,356,tons,45.42,16169.52,auction,sold,Kolkata,GreenTech Industries,2025-09-11,457,35
