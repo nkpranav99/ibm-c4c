@@ -122,8 +122,22 @@ class WatsonHybridService:
             "waste", "material", "listing", "plastic", "metal", "paper", "biomass",
             "machinery", "equipment", "price", "quantity", "buy", "sell",
             "seller", "location", "category", "auction", "bid",
-            "hype", "ldpe", "pet", "steel", "aluminum", "cardboard",
-            "bagasse", "ash", "glass", "rubber", "textile"
+            "bagasse", "rice husk", "coconut shell", "straw", "hay", "fly ash",
+            "bottom ash", "coal ash", "hdpe", "hdpe scrap", "pet", "pet bottles",
+            "pp scrap", "ldpe", "ldpe film", "mixed plastic", "steel", "steel scrap",
+            "aluminum", "aluminum scrap", "copper wire", "brass scrap", "cast iron",
+            "cardboard", "cardboard bales", "mixed paper", "newspaper", "concrete rubble",
+            "brick waste", "scrap wood", "gypsum waste", "clear glass", "mixed glass",
+            "broken glass", "cotton scrap", "fabric remnants", "industrial rags",
+            "tire scrap", "rubber crumb", "food processing waste", "vegetable waste",
+            "dual-shaft", "shredder", "pulp processing", "twin screw", "extruder",
+            "carbonization furnace", "hydraulic baler", "ring spinning", "rotary screw",
+            "projectile weaving", "injection molding", "blow molding",
+            "water cooled chiller", "fourdrinier", "paper machine", "coal fired boiler",
+            "bottling line", "reverse osmosis", "ro plant", "fiber laser", "press brake",
+            "briquetting", "pelletizing", "gasification", "de-inking", "granulator",
+            "washing line", "fiber spinning", "weaving loom", "alligator shear",
+            "baling press"
         ]
         
         return any(keyword in message_lower for keyword in data_keywords)

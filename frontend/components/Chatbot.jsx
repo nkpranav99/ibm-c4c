@@ -103,6 +103,18 @@ export default function Chatbot() {
       })
   }
 
+  const formatCurrency = (value) => {
+    if (value === null || value === undefined) return null
+    const numeric = Number(value)
+    if (!Number.isNaN(numeric)) {
+      return `₹${numeric.toLocaleString('en-IN')}`
+    }
+    if (typeof value === 'string') {
+      return value
+    }
+    return null
+  }
+
   return (
     <>
       {/* Chatbot Button */}
@@ -176,33 +188,124 @@ export default function Chatbot() {
                   {/* Listings Display */}
                   {message.listings && message.listings.length > 0 && (
                     <div className="mt-4 space-y-2">
-                      {message.listings.map((listing, listIndex) => (
-                        <a
-                          key={listIndex}
-                          href={`/listing/${listing.id}`}
-                          className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
-                            <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded">{listing.listing_type?.replace('_', ' ')}</span>
-                          </div>
-                          <div className="text-xs text-gray-700 space-y-1">
-                            <p><strong>Material:</strong> {listing.material_name} • {listing.category}</p>
-                            <p><strong>Quantity:</strong> {listing.quantity} {listing.quantity_unit}</p>
-                            <p><strong>Price:</strong> ₹{listing.price?.toLocaleString('en-IN') || '0'} / {listing.quantity_unit}</p>
-                            {listing.total_value && (
-                              <p><strong>Total Value:</strong> ₹{listing.total_value.toLocaleString('en-IN')}</p>
+                      {message.listings.map((listing, listIndex) => {
+                        const isMachinery =
+                          listing.card_type === 'machinery' ||
+                          String(listing?.detail_path || '').includes('/machinery') ||
+                          String(listing?.id || '').toLowerCase().startsWith('mach')
+                        const href = listing.detail_path || (isMachinery ? `/machinery/${listing.id}` : `/listing/${listing.id}`)
+                        const badgeLabel = isMachinery
+                          ? listing.listing_type && listing.listing_type !== 'machinery'
+                            ? listing.listing_type.replace(/_/g, ' ')
+                            : 'Machinery'
+                          : listing.listing_type
+                          ? listing.listing_type.replace(/_/g, ' ')
+                          : 'Listing'
+
+                        const priceDisplay = formatCurrency(listing.price)
+                        const originalPrice = formatCurrency(listing.original_price)
+                        const depreciationDisplay =
+                          listing?.depreciation_percentage !== undefined && listing?.depreciation_percentage !== null
+                            ? `${Number(listing.depreciation_percentage).toFixed(1)}% savings`
+                            : null
+                        const totalValueDisplay = formatCurrency(listing.total_value)
+                        let quantityDisplay = null
+                        if (listing.quantity !== undefined && listing.quantity !== null) {
+                          const quantityNumber = Number(listing.quantity)
+                          if (!Number.isNaN(quantityNumber)) {
+                            quantityDisplay = `${quantityNumber.toLocaleString('en-IN')} ${listing.quantity_unit || ''}`.trim()
+                          } else if (typeof listing.quantity === 'string') {
+                            quantityDisplay = listing.quantity
+                          }
+                        }
+
+                        return (
+                          <a
+                            key={listIndex}
+                            href={href}
+                            className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
+                              <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded capitalize">{badgeLabel}</span>
+                            </div>
+                            {isMachinery ? (
+                              <div className="text-xs text-gray-700 space-y-1">
+                                <p>
+                                  <strong>Machine Type:</strong> {listing.machine_type || '—'}
+                                  {listing.category ? ` • ${listing.category}` : ''}
+                                </p>
+                                {(listing.brand || listing.model) && (
+                                  <p>
+                                    <strong>Brand/Model:</strong> {[listing.brand, listing.model].filter(Boolean).join(' ')}
+                                  </p>
+                                )}
+                                {listing.condition && (
+                                  <p>
+                                    <strong>Condition:</strong> {listing.condition}
+                                    {listing.status ? ` • ${listing.status}` : ''}
+                                  </p>
+                                )}
+                                {(priceDisplay || originalPrice || depreciationDisplay) && (
+                                  <p>
+                                    <strong>Price:</strong> {[priceDisplay, originalPrice && `Original ${originalPrice}`, depreciationDisplay]
+                                      .filter(Boolean)
+                                      .join(' | ')}
+                                  </p>
+                                )}
+                                {listing.location && (
+                                  <p>
+                                    <strong>Location:</strong> {listing.location}
+                                  </p>
+                                )}
+                                {listing.seller_company && (
+                                  <p>
+                                    <strong>Seller:</strong> {listing.seller_company}
+                                  </p>
+                                )}
+                                {Array.isArray(listing.compatible_materials) && listing.compatible_materials.length > 0 && (
+                                  <p>
+                                    <strong>Compatible Materials:</strong> {listing.compatible_materials.slice(0, 3).join(', ')}
+                                    {listing.compatible_materials.length > 3 ? '…' : ''}
+                                  </p>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-xs text-gray-700 space-y-1">
+                                <p>
+                                  <strong>Material:</strong> {listing.material_name}
+                                  {listing.category ? ` • ${listing.category}` : ''}
+                                </p>
+                                {quantityDisplay && (
+                                  <p>
+                                    <strong>Quantity:</strong> {quantityDisplay}
+                                  </p>
+                                )}
+                                <p>
+                                  <strong>Price:</strong> {priceDisplay ? priceDisplay : '—'}
+                                  {listing.quantity_unit ? ` / ${listing.quantity_unit}` : ''}
+                                </p>
+                                {totalValueDisplay && (
+                                  <p>
+                                    <strong>Total Value:</strong> {totalValueDisplay}
+                                  </p>
+                                )}
+                                {listing.location && (
+                                  <p>
+                                    <strong>Location:</strong> {listing.location}
+                                  </p>
+                                )}
+                                {listing.seller_company && (
+                                  <p>
+                                    <strong>Seller:</strong> {listing.seller_company}
+                                  </p>
+                                )}
+                              </div>
                             )}
-                            <p><strong>Location:</strong> {listing.location}</p>
-                            {listing.seller_company && (
-                              <p><strong>Seller:</strong> {listing.seller_company}</p>
-                            )}
-                          </div>
-                          <div className="mt-2 text-xs text-primary-700 font-medium">
-                            View Details →
-                          </div>
-                        </a>
-                      ))}
+                            <div className="mt-2 text-xs text-primary-700 font-medium">View Details →</div>
+                          </a>
+                        )
+                      })}
                     </div>
                   )}
                   

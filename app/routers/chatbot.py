@@ -118,6 +118,7 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
             for listing in matched_listings[:limit]:
                 formatted.append({
                     "id": listing.get("id"),
+                    "card_type": "material",
                     "title": listing.get("title"),
                     "material_name": listing.get("material_name"),
                     "category": listing.get("category"),
@@ -128,11 +129,120 @@ def search_listings_by_keywords(keywords: List[str], location: Optional[str] = N
                     "location": listing.get("location"),
                     "listing_type": listing.get("sale_type"),
                     "seller_company": listing.get("seller_company"),
+                    "status": listing.get("status"),
+                    "detail_path": f"/listing/{listing.get('id')}"
                 })
             
             return formatted
     except Exception as e:
         print(f"Error searching listings: {e}")
+    return []
+
+
+# Machinery query keywords for detection
+MACHINERY_QUERY_KEYWORDS = [
+    "machinery", "machine", "equipment", "industrial equipment",
+    "shredder", "dual-shaft", "extruder", "processing line", "pulp line",
+    "carbonization", "furnace", "baler", "spinning", "loom",
+    "compressor", "chiller", "boiler", "bottling", "injection", "molding",
+    "cnc", "laser", "press brake", "water treatment", "ro plant",
+    "shutdown machinery", "liquidation machinery"
+]
+
+GENERIC_MACHINERY_TERMS = {
+    "machinery", "machine", "equipment", "industrial equipment",
+    "shutdown machinery", "liquidation machinery"
+}
+
+KNOWN_LOCATIONS = [
+    "mumbai", "delhi", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad",
+    "coimbatore", "nagpur", "surat", "jaipur", "lucknow", "kanpur", "kochi"
+]
+
+
+def extract_machinery_keywords(message: str) -> List[str]:
+    message_lower = message.lower()
+    return [keyword for keyword in MACHINERY_QUERY_KEYWORDS if keyword in message_lower]
+
+
+def search_machinery_by_keywords(keywords: List[str], location: Optional[str] = None, limit: int = 5) -> List[dict]:
+    """Search machinery listings using master data."""
+    try:
+        if getattr(settings, "DISABLE_DB", False):
+            mock_path = Path(__file__).resolve().parents[2] / "mock_data" / "waste_streams_dashboard_data.json"
+            with open(mock_path, "r") as f:
+                master_data = json.load(f)
+
+            machinery_sources = master_data.get("machinery_listings", []) + master_data.get("all_shutdown_machinery", [])
+
+            # Deduplicate by ID (shutdown listings share IDs with base list)
+            machinery_map = {}
+            for machine in machinery_sources:
+                machine_id = str(machine.get("id"))
+                machinery_map[machine_id] = machine
+
+            machinery_list = list(machinery_map.values())
+
+            if not keywords:
+                matched = machinery_list.copy()
+            else:
+                matched = []
+                for machine in machinery_list:
+                    fields = " ".join([
+                        str(machine.get("title", "")),
+                        str(machine.get("machine_type", "")),
+                        str(machine.get("category", "")),
+                        str(machine.get("brand", "")),
+                        str(machine.get("model", "")),
+                        str(machine.get("seller_type", "")),
+                        str(machine.get("description", ""))
+                    ]).lower()
+
+                    for keyword in keywords:
+                        keyword_lower = keyword.lower()
+                        if keyword_lower and keyword_lower in fields:
+                            matched.append(machine)
+                            break
+
+            if location:
+                location_lower = location.lower()
+                location_matches = [m for m in matched if location_lower in str(m.get("location", "")).lower()]
+                if location_matches:
+                    matched = location_matches + [m for m in matched if m not in location_matches]
+
+            formatted = []
+            for machine in matched[:limit]:
+                price = machine.get("price_inr") or machine.get("price")
+                formatted.append({
+                    "id": machine.get("id"),
+                    "card_type": "machinery",
+                    "title": machine.get("title"),
+                    "machine_type": machine.get("machine_type"),
+                    "category": machine.get("category"),
+                    "brand": machine.get("brand"),
+                    "model": machine.get("model"),
+                    "condition": machine.get("condition"),
+                    "year_of_manufacture": machine.get("year_of_manufacture"),
+                    "price": price,
+                    "original_price": machine.get("original_price_inr") or machine.get("original_price"),
+                    "depreciation_percentage": machine.get("depreciation_percentage"),
+                    "location": machine.get("location"),
+                    "listing_type": machine.get("sale_type") or machine.get("listing_type") or "machinery",
+                    "seller_company": machine.get("seller_company"),
+                    "seller_type": machine.get("seller_type"),
+                    "status": machine.get("status"),
+                    "views": machine.get("views"),
+                    "inquiries": machine.get("inquiries"),
+                    "detail_path": f"/machinery/{machine.get('id')}",
+                    "compatible_materials": machine.get("compatible_materials"),
+                    "negotiable": machine.get("negotiable"),
+                    "urgency_note": machine.get("urgency_note"),
+                })
+
+            return formatted
+    except Exception as e:
+        print(f"Error searching machinery listings: {e}")
+
     return []
 
 
@@ -263,10 +373,8 @@ def extract_business_intent(message: str) -> dict:
     }
     
     # Extract location if mentioned
-    locations = ["mumbai", "delhi", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad", 
-                 "coimbatore", "nagpur", "surat", "jaipur", "lucknow", "kanpur", "kochi"]
     location = None
-    for loc in locations:
+    for loc in KNOWN_LOCATIONS:
         if loc in message_lower:
             location = loc
             break
@@ -310,10 +418,8 @@ def extract_manufacturing_intent(message: str) -> dict:
     }
     
     # Extract location if mentioned
-    locations = ["mumbai", "delhi", "bangalore", "chennai", "kolkata", "hyderabad", "pune", "ahmedabad", 
-                 "coimbatore", "nagpur", "surat", "jaipur", "lucknow", "kanpur", "kochi"]
     location = None
-    for loc in locations:
+    for loc in KNOWN_LOCATIONS:
         if loc in message_lower:
             location = loc
             break
@@ -450,6 +556,97 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
                 ]
             )
     
+    # Machinery specific queries
+    machinery_keywords = extract_machinery_keywords(user_message)
+    if machinery_keywords or "machinery" in message_lower or "equipment" in message_lower:
+        location = None
+        for loc in KNOWN_LOCATIONS:
+            if loc in message_lower:
+                location = loc
+                break
+
+        search_terms = [kw for kw in machinery_keywords if kw not in GENERIC_MACHINERY_TERMS]
+        machinery_results = search_machinery_by_keywords(search_terms, location, limit=5)
+
+        if machinery_results:
+            primary_cards = machinery_results[:2]
+            additional_results = machinery_results[2:]
+
+            response_lines = ["🛠️ **Here are the machinery options available right now:**\n"]
+
+            for idx, machine in enumerate(machinery_results, 1):
+                price = machine.get("price")
+                price_str = None
+                if isinstance(price, (int, float)):
+                    price_str = f"₹{price:,.0f}"
+                elif isinstance(price, str) and price.strip():
+                    price_str = price
+
+                original_price = machine.get("original_price")
+                if isinstance(original_price, (int, float)):
+                    original_str = f"₹{original_price:,.0f}"
+                elif isinstance(original_price, str) and original_price.strip():
+                    original_str = original_price
+                else:
+                    original_str = None
+
+                depreciation = machine.get("depreciation_percentage")
+                if isinstance(depreciation, (int, float)):
+                    depreciation_str = f"{depreciation:.1f}% savings"
+                else:
+                    depreciation_str = None
+
+                response_lines.append(f"**{idx}. {machine.get('title', 'Machinery Listing')}**")
+                response_lines.append(f"   • Machine Type: {machine.get('machine_type', 'N/A')}")
+                response_lines.append(f"   • Condition: {machine.get('condition', 'N/A')} | Status: {machine.get('status', 'N/A')}")
+                response_lines.append(f"   • Location: {machine.get('location', 'N/A')} | Seller: {machine.get('seller_company', 'N/A')}")
+
+                price_parts = []
+                if price_str:
+                    price_parts.append(price_str)
+                if original_str:
+                    price_parts.append(f"Original {original_str}")
+                if depreciation_str:
+                    price_parts.append(depreciation_str)
+
+                if price_parts:
+                    response_lines.append("   • Pricing: " + " | ".join(price_parts))
+                else:
+                    response_lines.append("   • Pricing: Contact for price")
+
+                if machine.get("compatible_materials"):
+                    compatible = ", ".join(machine["compatible_materials"])
+                    response_lines.append(f"   • Works with: {compatible}")
+
+                response_lines.append(f"   • [View Details →]({machine.get('detail_path', '/')})\n")
+
+            if additional_results:
+                response_lines.append("ℹ️ Showing cards for the top 2 matches. See above for full details on additional options.")
+
+            if location:
+                response_lines.append(f"\n📍 Filter applied: {location.title()}")
+
+            response_lines.append("\nNeed something else? Ask for a specific machine type or location!")
+
+            return ChatResponse(
+                message="\n".join(response_lines),
+                suggestions=[
+                    "Show more shutdown machinery deals",
+                    "Do you have any machines in Mumbai?",
+                    "What packages include machinery?"
+                ],
+                listings=primary_cards
+            )
+        else:
+            return ChatResponse(
+                message="I couldn't find machinery that matches those keywords right now. Try specifying the machine type (e.g., shredder, extruder, boiler) or a location to narrow the search.",
+                suggestions=[
+                    "Show available shredders",
+                    "Any machinery auctions running?",
+                    "List machines in Delhi"
+                ]
+            )
+
     # Check for manufacturing/manufacturing unit/raw material intent
     manufacturing_indicators = [
         "manufacturing", "manufacturing unit", "factory", "production", 
@@ -620,6 +817,7 @@ async def chat(request: ChatRequest):
             # Check if watson services are enabled
             if watson_service.orchestrate_enabled or watson_service.watsonx_enabled:
                 logger.info("🤖 Using Watson services for response")
+                message_lower = request.message.lower()
                 
                 # Prepare context data (listings, materials, etc.)
                 context_data = {}
@@ -629,6 +827,19 @@ async def chat(request: ChatRequest):
                     listings = search_listings_by_keywords(keywords, limit=5)
                     if listings:
                         context_data["listings"] = listings
+
+                # Add machinery context if applicable
+                machinery_keywords = extract_machinery_keywords(request.message)
+                if machinery_keywords or "machinery" in message_lower or "equipment" in message_lower:
+                    search_terms = [kw for kw in machinery_keywords if kw not in GENERIC_MACHINERY_TERMS]
+                    machinery_location = None
+                    for loc in KNOWN_LOCATIONS:
+                        if loc in message_lower:
+                            machinery_location = loc
+                            break
+                    machinery_results = search_machinery_by_keywords(search_terms, machinery_location, limit=5)
+                    if machinery_results:
+                        context_data["machinery"] = machinery_results
                 
                 # Generate AI response
                 ai_response = watson_service.generate_response(
@@ -642,6 +853,15 @@ async def chat(request: ChatRequest):
                 
                 if ai_response:
                     logger.info("✅ Returned AI-generated response from Watson")
+                    listings_payload = []
+                    machinery_context = context_data.get("machinery")
+                    if machinery_context:
+                        listings_payload.extend(machinery_context[:2])
+                    if len(listings_payload) < 2:
+                        material_context = context_data.get("listings")
+                        if material_context:
+                            listings_payload.extend(material_context[: 2 - len(listings_payload)])
+
                     return ChatResponse(
                         message=ai_response,
                         suggestions=[
@@ -649,7 +869,7 @@ async def chat(request: ChatRequest):
                             "What are the prices?",
                             "How do I start a business?",
                         ],
-                        listings=context_data.get("listings", [])
+                        listings=listings_payload
                     )
                 else:
                     logger.warning("⚠️  Watson returned no response, falling back to rules")
