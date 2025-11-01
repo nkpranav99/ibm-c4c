@@ -76,7 +76,8 @@ class WatsonHybridService:
         # System prompt for watsonx
         self.general_prompt = """You are a helpful assistant for a waste material marketplace.
         Help users with general questions about the platform, buying, selling, auctions, and marketplace features.
-        Keep responses friendly, concise, and helpful."""
+        Keep responses friendly, concise, and helpful.
+        Provide a single direct answer tailored to the latest user question without including dialogue labels like 'User:' or 'Assistant:'."""
     
     def get_iam_token(self, service: str = "orchestrate") -> Optional[str]:
         """Get IAM token for IBM Cloud authentication
@@ -255,25 +256,34 @@ class WatsonHybridService:
             
             # Build the prompt from conversation
             prompt_parts = [self.general_prompt]
-            
+
             # Add context if available
             if context_data:
                 context_str = json.dumps(context_data, indent=2)
-                prompt_parts.append(f"\nAdditional context:\n{context_str}")
-            
-            # Add conversation history
+                prompt_parts.append(f"\nAdditional context to reference if useful:\n{context_str}")
+
+            # Add recent conversation history for grounding without duplicating roles in the response
             if conversation_history:
-                for msg in conversation_history:
-                    role = msg.get("role", "user")
+                recent_history = conversation_history[-6:]
+                formatted_history = []
+                for msg in recent_history:
                     content = msg.get("content", "")
-                    if role == "user":
-                        prompt_parts.append(f"\nUser: {content}")
-                    elif role == "assistant":
-                        prompt_parts.append(f"\nAssistant: {content}")
-            
-            # Add current message
-            prompt_parts.append(f"\nUser: {message}\nAssistant:")
-            
+                    if not content:
+                        continue
+                    role = msg.get("role", "user")
+                    if role == "assistant":
+                        formatted_history.append(f"Assistant: {content}")
+                    else:
+                        formatted_history.append(f"User: {content}")
+                if formatted_history:
+                    history_block = "\n".join(formatted_history)
+                    prompt_parts.append(f"\nConversation context (most recent last):\n{history_block}")
+
+            # Add current message and explicit instruction for the reply format
+            prompt_parts.append(
+                f"\nLatest user question:\n{message}\n\nReply with one helpful assistant response in plain text, without adding role prefixes or follow-up questions unless the user explicitly asks for them.\n"
+            )
+
             full_prompt = "".join(prompt_parts)
             
             payload = {
@@ -293,7 +303,7 @@ class WatsonHybridService:
             logger.info(f"📡 Watsonx Endpoint: {endpoint}")
             logger.info(f"📦 Watsonx Payload (prompt preview): {full_prompt[:200]}...")
             
-            response = requests.post(endpoint, headers=headers, json=payload, params=params, timeout=10)
+            response = requests.post(endpoint, headers=headers, json=payload, params=params, timeout=30)
             
             logger.info(f"📥 Watsonx Response status: {response.status_code}")
             
