@@ -11,7 +11,7 @@ export default function Navigation() {
   const pathname = usePathname()
 
   const displayName = user?.username || user?.email?.split('@')[0] || user?.email || 'Member'
-  const secondaryLine = user?.company_name && user?.company_name !== displayName ? user.company_name : null
+  const avatarLetter = displayName ? displayName.charAt(0).toUpperCase() : 'M'
 
   const handleLogout = () => {
     logout()
@@ -28,17 +28,14 @@ export default function Navigation() {
             </Link>
             {isAuthenticated && (
               <>
-                <Link href="/profile" className="text-gray-700 hover:text-primary-600 transition">
-                  Profile
-                </Link>
-                <Link href="/auctions/live" className="text-gray-700 hover:text-primary-600 transition">
-                  Live Auctions
-                </Link>
                 {user?.role !== 'seller' && (
                   <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
                     Browse Materials
                   </Link>
                 )}
+                <Link href="/auctions/live" className="text-gray-700 hover:text-primary-600 transition">
+                  Live Auctions
+                </Link>
                 {user?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-primary-600 transition">
                     Admin Panel
@@ -51,10 +48,17 @@ export default function Navigation() {
           <div className="flex items-center space-x-4">
             {isAuthenticated && pathname !== '/login' && pathname !== '/signup' ? (
               <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-700">{displayName}</p>
-                  {secondaryLine && <p className="text-xs text-gray-500">{secondaryLine}</p>}
-                </div>
+                <Link
+                  href="/profile"
+                  className="flex flex-col items-center text-primary-600 hover:text-primary-700 transition"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-base font-semibold text-primary-700">
+                    {avatarLetter}
+                  </span>
+                  <span className="mt-1 text-xs font-medium text-gray-700">
+                    {displayName}
+                  </span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="btn-secondary text-sm px-4 py-2"
