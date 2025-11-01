@@ -12,6 +12,8 @@ export default function Home() {
   const isSeller = isAuthenticated && user?.role === 'seller'
   const shouldShowListCta = !isAuthenticated || isSeller
   const listCtaHref = isSeller ? '/dashboard/new-listing' : '/signup'
+  const shouldShowBrowseMaterials = !isSeller
+  const featureSectionTitle = isSeller ? 'Quick Actions' : 'How It Works'
 
   const getCategoryEmoji = (category) => {
     const emojis = {
@@ -53,13 +55,18 @@ export default function Home() {
                 </Link>
               )}
               {isAuthenticated && (
-                <Link href="/dashboard" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
-                  Go to Dashboard
+                <Link
+                  href={isSeller ? '/profile?tab=insights' : '/dashboard'}
+                  className="btn-primary bg-white text-primary-600 hover:bg-primary-50"
+                >
+                  {isSeller ? 'View Insights' : 'Go to Dashboard'}
                 </Link>
               )}
-              <Link href="/listings" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
-                Browse Materials
-              </Link>
+              {shouldShowBrowseMaterials && (
+                <Link href="/listings" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
+                  Browse Materials
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -68,7 +75,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">{featureSectionTitle}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Link
               href={shouldShowListCta ? listCtaHref : '/listings'}
@@ -80,20 +87,46 @@ export default function Home() {
                 Companies can list their waste materials with details, pricing, and availability.
               </p>
             </Link>
-            <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔍</div>
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Browse & Search</h3>
+            <Link
+              href="/profile?tab=insights"
+              className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
+            >
+              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
+              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">View Insights</h3>
               <p className="text-gray-600">
-                Buyers can search by material type, location, and price to find what they need.
+                Monitor performance, track revenue, and understand buyer engagement from one place.
               </p>
             </Link>
-            <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">💰</div>
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Buy or Bid</h3>
-              <p className="text-gray-600">
-                Purchase at fixed price or bid in real-time auctions for premium materials.
-              </p>
-            </Link>
+            {isSeller && (
+              <Link
+                href="/profile?tab=listings"
+                className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              >
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🗂️</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Manage Active Listings</h3>
+                <p className="text-gray-600">
+                  Jump straight to your listings to update availability, pricing, or create new offers.
+                </p>
+              </Link>
+            )}
+            {shouldShowBrowseMaterials && (
+              <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🔍</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Browse & Search</h3>
+                <p className="text-gray-600">
+                  Buyers can search by material type, location, and price to find what they need.
+                </p>
+              </Link>
+            )}
+            {shouldShowBrowseMaterials && (
+              <Link href="/listings" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">💰</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Buy or Bid</h3>
+                <p className="text-gray-600">
+                  Purchase at fixed price or bid in real-time auctions for premium materials.
+                </p>
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -156,27 +189,31 @@ export default function Home() {
                 )
               })}
             </div>
-            <div className="text-center mt-8">
-              <Link href="/listings" className="btn-primary">
-                View All Listings
-              </Link>
-            </div>
+            {shouldShowBrowseMaterials && (
+              <div className="text-center mt-8">
+                <Link href="/listings" className="btn-primary">
+                  View All Listings
+                </Link>
+              </div>
+            )}
           </div>
         </section>
       )}
 
       {/* CTA Section */}
-      <section className="bg-primary-600 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-          <p className="text-xl mb-8 text-primary-100">
-            Join our marketplace and start trading waste materials today.
-          </p>
-          <Link href="/signup" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
-            Sign Up Now
-          </Link>
-        </div>
-      </section>
+      {!isAuthenticated && (
+        <section className="bg-primary-600 text-white py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
+            <p className="text-xl mb-8 text-primary-100">
+              Join our marketplace and start trading waste materials today.
+            </p>
+            <Link href="/signup" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
+              Sign Up Now
+            </Link>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

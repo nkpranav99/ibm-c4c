@@ -28,18 +28,17 @@ export default function Navigation() {
             </Link>
             {isAuthenticated && (
               <>
-                <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 transition">
-                  Dashboard
-                </Link>
                 <Link href="/profile" className="text-gray-700 hover:text-primary-600 transition">
                   Profile
                 </Link>
                 <Link href="/auctions/live" className="text-gray-700 hover:text-primary-600 transition">
                   Live Auctions
                 </Link>
-                <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
-                  Browse Materials
-                </Link>
+                {user?.role !== 'seller' && (
+                  <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
+                    Browse Materials
+                  </Link>
+                )}
                 {user?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-primary-600 transition">
                     Admin Panel
