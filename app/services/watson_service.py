@@ -4,11 +4,12 @@ Hybrid Watson Service
 - Watsonx.ai Foundation Models: For general queries and fallback
 """
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from app.config import settings
 import json
-import requests
+import requests  # type: ignore
 import logging
+import re
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -354,6 +355,149 @@ class WatsonHybridService:
             logger.error(traceback.format_exc())
             return None
     
+    def _normalize_listing_record(self, record: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        try:
+            material = (record.get("material_name") or record.get("material") or "").strip()
+            category = (record.get("category") or record.get("listing_category") or "").strip()
+            title = (record.get("title") or record.get("listing_name") or record.get("name") or material).strip()
+            unit = (record.get("unit") or record.get("quantity_unit") or "tons").strip() or "tons"
+            location = (record.get("location") or record.get("city") or "").strip()
+            description = record.get("description") or record.get("details") or None
+
+            def _to_number(value):
+                if value is None:
+                    return None
+                if isinstance(value, (int, float)):
+                    return float(value)
+                cleaned = re.sub(r"[^0-9.\-]", "", str(value))
+                if cleaned in {"", "-"}:
+                    return None
+                try:
+                    return float(cleaned)
+                except ValueError:
+                    return None
+
+            quantity = _to_number(record.get("quantity"))
+            price_per_unit = _to_number(record.get("price_per_unit") or record.get("price"))
+
+            sale_type_raw = (record.get("sale_type") or record.get("listing_type") or "").strip().lower()
+            if "auction" in sale_type_raw:
+                sale_type = "auction"
+            elif sale_type_raw:
+                sale_type = "fixed_price"
+            else:
+                sale_type = "fixed_price"
+
+            if not material or quantity is None or price_per_unit is None or not location:
+                return None
+
+            return {
+                "material_name": material,
+                "title": title,
+                "category": category or "Other",
+                "quantity": quantity,
+                "unit": unit,
+                "price_per_unit": price_per_unit,
+                "sale_type": sale_type,
+                "location": location,
+                "description": description,
+                "images": record.get("images") if isinstance(record.get("images"), list) else [],
+            }
+        except Exception as exc:
+            logger.error(f"Failed to normalize listing payload: {exc}")
+            return None
+
+    def generate_structured_listing(self, raw_message: str) -> Optional[Dict[str, Any]]:
+        if not self.watsonx_enabled:
+            logger.info("Watsonx disabled - cannot parse structured listing")
+            return None
+
+        logger.info("🧾 Invoking watsonx structured listing extractor")
+        logger.info(f"📝 Raw message snippet: {raw_message[:]}")
+
+        token = self.get_iam_token(service="watsonx")
+        if not token:
+            logger.warning("Unable to obtain Watsonx token for structured listing call")
+            return None
+
+        endpoint = f"{self.watsonx_url.rstrip('/')}/ml/v1/text/generation"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
+        instruction = (
+            "You are a strict data extraction assistant. Read the seller's message and output ONLY a compact JSON "
+            "object with these keys: material_name, title, category, quantity, unit, price_per_unit, sale_type, "
+            "location, description. Numbers must be numeric. sale_type must be either 'fixed_price' or 'auction'. "
+            "If information is missing, set value to null. Do not add commentary."
+        )
+
+        payload = {
+            "model_id": self.watsonx_model_id,
+            "project_id": self.watsonx_project_id,
+            "input": f"{instruction}\n\nSeller message:\n{raw_message.strip()}\n\nJSON:",
+            "parameters": {
+                "decoding_method": "greedy",
+                "max_new_tokens": 256,
+                "min_new_tokens": 1,
+                "repetition_penalty": 1.05,
+            },
+        }
+
+        try:
+            response = requests.post(
+                endpoint,
+                headers=headers,
+                json=payload,
+                params={"version": "2023-05-29"},
+                timeout=30,
+            )
+            if response.status_code != 200:
+                logger.warning(
+                    "Watsonx structured listing call failed: %s - %s",
+                    response.status_code,
+                    response.text[:200],
+                )
+                return None
+
+            data = response.json()
+            generated = (
+                data.get("results", [{}])[0].get("generated_text", "") if isinstance(data.get("results"), list) else ""
+            ).strip()
+
+            logger.info(f"🧾 watsonx raw generated payload: {generated[:200]}")
+
+            if not generated:
+                return None
+
+            start = generated.find("{")
+            end = generated.rfind("}")
+            if start == -1 or end == -1 or end <= start:
+                logger.warning("Structured listing response missing JSON body: %s", generated[:120])
+                return None
+
+            json_block = generated[start : end + 1]
+            try:
+                parsed = json.loads(json_block)
+            except json.JSONDecodeError:
+                logger.warning("Unable to decode JSON from structured listing response: %s", json_block[:120])
+                return None
+
+            if isinstance(parsed, list) and parsed:
+                parsed = parsed[0]
+
+            if not isinstance(parsed, dict):
+                return None
+
+            normalized = self._normalize_listing_record(parsed)
+            logger.info(f"🧾 Normalized watsonx listing: {normalized}")
+            return normalized
+        except Exception as exc:
+            logger.exception("Error generating structured listing: %s", exc)
+            return None
+
     def generate_response(
         self,
         message: str,

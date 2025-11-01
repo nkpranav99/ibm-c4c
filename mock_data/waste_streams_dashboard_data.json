@@ -597,6 +597,25 @@
       "views": 0,
       "inquiries": 0,
       "description": "Legendary ghuso"
+    },
+    {
+      "id": 22,
+      "listing_type": "waste_material",
+      "title": "bagasse",
+      "material_name": "bagasse",
+      "category": "Other",
+      "quantity": 2.0,
+      "unit": "ton",
+      "price_per_unit": 50.0,
+      "total_value": 100.0,
+      "sale_type": "fixed_price",
+      "status": "pending",
+      "location": "Goa",
+      "seller_company": "test",
+      "date_posted": "2025-11-01",
+      "views": 0,
+      "inquiries": 0,
+      "description": "premium bagasse from Pravin Juice Centre"
     }
   ],
   "machinery_listings": [

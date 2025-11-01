@@ -172,6 +172,47 @@ def _start_listing_flow(flow_key: str):
     logger.info(f"🧾 Listing flow started for {flow_key}")
 
 
+def _format_structured_listing_preview(data: Dict[str, Any]) -> str:
+    parts = ["Here’s what I understood:"]
+    mapping = [
+        ("Material", data.get("material_name")),
+        ("Listing title", data.get("title")),
+        ("Category", data.get("category")),
+        ("Quantity", f"{data.get('quantity')} {data.get('unit')}") if data.get("quantity") else None,
+        ("Price per unit", f"₹{data.get('price_per_unit')}" if data.get("price_per_unit") is not None else None),
+        ("Sale type", data.get("sale_type", "").replace('_', ' ').title()),
+        ("Location", data.get("location")),
+    ]
+    for label, value in mapping:
+        if value:
+            parts.append(f"• {label}: {value}")
+    description = data.get("description")
+    if description:
+        parts.append("")
+        parts.append(f"Description: {description}")
+    parts.append("")
+    parts.append("Should I publish this listing?")
+    return "\n".join(parts)
+
+
+def _call_watson_listing_parser(raw_message: str) -> Optional[Dict[str, Any]]:
+    logger.info("🤖 Attempting watsonx structured listing parse")
+    try:
+        watson_service = get_watson_service() if get_watson_service else None
+        if not watson_service:
+            logger.info("❌ Watson service unavailable for structured listing parse")
+            return None
+        parsed = watson_service.generate_structured_listing(raw_message)
+        if parsed:
+            logger.info("✅ watsonx returned structured listing data")
+        else:
+            logger.info("⚠️ watsonx did not return structured listing data")
+        return parsed
+    except Exception as exc:
+        logger.error(f"Listing parser call failed: {exc}")
+        return None
+
+
 def _get_step_instruction(field: str, step_index: int) -> str:
     label = LISTING_FLOW_STEP_MAP[field]["label"]
     optional_suffix = " (optional)" if LISTING_FLOW_STEP_MAP[field]["optional"] else ""
@@ -214,6 +255,21 @@ def _should_start_listing_flow(message: str) -> bool:
     ]
     if any(trigger in normalized for trigger in keywords):
         return True
+
+    sale_phrases = [
+        "available for sale",
+        "for sale",
+        "ready for sale",
+        "up for auction",
+        "priced at",
+        "fixed sale",
+        "fixed price",
+    ]
+
+    if any(phrase in normalized for phrase in sale_phrases):
+        if any(word in normalized for word in ["have", "selling", "providing", "offering", "available"]):
+            if any(unit in normalized for unit in ["ton", "tons", "kg", "kilogram", "metric", "bale", "mt", "quantity"]):
+                return True
 
     if "list" in normalized and (
         "sell" in normalized
@@ -481,6 +537,40 @@ def _handle_listing_flow_message(flow_key: str, user: Dict, user_message: str) -
     state = LISTING_FLOW_SESSIONS.get(flow_key)
     if not state:
         return None
+
+    if state.get("pending_confirmation"):
+        answer = user_message.strip().lower()
+        if answer in {"yes", "y", "publish", "confirm", "yes, publish it"}:
+            try:
+                listing = _submit_listing_from_flow(state["data"], user)
+            except Exception as exc:
+                logger.error(f"Error creating listing from structured flow: {exc}")
+                _reset_listing_flow(flow_key)
+                return ChatResponse(
+                    message="Something went wrong while publishing. Please try again or create the listing from your dashboard.",
+                    suggestions=["Try again", "Open seller dashboard"],
+                )
+
+            _reset_listing_flow(flow_key)
+            summary_message = _build_listing_summary_message(listing)
+            return ChatResponse(
+                message=summary_message,
+                suggestions=["Create another listing", "Show my listings", "What else can you help with?"],
+                listings=[listing],
+            )
+
+        if answer in {"no", "n", "start over", "restart", "no, start over"}:
+            _start_listing_flow(flow_key)
+            prompt = _get_step_instruction(LISTING_FLOW_FIELDS[0], 0)
+            return ChatResponse(
+                message="No problem, let's do it step by step.\n\n" + prompt,
+                suggestions=_default_listing_flow_suggestions(),
+            )
+
+        return ChatResponse(
+            message="Please reply with **Yes** to publish or **No** to start over.",
+            suggestions=["Yes, publish it", "No, start over"],
+        )
 
     message_lower = user_message.strip().lower()
     if message_lower in {"cancel", "cancel listing", "stop", "exit"}:
@@ -1354,10 +1444,25 @@ async def chat(request: ChatRequest, http_request: Request):
                     suggestions=["How do I become a seller?", "Show me seller benefits"],
                 )
 
+            structured = _call_watson_listing_parser(request.message)
+
             if not flow_key:
                 flow_key = _get_listing_flow_key(current_user)
                 if not flow_key:
                     flow_key = f"seller-{current_user.get('id') or current_user.get('username') or datetime.utcnow().timestamp()}"
+
+            if structured:
+                LISTING_FLOW_SESSIONS[flow_key] = {
+                    "step_index": LISTING_FLOW_TOTAL_STEPS,
+                    "data": structured,
+                    "started_at": datetime.utcnow().isoformat(),
+                    "pending_confirmation": True,
+                }
+                preview = _format_structured_listing_preview(structured)
+                return ChatResponse(
+                    message="Great! I'll collect the details to publish your listing.\n\n" + preview,
+                    suggestions=["Yes, publish it", "No, start over"],
+                )
 
             _start_listing_flow(flow_key)
             prompt = _get_step_instruction(LISTING_FLOW_FIELDS[0], 0)
