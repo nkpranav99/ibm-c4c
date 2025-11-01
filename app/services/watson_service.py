@@ -26,6 +26,7 @@ class WatsonHybridService:
         # Watson Orchestrate Configuration
         self.orchestrate_api_key = settings.WATSON_API_KEY
         self.orchestrate_agent_id = settings.WATSON_AGENT_ID
+        self.seller_agent_id = settings.WATSON_SELLER_AGENT_ID
         self.orchestrate_enabled = settings.WATSON_ENABLED
         
         # Store instance ID for later use
@@ -71,6 +72,7 @@ class WatsonHybridService:
         logger.info(f"  - Orchestrate enabled: {self.orchestrate_enabled}")
         logger.info(f"  - Orchestrate host: {self.orchestrate_host}")
         logger.info(f"  - Orchestrate instance ID: {settings.WATSON_INSTANCE_ID}")
+        logger.info(f"  - Seller-specific agent configured: {bool(self.seller_agent_id)}")
         logger.info(f"  - Watsonx enabled: {self.watsonx_enabled}")
         
         # System prompt for watsonx
@@ -142,15 +144,23 @@ class WatsonHybridService:
         
         return any(keyword in message_lower for keyword in data_keywords)
     
-    def call_orchestrate_agent(self, message: str, token: str) -> Optional[str]:
+    def call_orchestrate_agent(
+        self,
+        message: str,
+        token: str,
+        agent_id: Optional[str] = None
+    ) -> Optional[str]:
         """
         Call Watson Orchestrate Agent (for waste data queries)
         """
-        if not self.orchestrate_enabled or not self.orchestrate_agent_id:
+        agent_to_use = agent_id or self.orchestrate_agent_id
+
+        if not self.orchestrate_enabled or not agent_to_use:
             return None
         
         try:
             logger.info("🤖 Calling Watson Orchestrate Agent")
+            logger.info(f"🆔 Using agent ID: {agent_to_use}")
             
             headers = {
                 "Authorization": f"Bearer {token}",
@@ -167,7 +177,7 @@ class WatsonHybridService:
                     "role": "human",
                     "content": message
                 },
-                "agent_id": self.orchestrate_agent_id,
+                "agent_id": agent_to_use,
                 "additional_parameters": {},
                 "context": {}
             }
@@ -348,7 +358,8 @@ class WatsonHybridService:
         self,
         message: str,
         conversation_history: List[Dict] = None,
-        context_data: Optional[Dict] = None
+        context_data: Optional[Dict] = None,
+        user_role: Optional[str] = None
     ) -> str:
         """
         Generate response using hybrid approach:
@@ -359,10 +370,17 @@ class WatsonHybridService:
         logger.info("=" * 30)
         logger.info("🤖 Watson Hybrid Service")
         logger.info(f"📝 Message: {message[:100]}...")
+        if user_role:
+            logger.info(f"👤 User role detected: {user_role}")
         
         # Determine query type
         is_data_query = self.is_data_query(message)
         logger.info(f"🎯 Query type: {'Data Query' if is_data_query else 'General Query'}")
+
+        agent_override = None
+        if user_role == "seller" and self.seller_agent_id:
+            agent_override = self.seller_agent_id
+            logger.info("🔁 Switching to seller-specific Orchestrate agent")
         
         # Try Orchestrate Agent for data queries
         if is_data_query and self.orchestrate_enabled:
@@ -370,7 +388,7 @@ class WatsonHybridService:
             # Get token using orchestrate API key
             token = self.get_iam_token(service="orchestrate")
             if token:
-                response = self.call_orchestrate_agent(message, token)
+                response = self.call_orchestrate_agent(message, token, agent_id=agent_override)
                 if response:
                     logger.info("✅ Got response from Orchestrate Agent")
                     return response

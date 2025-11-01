@@ -578,6 +578,25 @@
       "date_posted": "2025-09-11",
       "views": 457,
       "inquiries": 35
+    },
+    {
+      "id": 21,
+      "listing_type": "waste_material",
+      "title": "Premium Ghuso",
+      "material_name": "Baggesse",
+      "category": "Agricultural/Biomass",
+      "quantity": 5.0,
+      "unit": "tons",
+      "price_per_unit": 50.0,
+      "total_value": 250.0,
+      "sale_type": "auction",
+      "status": "pending",
+      "location": "Goa",
+      "seller_company": "test",
+      "date_posted": "2025-11-01",
+      "views": 0,
+      "inquiries": 0,
+      "description": "Legendary ghuso"
     }
   ],
   "machinery_listings": [
@@ -2190,7 +2209,7 @@
     {
       "id": 3,
       "type": "auction",
-      "description": "New bid on CNC Laser Cutter - Current bid ₹1.12 Cr",
+      "description": "New bid on CNC Laser Cutter - Current bid \u20b91.12 Cr",
       "user": "Industrial Buyer",
       "urgency": "Medium",
       "timestamp": "2025-10-29 22:57:10"
@@ -2214,7 +2233,7 @@
     {
       "id": 6,
       "type": "urgent_sale",
-      "description": "Price drop: Injection Molding Machine - Now ₹35 Lakh (Owner retiring)",
+      "description": "Price drop: Injection Molding Machine - Now \u20b935 Lakh (Owner retiring)",
       "user": "Delhi Plastic Processing Industries",
       "urgency": "Very High",
       "timestamp": "2025-10-29 06:57:10"

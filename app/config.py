@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     WATSON_INSTANCE_ID: Optional[str] = None  # Instance ID - will be appended to base URL
     WATSON_HOST_URL: Optional[str] = "https://api.au-syd.watson-orchestrate.cloud.ibm.com"  # Base API URL (without /instances/)
     WATSON_AGENT_ID: Optional[str] = None
+    WATSON_SELLER_AGENT_ID: Optional[str] = "64f536a9-731d-40a4-9d38-90134de05abe"
     WATSON_ENABLED: bool = False
     
     # Watsonx.ai Configuration (for general responses)

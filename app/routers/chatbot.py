@@ -1,11 +1,21 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 import json
-from pathlib import Path
-from app.config import settings
 import logging
+import re
+from pathlib import Path
+from jose import JWTError, jwt
+
+from app.config import settings
+from app.schemas.listing import ListingSubmission
+from app.utils.mock_storage import get_user_by_email
+from app.routers.listings import (
+    load_master_data as listings_load_master_data,
+    save_master_data as listings_save_master_data,
+    format_listing as listings_format_listing,
+)
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -32,6 +42,10 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     conversation_history: Optional[List[ChatMessage]] = []
+    user_role: Optional[str] = None
+    user_email: Optional[str] = None
+    user_username: Optional[str] = None
+    user_company: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -39,6 +53,495 @@ class ChatResponse(BaseModel):
     suggestions: Optional[List[str]] = []
     listings: Optional[List[dict]] = []  # Include relevant listings
 
+
+SELLER_LISTING_CATEGORIES = [
+    "Agricultural/Biomass",
+    "Industrial Ash",
+    "Plastic Waste",
+    "Metal Scrap",
+    "Paper & Cardboard",
+    "Construction & Demolition",
+    "Glass",
+    "Textile Waste",
+    "Rubber & Tires",
+    "Organic/Food Waste",
+]
+
+
+SALE_TYPE_ALIASES = {
+    "fixed_price": {"fixed price", "fixed", "fixed-price", "direct", "direct sale", "set price"},
+    "auction": {"auction", "bid", "bidding", "auction listing", "open bidding"},
+}
+
+
+LISTING_FLOW_PLAN = [
+    {"field": "material_name", "label": "Material name", "optional": False},
+    {"field": "title", "label": "Listing title", "optional": True},
+    {"field": "category", "label": "Category", "optional": False},
+    {"field": "quantity", "label": "Quantity", "optional": False},
+    {"field": "unit", "label": "Unit", "optional": False},
+    {"field": "price_per_unit", "label": "Price per unit", "optional": False},
+    {"field": "sale_type", "label": "Sale type", "optional": False},
+    {"field": "location", "label": "Location", "optional": False},
+    {"field": "description", "label": "Description", "optional": True},
+    {"field": "images", "label": "Image URLs", "optional": True},
+]
+
+
+LISTING_FLOW_FIELDS = [step["field"] for step in LISTING_FLOW_PLAN]
+LISTING_FLOW_STEP_MAP = {step["field"]: step for step in LISTING_FLOW_PLAN}
+LISTING_FLOW_TOTAL_STEPS = len(LISTING_FLOW_PLAN)
+
+
+LISTING_STEP_INSTRUCTIONS = {
+    "material_name": "What material are you listing? (e.g., HDPE scrap, mixed paper bales)",
+    "title": "Provide a short headline buyers will see. Type 'skip' and I'll create one for you automatically.",
+    "category": "Choose the closest category from this list: "
+    + ", ".join(SELLER_LISTING_CATEGORIES),
+    "quantity": "How much material is available? Please share a number (you can include decimals).",
+    "unit": "What unit should we display? (e.g., tons, kg, liters). Type 'skip' to use 'tons'.",
+    "price_per_unit": "What's the price per unit? Share the amount in INR.",
+    "sale_type": "Is this a fixed price or an auction listing? Reply with 'fixed price' or 'auction'.",
+    "location": "Where is the material located? (City or region).",
+    "description": "Add any quality notes, certifications, or pickup details buyers should know. Type 'skip' to leave it blank for now.",
+    "images": "Share image URLs separated by commas or new lines. Type 'skip' if you don't have photos yet.",
+}
+
+
+LISTING_FLOW_SESSIONS: Dict[str, Dict[str, Any]] = {}
+
+
+def _get_user_from_request(http_request: Request) -> Optional[Dict]:
+    """Attempt to resolve the authenticated user from the incoming request."""
+    auth_header = (
+        http_request.headers.get("authorization")
+        or http_request.headers.get("Authorization")
+        or http_request.headers.get("AUTHORIZATION")
+    )
+    if not auth_header:
+        return None
+
+    parts = auth_header.replace(",", " ").split()
+    if not parts:
+        return None
+
+    scheme = parts[0]
+    token = parts[1] if len(parts) > 1 else ""
+    if scheme.lower() != "bearer" or not token:
+        return None
+
+    token = token.strip()
+    if token.lower() in {"null", "none", "undefined"}:
+        return None
+
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    except JWTError:
+        logger.warning("⚠️  Invalid authentication token presented at chatbot endpoint")
+        return None
+
+    email = payload.get("sub")
+    if not email:
+        return None
+
+    user = get_user_by_email(email)
+    if not user:
+        logger.warning("⚠️  Chatbot request token resolved to unknown user")
+    return user
+
+
+def _get_listing_flow_key(user: Optional[Dict]) -> Optional[str]:
+    if not user:
+        return None
+    key = user.get("email") or user.get("id") or user.get("username")
+    if key is None:
+        return None
+    return str(key)
+
+
+def _reset_listing_flow(flow_key: str):
+    LISTING_FLOW_SESSIONS.pop(flow_key, None)
+
+
+def _start_listing_flow(flow_key: str):
+    LISTING_FLOW_SESSIONS[flow_key] = {
+        "step_index": 0,
+        "data": {},
+        "started_at": datetime.utcnow().isoformat(),
+    }
+    logger.info(f"🧾 Listing flow started for {flow_key}")
+
+
+def _get_step_instruction(field: str, step_index: int) -> str:
+    label = LISTING_FLOW_STEP_MAP[field]["label"]
+    optional_suffix = " (optional)" if LISTING_FLOW_STEP_MAP[field]["optional"] else ""
+    base = f"Step {step_index + 1}/{LISTING_FLOW_TOTAL_STEPS} – {label}{optional_suffix}\n"
+    instruction = LISTING_STEP_INSTRUCTIONS.get(field, "Please provide the required information.")
+    return (
+        f"{base}{instruction}\n\nType 'cancel' anytime to stop or 'start over' to begin again."
+    )
+
+
+def _should_start_listing_flow(message: str) -> bool:
+    if not message:
+        return False
+    text = message.lower()
+    keywords = [
+        "list an item",
+        "list my item",
+        "list a new item",
+        "list this item",
+        "list material",
+        "list my material",
+        "list items",
+        "list my items",
+        "list items for sale",
+        "create a listing",
+        "create new listing",
+        "new listing",
+        "publish listing",
+        "post a listing",
+        "sell this material",
+        "sell my material",
+        "sell an item",
+        "add new listing",
+        "add a listing",
+        "add listing",
+        "list for sale",
+        "list your item",
+    ]
+    if any(trigger in text for trigger in keywords):
+        return True
+
+    if "list" in text and (
+        "sell" in text
+        or "sale" in text
+        or "material" in text
+        or "materials" in text
+        or "item" in text
+        or "items" in text
+        or "listing" in text
+    ):
+        return True
+
+    if "create" in text and "listing" in text:
+        return True
+
+    if "publish" in text and "listing" in text:
+        return True
+
+    return False
+
+
+def _is_seller_intent(message: str, user_role: Optional[str]) -> bool:
+    if user_role != "seller":
+        return False
+    return _should_start_listing_flow(message)
+
+
+def _extract_number(value: str) -> Optional[float]:
+    if not value:
+        return None
+    sanitized = value.replace(",", " ")
+    match = re.search(r"-?\d+(?:\.\d+)?", sanitized)
+    if not match:
+        return None
+    try:
+        return float(match.group())
+    except ValueError:
+        return None
+
+
+def _parse_listing_flow_input(field: str, raw_message: str):
+    message = raw_message.strip()
+    if not message:
+        return False, None, "Please enter a response so I can continue."
+
+    lower_message = message.lower()
+    if field in {"title", "unit", "description", "images"} and lower_message in {"skip", "none", "no", "n/a", "na"}:
+        if field == "unit":
+            return True, "tons", None
+        if field == "images":
+            return True, [], None
+        return True, None, None
+
+    if field == "material_name":
+        stripped = message.strip().rstrip('.')
+        if not stripped:
+            return False, None, "Please share the material name so buyers know what you're offering."
+        return True, stripped, None
+
+    if field == "title":
+        return True, message.strip(), None
+
+    if field == "category":
+        normalized = message.strip().lower()
+        for category in SELLER_LISTING_CATEGORIES:
+            if normalized == category.lower():
+                return True, category, None
+        # Allow partial matches
+        for category in SELLER_LISTING_CATEGORIES:
+            if normalized in category.lower():
+                return True, category, None
+        return False, None, "I couldn't match that category. Please choose one from the list I provided."
+
+    if field == "quantity":
+        number = _extract_number(message)
+        if number is None:
+            return False, None, "Please share the quantity as a number (you can include decimals)."
+        if number <= 0:
+            return False, None, "The quantity must be greater than zero."
+        return True, number, None
+
+    if field == "unit":
+        unit_value = message.strip()
+        if not unit_value:
+            return False, None, "Please provide a unit (e.g., tons, kg) or type 'skip' to use 'tons'."
+        return True, unit_value, None
+
+    if field == "price_per_unit":
+        number = _extract_number(message)
+        if number is None:
+            return False, None, "Please share the price per unit as a number in INR."
+        if number < 0:
+            return False, None, "The price cannot be negative."
+        return True, number, None
+
+    if field == "sale_type":
+        clean = re.sub(r"[^a-z0-9 ]", "", lower_message)
+        clean = clean.strip()
+        words = set(clean.split())
+        for sale_type, aliases in SALE_TYPE_ALIASES.items():
+            if clean == sale_type:
+                return True, sale_type, None
+            if clean in aliases:
+                return True, sale_type, None
+            for alias in aliases:
+                if " " in alias and alias in clean:
+                    return True, sale_type, None
+                if " " not in alias and alias in words:
+                    return True, sale_type, None
+        return False, None, "Please reply with 'fixed price' or 'auction'."
+
+    if field == "location":
+        return True, message.strip(), None
+
+    if field == "description":
+        return True, message.strip(), None
+
+    if field == "images":
+        urls = []
+        separators = re.split(r"\r?\n|,", message)
+        for entry in separators:
+            trimmed = entry.strip()
+            if trimmed:
+                urls.append(trimmed)
+        return True, urls, None
+
+    return False, None, "I'm not sure how to process that input."
+
+
+def _format_listing_flow_acknowledgement(field: str, value) -> str:
+    if field == "material_name" and value:
+        return f"Great, we'll list it as **{value}**."
+    if field == "title":
+        return "Got it – I'll use your custom headline." if value else "No problem, I'll generate a headline for you."
+    if field == "category" and value:
+        return f"Category set to **{value}**."
+    if field == "quantity" and value is not None:
+        quantity_display = format(value, 'g') if isinstance(value, (int, float)) else value
+        return f"Quantity captured as **{quantity_display}**."
+    if field == "unit" and value:
+        return f"Unit noted as **{value}**."
+    if field == "price_per_unit" and value is not None:
+        if isinstance(value, (int, float)):
+            return f"Price per unit recorded as **₹{value:,.2f}**."
+        return "Price per unit recorded."
+    if field == "sale_type" and value:
+        label = "Fixed price" if value == "fixed_price" else "Auction"
+        return f"Sale type selected: **{label}**."
+    if field == "location" and value:
+        return f"We'll show the location as **{value}**."
+    if field == "description":
+        return "Description added." if value else "No worries, you can add a description later."
+    if field == "images":
+        if value:
+            return f"Captured {len(value)} image link{'s' if len(value) != 1 else ''}."
+        return "No images for now — you can add them later if you'd like."
+    return ""
+
+
+def _submit_listing_from_flow(flow_data: Dict[str, Any], user: Dict) -> dict:
+    payload = {
+        "title": (flow_data.get("title") or f"{flow_data['material_name']} Listing").strip(),
+        "material_name": flow_data["material_name"],
+        "category": flow_data["category"],
+        "quantity": float(flow_data["quantity"]),
+        "unit": (flow_data.get("unit") or "tons").strip() or "tons",
+        "price_per_unit": float(flow_data["price_per_unit"]),
+        "sale_type": flow_data["sale_type"],
+        "location": flow_data["location"],
+        "description": flow_data.get("description") or None,
+        "seller_company": user.get("company_name") or user.get("username") or "Independent Seller",
+        "images": flow_data.get("images") or [],
+    }
+
+    submission = ListingSubmission(**payload)
+
+    master_data = listings_load_master_data()
+    listings = master_data.get("waste_material_listings", [])
+
+    new_id = max((item.get("id", 0) for item in listings), default=0) + 1
+    date_posted = datetime.utcnow().date().isoformat()
+
+    new_listing = {
+        "id": new_id,
+        "listing_type": "waste_material",
+        "title": submission.title,
+        "material_name": submission.material_name,
+        "category": submission.category,
+        "quantity": submission.quantity,
+        "unit": submission.unit,
+        "price_per_unit": submission.price_per_unit,
+        "total_value": round(submission.quantity * submission.price_per_unit, 2),
+        "sale_type": submission.sale_type,
+        "status": "pending",
+        "location": submission.location,
+        "seller_company": submission.seller_company,
+        "date_posted": date_posted,
+        "views": 0,
+        "inquiries": 0,
+    }
+
+    if submission.description:
+        new_listing["description"] = submission.description
+    if submission.images:
+        new_listing["images"] = submission.images
+
+    listings.append(new_listing)
+    master_data["waste_material_listings"] = listings
+    listings_save_master_data(master_data)
+
+    logger.info(
+        "🧾 New listing created via chatbot for seller %s (listing ID %s)",
+        submission.seller_company,
+        new_id,
+    )
+
+    return listings_format_listing(new_listing)
+
+
+def _build_listing_summary_message(listing: dict) -> str:
+    price_value = listing.get('price')
+    if isinstance(price_value, (int, float)):
+        price_display = f"₹{price_value:,.2f}"
+    elif price_value is not None:
+        price_display = str(price_value)
+    else:
+        price_display = "—"
+
+    quantity_value = listing.get('quantity')
+    if isinstance(quantity_value, (int, float)):
+        quantity_display = format(quantity_value, 'g')
+    else:
+        quantity_display = quantity_value or "—"
+
+    unit_display = listing.get('quantity_unit') or ''
+
+    lines = [
+        "✅ **Listing submitted successfully!**",
+        "",
+        f"• **Title:** {listing.get('title', 'N/A')}",
+        f"• **Material:** {listing.get('material_name', 'N/A')}",
+        f"• **Quantity:** {quantity_display} {unit_display}",
+        f"• **Price per unit:** {price_display}",
+        f"• **Sale type:** {listing.get('listing_type', 'N/A').replace('_', ' ').title()}",
+        f"• **Location:** {listing.get('location', 'N/A')}",
+        f"• **Status:** {listing.get('status', 'pending').title()}",
+    ]
+
+    detail_path = listing.get("detail_path")
+    if detail_path:
+        lines.extend([
+            "",
+            f"🔗 You can review it here: {detail_path}",
+        ])
+
+    lines.append("\nI'll keep an eye out for inquiries on this listing.")
+    return "\n".join(lines)
+
+
+def _default_listing_flow_suggestions() -> List[str]:
+    return ["Cancel listing creation", "Start over", "Show my listings"]
+
+
+def _handle_listing_flow_message(flow_key: str, user: Dict, user_message: str) -> Optional[ChatResponse]:
+    state = LISTING_FLOW_SESSIONS.get(flow_key)
+    if not state:
+        return None
+
+    message_lower = user_message.strip().lower()
+    if message_lower in {"cancel", "cancel listing", "stop", "exit"}:
+        _reset_listing_flow(flow_key)
+        return ChatResponse(
+            message="Understood — I cancelled the listing setup. Let me know when you want to start again.",
+            suggestions=["Start a new listing", "What can you do?"]
+        )
+
+    if message_lower in {"start over", "restart", "reset"}:
+        _start_listing_flow(flow_key)
+        prompt = _get_step_instruction(LISTING_FLOW_FIELDS[0], 0)
+        return ChatResponse(
+            message="No problem, let's begin again from the top.\n\n" + prompt,
+            suggestions=_default_listing_flow_suggestions(),
+        )
+
+    current_step_index = state["step_index"]
+    current_field = LISTING_FLOW_FIELDS[current_step_index]
+
+    success, value, error = _parse_listing_flow_input(current_field, user_message)
+    if not success:
+        prompt = _get_step_instruction(current_field, current_step_index)
+        return ChatResponse(
+            message=f"{error}\n\n{prompt}",
+            suggestions=_default_listing_flow_suggestions(),
+        )
+
+    state["data"][current_field] = value
+    acknowledgement = _format_listing_flow_acknowledgement(current_field, value)
+
+    state["step_index"] += 1
+
+    if state["step_index"] >= LISTING_FLOW_TOTAL_STEPS:
+        try:
+            listing = _submit_listing_from_flow(state["data"], user)
+        except Exception as exc:
+            logger.error(f"Error submitting listing via chatbot: {exc}")
+            _reset_listing_flow(flow_key)
+            return ChatResponse(
+                message="I captured your answers but ran into an error while creating the listing. Please try again from the seller dashboard.",
+                suggestions=["Open seller dashboard", "Try again later"],
+            )
+
+        _reset_listing_flow(flow_key)
+        summary_message = _build_listing_summary_message(listing)
+        return ChatResponse(
+            message=summary_message,
+            suggestions=["Create another listing", "Show my listings", "What else can you help with?"],
+            listings=[listing],
+        )
+
+    next_field = LISTING_FLOW_FIELDS[state["step_index"]]
+    prompt = _get_step_instruction(next_field, state["step_index"])
+    message_parts = []
+    if acknowledgement:
+        message_parts.append(acknowledgement)
+    message_parts.append("")
+    message_parts.append(prompt)
+    return ChatResponse(
+        message="\n".join(message_parts),
+        suggestions=_default_listing_flow_suggestions(),
+    )
 
 def extract_keywords_from_message(message: str) -> List[str]:
     """
@@ -799,7 +1302,7 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, http_request: Request):
     """
     Chat endpoint with hybrid Watson integration:
     - Watson Orchestrate Agent for waste data queries (knowledge base)
@@ -810,6 +1313,57 @@ async def chat(request: ChatRequest):
         if not request.message or not request.message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
         
+        current_user = _get_user_from_request(http_request)
+        user_role = current_user.get("role") if current_user else None
+
+        if not current_user and request.user_role:
+            current_user = {
+                "role": request.user_role,
+                "email": request.user_email,
+                "username": request.user_username,
+                "company_name": request.user_company,
+            }
+            user_role = request.user_role
+            logger.info("👤 Using request-provided user context (no auth token detected)")
+        if user_role:
+            logger.info(f"👤 Chatbot invoked by user role: {user_role}")
+
+        flow_key = _get_listing_flow_key(current_user)
+        seller_intent = _is_seller_intent(request.message, user_role)
+
+        if user_role == "seller" and flow_key:
+            # Continue ongoing listing flow if present
+            existing_flow = LISTING_FLOW_SESSIONS.get(flow_key)
+            if existing_flow:
+                flow_response = _handle_listing_flow_message(flow_key, current_user, request.message)
+                if flow_response:
+                    return flow_response
+
+        if seller_intent:
+            if not current_user:
+                return ChatResponse(
+                    message="You're almost there! Please sign in as a seller so I can publish the listing on your behalf.",
+                    suggestions=["Log in", "How do I become a seller?"],
+                )
+
+            if user_role != "seller":
+                return ChatResponse(
+                    message="Listing creation is available for seller accounts. Switch to your seller profile (or apply to become one) and ask me again when you're ready!",
+                    suggestions=["How do I become a seller?", "Show me seller benefits"],
+                )
+
+            if not flow_key:
+                flow_key = _get_listing_flow_key(current_user)
+                if not flow_key:
+                    flow_key = f"seller-{current_user.get('id') or current_user.get('username') or datetime.utcnow().timestamp()}"
+
+            _start_listing_flow(flow_key)
+            prompt = _get_step_instruction(LISTING_FLOW_FIELDS[0], 0)
+            return ChatResponse(
+                message="Great! I'll collect the details to publish your listing.\n\n" + prompt,
+                suggestions=_default_listing_flow_suggestions(),
+            )
+
         # Try Watson services first if available
         if WATSON_AVAILABLE and get_watson_service:
             watson_service = get_watson_service()
@@ -848,7 +1402,8 @@ async def chat(request: ChatRequest):
                         {"role": msg.role, "content": msg.content} 
                         for msg in request.conversation_history
                     ],
-                    context_data=context_data if context_data else None
+                    context_data=context_data if context_data else None,
+                    user_role=user_role
                 )
                 
                 if ai_response:
