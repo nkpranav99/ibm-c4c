@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function ProfileSidebar({ tabs, activeTab, onTabChange, roleLabel, user }) {
   return (
-    <aside className="card bg-white border border-gray-100 space-y-6">
+    <aside className="card space-y-6">
       <div className="flex items-center gap-4">
         <div className="h-12 w-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xl font-bold">
           {user?.username?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}

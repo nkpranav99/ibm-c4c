@@ -252,7 +252,7 @@ export default function DashboardPage() {
                   </div>
                   <Link
                     href="/listings"
-                    className="inline-flex items-center px-4 py-2 text-sm font-semibold text-sky-800 bg-white border border-sky-200 rounded-lg hover:bg-sky-100 transition"
+                    className="inline-flex items-center px-4 py-2 text-sm font-semibold text-primary-700 bg-secondary-200 border border-secondary-300 rounded-lg hover:bg-secondary-100 transition"
                   >
                     Refresh Listings →
                   </Link>

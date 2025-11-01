@@ -187,7 +187,7 @@ export default function PackagesPage() {
 
         {/* Shutdown Companies Info */}
         {shutdownCompanies.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white border border-secondary-200 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">🏢 Individual Machinery from Liquidating Companies</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {shutdownCompanies.map((company) => (

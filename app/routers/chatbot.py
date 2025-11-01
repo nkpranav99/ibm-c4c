@@ -1277,7 +1277,7 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
     
     elif any(word in message_lower for word in ["help", "support", "question", "problem"]):
         return ChatResponse(
-            message="I'm here to help! 🌟\n\n**Common topics I can assist with:**\n• Listing materials for sale\n• Browsing and buying materials\n• Understanding auctions and bidding\n• Account management\n• Searching and filtering\n• Platform navigation\n\n**If you need further assistance:**\n• Check our FAQ section (link in footer)\n• Contact support via email: support@wastemarket.com\n• Review our Help Center articles\n\nJust ask me anything about the marketplace and I'll do my best to help!",
+            message="I'm here to help! 🌟\n\n**Common topics I can assist with:**\n• Listing materials for sale\n• Browsing and buying materials\n• Understanding auctions and bidding\n• Account management\n• Searching and filtering\n• Platform navigation\n\n**If you need further assistance:**\n• Check our FAQ section (link in footer)\n• Contact support via email: support@Scraps2Stacks.com\n• Review our Help Center articles\n\nJust ask me anything about the marketplace and I'll do my best to help!",
             suggestions=["How do I report a problem?", "Where is the FAQ section?"]
         )
     

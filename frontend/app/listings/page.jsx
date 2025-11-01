@@ -233,7 +233,7 @@ export default function ListingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Tabs */}
         <div className="mb-8">
@@ -284,7 +284,7 @@ export default function ListingsPage() {
 
         {/* Enhanced Filters - Only show for materials tab */}
         {activeTab === 'materials' && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="card mb-8">
             <h2 className="text-lg font-semibold mb-4 text-gray-800">Search & Filter</h2>
             <div className="grid md:grid-cols-5 gap-4">
               <input
@@ -358,7 +358,7 @@ export default function ListingsPage() {
             </div>
 
             {/* Machinery Filters */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div className="card mb-8">
               <h2 className="text-lg font-semibold mb-4 text-gray-800">🔍 Filter Machinery</h2>
               <div className="grid md:grid-cols-4 gap-4">
                 <input
@@ -485,7 +485,7 @@ export default function ListingsPage() {
             <p className="mt-4 text-gray-600">Loading products...</p>
           </div>
         ) : listings.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg shadow">
+          <div className="text-center py-16 bg-white border border-secondary-200 rounded-lg shadow-sm">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No listings found</h3>
             <p className="text-gray-600 mb-4">Try adjusting your filters or search terms</p>
@@ -507,7 +507,7 @@ export default function ListingsPage() {
             {listings.map((item, index) => {
               const focusMatch = isFocusMatch(item)
               const highlightActive = highlightIdSet.size > 0
-              const cardBaseClasses = 'bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-transparent'
+              const cardBaseClasses = 'bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-secondary-200'
               const focusClasses = focusMatch
                 ? ' bg-primary-100/80 border border-primary-200 shadow-lg'
                 : highlightActive
@@ -565,7 +565,7 @@ export default function ListingsPage() {
                           {item.listing_type === 'auction' ? '🎯 Auction' : '💰 Fixed Price'}
                         </span>
                         {item.category && (
-                          <span className="px-3 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-full shadow">
+                          <span className="px-3 py-1 text-xs font-medium bg-secondary-100 text-gray-700 rounded-full shadow">
                             {item.category}
                           </span>
                         )}
@@ -582,7 +582,7 @@ export default function ListingsPage() {
                           {item.seller_type?.includes('Shutdown') ? '🚨 Liquidation' : item.sale_type === 'auction' ? '🎯 Auction' : '💰 Fixed'}
                         </span>
                         {item.machine_type && (
-                          <span className="px-3 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-full shadow truncate max-w-[150px]">
+                          <span className="px-3 py-1 text-xs font-medium bg-secondary-100 text-gray-700 rounded-full shadow truncate max-w-[150px]">
                             {item.machine_type}
                           </span>
                         )}

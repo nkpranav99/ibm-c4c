@@ -56,7 +56,7 @@ const AuctionCard = ({ auction, isHighlighted }) => {
     <div
       id={`auction-${auction.listing_id}`}
       className={[
-        'relative rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow',
+        'relative rounded-xl border border-secondary-200 bg-white shadow-sm transition-shadow',
         'hover:shadow-lg',
         isHighlighted ? 'ring-2 ring-primary-500 ring-offset-2' : '',
       ].join(' ')}
@@ -130,7 +130,7 @@ const AuctionCard = ({ auction, isHighlighted }) => {
               View listing details
             </Link>
             {auction.buy_now_price && (
-              <div className="rounded-lg border border-primary-200 bg-white px-3 py-2 text-center text-xs text-primary-700">
+              <div className="rounded-lg border border-primary-200 bg-secondary-100 px-3 py-2 text-center text-xs text-primary-700">
                 Buy-now guidance {formatCurrency(auction.buy_now_price)}
               </div>
             )}
@@ -241,21 +241,21 @@ export default function LiveAuctionsPage() {
         </div>
       )}
 
-      <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Active lots</p>
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-xl border border-secondary-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-600">Active auctions</p>
           <p className="text-2xl font-bold text-gray-900">{metrics.total}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Value on the block</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(metrics.totalValue)}</p>
+        <div className="rounded-xl border border-secondary-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-600">Combined market value</p>
+          <p className="text-2xl font-bold text-gray-900">₹{Math.round(metrics.totalValue / 100000).toLocaleString('en-IN')}L</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Average bids</p>
+        <div className="rounded-xl border border-secondary-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-600">Average bids per lot</p>
           <p className="text-2xl font-bold text-gray-900">{metrics.avgBids.toFixed(1)}</p>
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Closing within 4h</p>
+        <div className="rounded-xl border border-secondary-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-gray-600">Closing within 4 hours</p>
           <p className="text-2xl font-bold text-gray-900">{metrics.closingSoon}</p>
         </div>
       </div>

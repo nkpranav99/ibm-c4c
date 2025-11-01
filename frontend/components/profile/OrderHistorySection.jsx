@@ -269,7 +269,7 @@ export default function OrderHistorySection({ variant = 'page', disableRedirect 
             Order History
           </h2>
           <p className="text-sm text-gray-600 mt-2">
-            Track every purchase you have made on WasteMarket. Orders include real transactions along with demo records created during walkthrough scenarios.
+            Track every purchase you have made on Scraps2Stacks. Orders include real transactions along with demo records created during walkthrough scenarios.
           </p>
         </div>
         <button onClick={loadOrders} className="btn-secondary text-sm px-4 py-2">
@@ -313,7 +313,7 @@ export default function OrderHistorySection({ variant = 'page', disableRedirect 
                 className={`px-3 py-1 text-sm rounded-full border transition-colors ${
                   statusFilter === option.value
                     ? 'bg-primary-600 text-white border-primary-600'
-                    : 'bg-white text-gray-600 border-gray-300 hover:border-primary-400'
+                    : 'bg-white text-gray-600 border-secondary-200 hover:border-primary-400'
                 }`}
               >
                 {option.label}

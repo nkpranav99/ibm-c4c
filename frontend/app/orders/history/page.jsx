@@ -34,7 +34,7 @@ const OrderCard = ({ order, variant }) => {
   const badgeClass = statusBadgeClasses[statusKey] || 'bg-gray-100 text-gray-800'
 
   return (
-    <div className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
+    <div className="p-4 border border-secondary-200 rounded-lg shadow-sm bg-white">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
         <div>
           <div className="flex items-center gap-3 mb-1">

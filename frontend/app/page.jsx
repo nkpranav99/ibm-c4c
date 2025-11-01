@@ -10,10 +10,11 @@ export default function Home() {
   const [featuredListings, setFeaturedListings] = useState([])
   const { isAuthenticated, user } = useAuth()
   const isSeller = isAuthenticated && user?.role === 'seller'
+  const isBuyer = isAuthenticated && user?.role === 'buyer'
   const shouldShowListCta = !isAuthenticated || isSeller
   const listCtaHref = isSeller ? '/dashboard/new-listing' : '/signup'
   const shouldShowBrowseMaterials = !isSeller
-  const featureSectionTitle = isSeller ? 'Quick Actions' : 'How It Works'
+  const featureSectionTitle = (isSeller || isBuyer) ? 'Quick Actions' : 'How It Works'
 
   const getCategoryEmoji = (category) => {
     const emojis = {
@@ -50,20 +51,20 @@ export default function Home() {
             </p>
             <div className="flex justify-center space-x-4 flex-wrap gap-3">
               {shouldShowListCta && (
-                <Link href={listCtaHref} className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
+                <Link href={listCtaHref} className="btn-primary">
                   List Waste Material
                 </Link>
               )}
-              {isAuthenticated && (
+              {isAuthenticated && !isBuyer && (
                 <Link
                   href={isSeller ? '/profile?tab=insights' : '/dashboard'}
-                  className="btn-primary bg-white text-primary-600 hover:bg-primary-50"
+                  className="btn-secondary"
                 >
                   {isSeller ? 'View Insights' : 'Go to Dashboard'}
                 </Link>
               )}
               {shouldShowBrowseMaterials && (
-                <Link href="/listings" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
+                <Link href="/listings" className="btn-secondary">
                   Browse Materials
                 </Link>
               )}
@@ -73,30 +74,34 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-secondary-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">{featureSectionTitle}</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Link
-              href={shouldShowListCta ? listCtaHref : '/listings'}
-              className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            >
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📋</div>
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">List Your Waste</h3>
-              <p className="text-gray-600">
-                Companies can list their waste materials with details, pricing, and availability.
-              </p>
-            </Link>
-            <Link
-              href="/profile?tab=insights"
-              className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
-            >
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
-              <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">View Insights</h3>
-              <p className="text-gray-600">
-                Monitor performance, track revenue, and understand buyer engagement from one place.
-              </p>
-            </Link>
+            {(isSeller || !isAuthenticated) && (
+              <Link
+                href={shouldShowListCta ? listCtaHref : '/listings'}
+                className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              >
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📋</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">List Your Waste</h3>
+                <p className="text-gray-600">
+                  Companies can list their waste materials with details, pricing, and availability.
+                </p>
+              </Link>
+            )}
+            {isSeller && (
+              <Link
+                href="/profile?tab=insights"
+                className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group"
+              >
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">View Insights</h3>
+                <p className="text-gray-600">
+                  Monitor performance, track revenue, and understand buyer engagement from one place.
+                </p>
+              </Link>
+            )}
             {isSeller && (
               <Link
                 href="/profile?tab=listings"
@@ -115,6 +120,15 @@ export default function Home() {
                 <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Browse & Search</h3>
                 <p className="text-gray-600">
                   Buyers can search by material type, location, and price to find what they need.
+                </p>
+              </Link>
+            )}
+            {isBuyer && (
+              <Link href="/auctions/live" className="card text-center hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">🏷️</div>
+                <h3 className="text-xl font-semibold mb-2 group-hover:text-primary-600 transition-colors">Explore Live Auctions</h3>
+                <p className="text-gray-600">
+                  Jump straight into active auctions to bid on high-demand materials in real time.
                 </p>
               </Link>
             )}
@@ -164,14 +178,14 @@ export default function Home() {
                         <span
                           className={`px-3 py-1 text-xs font-semibold rounded-full shadow ${
                             listing.listing_type === 'auction'
-                              ? 'bg-yellow-400 text-yellow-900'
-                              : 'bg-green-500 text-white'
+                              ? 'bg-secondary-400 text-primary-800'
+                              : 'bg-primary-500/90 text-white'
                           }`}
                         >
                           {listing.listing_type === 'auction' ? '🎯 Auction' : '💰 Fixed Price'}
                         </span>
                         {listing.category && (
-                          <span className="px-3 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-full shadow">
+                          <span className="px-3 py-1 text-xs font-medium bg-secondary-100 text-gray-700 rounded-full shadow">
                             {listing.category}
                           </span>
                         )}
@@ -208,7 +222,7 @@ export default function Home() {
             <p className="text-xl mb-8 text-primary-100">
               Join our marketplace and start trading waste materials today.
             </p>
-            <Link href="/signup" className="btn-primary bg-white text-primary-600 hover:bg-primary-50">
+            <Link href="/signup" className="btn-primary">
               Sign Up Now
             </Link>
           </div>

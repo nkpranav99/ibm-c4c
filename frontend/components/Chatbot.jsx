@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { chatbotAPI } from '../lib/api'
-import { useAuth } from '../context/AuthContext'
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -17,7 +16,6 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
-  const { user } = useAuth()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -55,11 +53,7 @@ export default function Chatbot() {
         conversation_history: messages.map(m => ({
           role: m.role,
           content: m.content
-        })),
-        user_role: user?.role,
-        user_email: user?.email,
-        user_username: user?.username,
-        user_company: user?.company_name,
+        }))
       })
 
       // Add assistant response
@@ -109,18 +103,6 @@ export default function Chatbot() {
       })
   }
 
-  const formatCurrency = (value) => {
-    if (value === null || value === undefined) return null
-    const numeric = Number(value)
-    if (!Number.isNaN(numeric)) {
-      return `₹${numeric.toLocaleString('en-IN')}`
-    }
-    if (typeof value === 'string') {
-      return value
-    }
-    return null
-  }
-
   return (
     <>
       {/* Chatbot Button */}
@@ -144,17 +126,17 @@ export default function Chatbot() {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col border border-gray-200 animate-slide-up">
+        <div className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col border border-secondary-200 animate-slide-up">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-4 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-secondary-200 rounded-full flex items-center justify-center">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">Marketplace Assistant</h3>
+                <h3 className="font-semibold">Scraps2Stacks Assistant</h3>
                 <p className="text-xs text-primary-100">Online • Ready to help</p>
               </div>
             </div>
@@ -180,7 +162,7 @@ export default function Chatbot() {
                   className={`max-w-[80%] rounded-lg p-3 ${
                     message.role === 'user'
                       ? 'bg-primary-600 text-white'
-                      : 'bg-white text-gray-800 shadow-sm border border-gray-200'
+                      : 'bg-secondary-200 text-gray-800 shadow-sm border border-secondary-300'
                   }`}
                 >
                   {message.role === 'assistant' ? (
@@ -194,124 +176,33 @@ export default function Chatbot() {
                   {/* Listings Display */}
                   {message.listings && message.listings.length > 0 && (
                     <div className="mt-4 space-y-2">
-                      {message.listings.map((listing, listIndex) => {
-                        const isMachinery =
-                          listing.card_type === 'machinery' ||
-                          String(listing?.detail_path || '').includes('/machinery') ||
-                          String(listing?.id || '').toLowerCase().startsWith('mach')
-                        const href = listing.detail_path || (isMachinery ? `/machinery/${listing.id}` : `/listing/${listing.id}`)
-                        const badgeLabel = isMachinery
-                          ? listing.listing_type && listing.listing_type !== 'machinery'
-                            ? listing.listing_type.replace(/_/g, ' ')
-                            : 'Machinery'
-                          : listing.listing_type
-                          ? listing.listing_type.replace(/_/g, ' ')
-                          : 'Listing'
-
-                        const priceDisplay = formatCurrency(listing.price)
-                        const originalPrice = formatCurrency(listing.original_price)
-                        const depreciationDisplay =
-                          listing?.depreciation_percentage !== undefined && listing?.depreciation_percentage !== null
-                            ? `${Number(listing.depreciation_percentage).toFixed(1)}% savings`
-                            : null
-                        const totalValueDisplay = formatCurrency(listing.total_value)
-                        let quantityDisplay = null
-                        if (listing.quantity !== undefined && listing.quantity !== null) {
-                          const quantityNumber = Number(listing.quantity)
-                          if (!Number.isNaN(quantityNumber)) {
-                            quantityDisplay = `${quantityNumber.toLocaleString('en-IN')} ${listing.quantity_unit || ''}`.trim()
-                          } else if (typeof listing.quantity === 'string') {
-                            quantityDisplay = listing.quantity
-                          }
-                        }
-
-                        return (
-                          <a
-                            key={listIndex}
-                            href={href}
-                            className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
-                          >
-                            <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
-                              <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded capitalize">{badgeLabel}</span>
-                            </div>
-                            {isMachinery ? (
-                              <div className="text-xs text-gray-700 space-y-1">
-                                <p>
-                                  <strong>Machine Type:</strong> {listing.machine_type || '—'}
-                                  {listing.category ? ` • ${listing.category}` : ''}
-                                </p>
-                                {(listing.brand || listing.model) && (
-                                  <p>
-                                    <strong>Brand/Model:</strong> {[listing.brand, listing.model].filter(Boolean).join(' ')}
-                                  </p>
-                                )}
-                                {listing.condition && (
-                                  <p>
-                                    <strong>Condition:</strong> {listing.condition}
-                                    {listing.status ? ` • ${listing.status}` : ''}
-                                  </p>
-                                )}
-                                {(priceDisplay || originalPrice || depreciationDisplay) && (
-                                  <p>
-                                    <strong>Price:</strong> {[priceDisplay, originalPrice && `Original ${originalPrice}`, depreciationDisplay]
-                                      .filter(Boolean)
-                                      .join(' | ')}
-                                  </p>
-                                )}
-                                {listing.location && (
-                                  <p>
-                                    <strong>Location:</strong> {listing.location}
-                                  </p>
-                                )}
-                                {listing.seller_company && (
-                                  <p>
-                                    <strong>Seller:</strong> {listing.seller_company}
-                                  </p>
-                                )}
-                                {Array.isArray(listing.compatible_materials) && listing.compatible_materials.length > 0 && (
-                                  <p>
-                                    <strong>Compatible Materials:</strong> {listing.compatible_materials.slice(0, 3).join(', ')}
-                                    {listing.compatible_materials.length > 3 ? '…' : ''}
-                                  </p>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="text-xs text-gray-700 space-y-1">
-                                <p>
-                                  <strong>Material:</strong> {listing.material_name}
-                                  {listing.category ? ` • ${listing.category}` : ''}
-                                </p>
-                                {quantityDisplay && (
-                                  <p>
-                                    <strong>Quantity:</strong> {quantityDisplay}
-                                  </p>
-                                )}
-                                <p>
-                                  <strong>Price:</strong> {priceDisplay ? priceDisplay : '—'}
-                                  {listing.quantity_unit ? ` / ${listing.quantity_unit}` : ''}
-                                </p>
-                                {totalValueDisplay && (
-                                  <p>
-                                    <strong>Total Value:</strong> {totalValueDisplay}
-                                  </p>
-                                )}
-                                {listing.location && (
-                                  <p>
-                                    <strong>Location:</strong> {listing.location}
-                                  </p>
-                                )}
-                                {listing.seller_company && (
-                                  <p>
-                                    <strong>Seller:</strong> {listing.seller_company}
-                                  </p>
-                                )}
-                              </div>
+                      {message.listings.map((listing, listIndex) => (
+                        <a
+                          key={listIndex}
+                          href={`/listing/${listing.id}`}
+                          className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
+                            <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded">{listing.listing_type?.replace('_', ' ')}</span>
+                          </div>
+                          <div className="text-xs text-gray-700 space-y-1">
+                            <p><strong>Material:</strong> {listing.material_name} • {listing.category}</p>
+                            <p><strong>Quantity:</strong> {listing.quantity} {listing.quantity_unit}</p>
+                            <p><strong>Price:</strong> ₹{listing.price?.toLocaleString('en-IN') || '0'} / {listing.quantity_unit}</p>
+                            {listing.total_value && (
+                              <p><strong>Total Value:</strong> ₹{listing.total_value.toLocaleString('en-IN')}</p>
                             )}
-                            <div className="mt-2 text-xs text-primary-700 font-medium">View Details →</div>
-                          </a>
-                        )
-                      })}
+                            <p><strong>Location:</strong> {listing.location}</p>
+                            {listing.seller_company && (
+                              <p><strong>Seller:</strong> {listing.seller_company}</p>
+                            )}
+                          </div>
+                          <div className="mt-2 text-xs text-primary-700 font-medium">
+                            View Details →
+                          </div>
+                        </a>
+                      ))}
                     </div>
                   )}
                   
@@ -335,7 +226,7 @@ export default function Chatbot() {
             
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white text-gray-800 rounded-lg p-3 shadow-sm border border-gray-200">
+                <div className="bg-secondary-200 text-gray-800 rounded-lg p-3 shadow-sm border border-secondary-300">
                   <div className="flex space-x-2">
                     <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
@@ -348,7 +239,7 @@ export default function Chatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 p-4 bg-white rounded-b-lg">
+          <div className="border-t border-secondary-200 p-4 bg-secondary-100 rounded-b-lg">
             <div className="flex space-x-2">
               <input
                 ref={inputRef}
@@ -357,7 +248,7 @@ export default function Chatbot() {
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm break-words"
                 disabled={isLoading}
               />
               <button

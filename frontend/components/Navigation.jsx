@@ -19,22 +19,25 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-[#F2F2F2] border-b border-secondary-300 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-2xl font-bold text-primary-600">
-              ♻️ WasteMarket
+            <Link href="/" className="text-2xl font-semibold tracking-tight text-primary-700" aria-label="Scraps2Stacks home">
+              Scraps2Stacks
             </Link>
             {isAuthenticated && (
               <>
-                {user?.role !== 'seller' && (
-                  <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
-                    Browse Materials
+                {user?.role !== 'buyer' && (
+                  <Link href="/dashboard" className="text-gray-700 hover:text-primary-600 transition">
+                    Dashboard
                   </Link>
                 )}
                 <Link href="/auctions/live" className="text-gray-700 hover:text-primary-600 transition">
                   Live Auctions
+                </Link>
+                <Link href="/listings" className="text-gray-700 hover:text-primary-600 transition">
+                  Browse Materials
                 </Link>
                 {user?.role === 'admin' && (
                   <Link href="/admin" className="text-gray-700 hover:text-primary-600 transition">
@@ -50,12 +53,12 @@ export default function Navigation() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/profile"
-                  className="flex flex-col items-center text-primary-600 hover:text-primary-700 transition"
+                  className="flex flex-col items-center text-primary-700 hover:text-primary-800 transition"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-base font-semibold text-primary-700">
                     {avatarLetter}
                   </span>
-                  <span className="mt-1 text-xs font-medium text-gray-700">
+                  <span className="mt-2 text-xs font-medium text-gray-700">
                     {displayName}
                   </span>
                 </Link>

@@ -112,13 +112,13 @@ export default function SellOnMarketplaceSection({ user }) {
       <div className="card border border-primary-100 bg-primary-50">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-primary-800">Sell on WasteMarket</h2>
+            <h2 className="text-2xl font-bold text-primary-800">Sell on Scraps2Stacks</h2>
             <p className="text-sm text-primary-700 mt-1">
               Launch your own marketplace booth in minutes. We will guide you through onboarding, catalog setup,
               and compliance to get you selling quickly.
             </p>
           </div>
-          <div className="text-sm text-primary-800 bg-white border border-primary-200 rounded-lg px-4 py-3">
+          <div className="text-sm text-primary-800 bg-secondary-100 border border-secondary-200 rounded-lg px-4 py-3">
             <p className="font-semibold">Need help first?</p>
             <Link href="/dashboard/new-listing" className="text-primary-600 hover:text-primary-700 underline">
               Explore listing requirements
@@ -128,15 +128,15 @@ export default function SellOnMarketplaceSection({ user }) {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="card bg-white border border-gray-100">
+        <div className="card">
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">1. Prepare</h3>
           <p className="text-sm text-gray-600 mt-2">Tell us about your company, materials, and volume expectations.</p>
         </div>
-        <div className="card bg-white border border-gray-100">
+        <div className="card">
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">2. Onboard</h3>
           <p className="text-sm text-gray-600 mt-2">Our team will provision your seller workspace and train your staff.</p>
         </div>
-        <div className="card bg-white border border-gray-100">
+        <div className="card">
           <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">3. Launch</h3>
           <p className="text-sm text-gray-600 mt-2">List your materials, run auctions, and manage orders in one dashboard.</p>
         </div>
