@@ -186,6 +186,8 @@ def _should_start_listing_flow(message: str) -> bool:
     if not message:
         return False
     text = message.lower()
+    normalized = re.sub(r"[^a-z0-9\s]", " ", text)
+    normalized = re.sub(r"\s+", " ", normalized).strip()
     keywords = [
         "list an item",
         "list my item",
@@ -210,24 +212,24 @@ def _should_start_listing_flow(message: str) -> bool:
         "list for sale",
         "list your item",
     ]
-    if any(trigger in text for trigger in keywords):
+    if any(trigger in normalized for trigger in keywords):
         return True
 
-    if "list" in text and (
-        "sell" in text
-        or "sale" in text
-        or "material" in text
-        or "materials" in text
-        or "item" in text
-        or "items" in text
-        or "listing" in text
+    if "list" in normalized and (
+        "sell" in normalized
+        or "sale" in normalized
+        or "material" in normalized
+        or "materials" in normalized
+        or "item" in normalized
+        or "items" in normalized
+        or "listing" in normalized
     ):
         return True
 
-    if "create" in text and "listing" in text:
+    if "create" in normalized and "listing" in normalized:
         return True
 
-    if "publish" in text and "listing" in text:
+    if "publish" in normalized and "listing" in normalized:
         return True
 
     return False
@@ -1277,7 +1279,7 @@ def get_chatbot_response(user_message: str, conversation_history: List[ChatMessa
     
     elif any(word in message_lower for word in ["help", "support", "question", "problem"]):
         return ChatResponse(
-            message="I'm here to help! 🌟\n\n**Common topics I can assist with:**\n• Listing materials for sale\n• Browsing and buying materials\n• Understanding auctions and bidding\n• Account management\n• Searching and filtering\n• Platform navigation\n\n**If you need further assistance:**\n• Check our FAQ section (link in footer)\n• Contact support via email: support@Scraps2Stacks.com\n• Review our Help Center articles\n\nJust ask me anything about the marketplace and I'll do my best to help!",
+            message="I'm here to help! 🌟\n\n**Common topics I can assist with:**\n• Listing materials for sale\n• Browsing and buying materials\n• Understanding auctions and bidding\n• Account management\n• Searching and filtering\n• Platform navigation\n\n**If you need further assistance:**\n• Check our FAQ section (link in footer)\n• Contact support via email: support@wastemarket.com\n• Review our Help Center articles\n\nJust ask me anything about the marketplace and I'll do my best to help!",
             suggestions=["How do I report a problem?", "Where is the FAQ section?"]
         )
     
@@ -1329,7 +1331,7 @@ async def chat(request: ChatRequest, http_request: Request):
             logger.info(f"👤 Chatbot invoked by user role: {user_role}")
 
         flow_key = _get_listing_flow_key(current_user)
-        seller_intent = _is_seller_intent(request.message, user_role)
+        seller_intent = _should_start_listing_flow(request.message)
 
         if user_role == "seller" and flow_key:
             # Continue ongoing listing flow if present

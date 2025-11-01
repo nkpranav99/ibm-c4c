@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { chatbotAPI } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,6 +17,7 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+  const { user, isAuthenticated } = useAuth()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -53,7 +55,11 @@ export default function Chatbot() {
         conversation_history: messages.map(m => ({
           role: m.role,
           content: m.content
-        }))
+        })),
+        user_role: isAuthenticated ? user?.role : undefined,
+        user_email: isAuthenticated ? user?.email : undefined,
+        user_username: isAuthenticated ? user?.username : undefined,
+        user_company: isAuthenticated ? user?.company_name : undefined,
       })
 
       // Add assistant response
