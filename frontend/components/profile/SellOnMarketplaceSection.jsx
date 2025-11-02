@@ -112,7 +112,7 @@ export default function SellOnMarketplaceSection({ user }) {
       <div className="card border border-primary-100 bg-primary-50">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-primary-800">Sell on Scraps2Stacks</h2>
+            <h2 className="text-2xl font-bold text-primary-800">Sell on WasteMarket</h2>
             <p className="text-sm text-primary-700 mt-1">
               Launch your own marketplace booth in minutes. We will guide you through onboarding, catalog setup,
               and compliance to get you selling quickly.

@@ -122,9 +122,35 @@ export default function SignupPage() {
                 placeholder="Your organisation"
               />
             </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
+              <div className="flex space-x-4">
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="buyer"
+                    checked={formData.role === 'buyer'}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Buyer</span>
+                </label>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="seller"
+                    checked={formData.role === 'seller'}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Seller</span>
+                </label>
+              </div>
+            </div>
           </div>
-
-          <input type="hidden" value={formData.role} readOnly />
           <div>
             <button type="submit" className="btn-primary w-full">
               Sign up

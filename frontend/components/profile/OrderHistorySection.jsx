@@ -269,7 +269,7 @@ export default function OrderHistorySection({ variant = 'page', disableRedirect 
             Order History
           </h2>
           <p className="text-sm text-gray-600 mt-2">
-            Track every purchase you have made on Scraps2Stacks. Orders include real transactions along with demo records created during walkthrough scenarios.
+            Track every purchase you have made on WasteMarket. Orders include real transactions along with demo records created during walkthrough scenarios.
           </p>
         </div>
         <button onClick={loadOrders} className="btn-secondary text-sm px-4 py-2">
