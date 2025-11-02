@@ -229,6 +229,18 @@ def _should_start_listing_flow(message: str) -> bool:
     text = message.lower()
     normalized = re.sub(r"[^a-z0-9\s]", " ", text)
     normalized = re.sub(r"\s+", " ", normalized).strip()
+    
+    # First, check if this is a query about EXISTING listings (not creating new ones)
+    # These patterns indicate the user is asking about available/existing listings
+    querying_existing_patterns = [
+        "do we have", "do you have", "are there", "is there", "can we see",
+        "show me", "show us", "find", "search", "browse", "get listings",
+        "see listings", "available listings", "existing listings", 
+        "current listings", "any listings", "what listings", "listings available"
+    ]
+    if any(pattern in normalized for pattern in querying_existing_patterns):
+        return False  # This is a query about existing data, not creation intent
+    
     keywords = [
         "list an item",
         "list my item",
@@ -267,20 +279,28 @@ def _should_start_listing_flow(message: str) -> bool:
     ]
 
     if any(phrase in normalized for phrase in sale_phrases):
-        if any(word in normalized for word in ["have", "selling", "providing", "offering", "available"]):
-            if any(unit in normalized for unit in ["ton", "tons", "kg", "kilogram", "metric", "bale", "mt", "quantity"]):
-                return True
+        # Only trigger if it's clearly a creation intent, not a query about existing items
+        # Check that it's NOT a question about existing listings
+        if not any(qword in normalized for qword in ["do we have", "are there", "do you have", "show me", "find"]):
+            if any(word in normalized for word in ["have", "selling", "providing", "offering", "available"]):
+                if any(unit in normalized for unit in ["ton", "tons", "kg", "kilogram", "metric", "bale", "mt", "quantity"]):
+                    return True
 
-    if "list" in normalized and (
-        "sell" in normalized
-        or "sale" in normalized
-        or "material" in normalized
-        or "materials" in normalized
-        or "item" in normalized
-        or "items" in normalized
-        or "listing" in normalized
-    ):
-        return True
+    # More specific check: "list" should be combined with action words, not just "material"
+    # This prevents informational queries like "what can I do with material" from triggering
+    if "list" in normalized:
+        # Check for explicit listing creation phrases
+        listing_actions = ["list", "create", "add", "post", "publish", "sell"]
+        listing_objects = ["listing", "item", "items"]
+        
+        # Only trigger if "list" appears with another action word or listing object
+        # AND it's not part of a question
+        has_action = any(action in normalized for action in listing_actions if action != "list")
+        has_listing_object = any(obj in normalized for obj in listing_objects)
+        is_question = any(q in normalized for q in ["what", "how", "when", "where", "why", "can", "should"])
+        
+        if (has_action or has_listing_object) and not is_question:
+            return True
 
     if "create" in normalized and "listing" in normalized:
         return True
@@ -1421,7 +1441,62 @@ async def chat(request: ChatRequest, http_request: Request):
             logger.info(f"👤 Chatbot invoked by user role: {user_role}")
 
         flow_key = _get_listing_flow_key(current_user)
-        seller_intent = _should_start_listing_flow(request.message)
+        
+        # Check if this is an informational query first (questions, asking for help/info)
+        # Informational queries should go to Watson services, not listing flow
+        message_lower = request.message.lower()
+        
+        # First, check if this is a QUESTION (informational) - prioritize this over listing creation
+        # Question words that indicate informational queries
+        question_indicators = [
+            "what", "how", "where", "when", "why", "can i", "should i",
+            "what can i do", "what can i", "how can i", "how do", "how is", "how are",
+            "what is", "what are", "how does", "how did",
+            "tell me", "explain", "describe", "help me", "i want to know",
+            "do we have", "do you have", "are there", "can you", "can we",
+            "do they have", "is there", "are there any", "show me"
+        ]
+        is_question = any(qword in message_lower for qword in question_indicators)
+        
+        # Check if this is a listing creation query (NOT informational)
+        # Listing creation queries should use WatsonX for parsing, not Orchestrate
+        # But only if it's NOT a question
+        listing_creation_indicators = [
+            "i have", "i've got", "we have", "we've got",
+            "available for sale", "for sale", "priced at", "price per",
+            "tons available", "kg available", "material available",
+            "fixed sale", "fixed price", "selling"
+        ]
+        # Only treat as listing creation if it's not a question
+        is_listing_creation = (not is_question) and any(phrase in message_lower for phrase in listing_creation_indicators)
+        
+        # Keywords that indicate informational queries about existing data
+        informational_indicators = [
+            "existing", "current", "list of", "find", "search",
+            "show", "display", "get", "fetch", "browse"
+        ]
+        
+        # Check if it's asking about existing listings/data (not creating new ones)
+        is_querying_existing = any(indicator in message_lower for indicator in [
+            "existing", "current", "do we have", "are there",
+            "show me", "find", "search", "browse", "get listings", "see listings"
+        ])
+        
+        # If it's a question OR querying existing, it's informational
+        # Questions take priority over listing creation detection
+        is_informational_query = is_question or is_querying_existing
+        
+        # Only check for listing intent if it's not clearly an informational query
+        if is_listing_creation:
+            logger.info("📝 Detected listing creation query - will use WatsonX for parsing")
+        
+        if is_informational_query:
+            logger.info(f"📝 Detected informational query (question: {is_question}, querying existing: {is_querying_existing}) - routing to Watson services")
+            seller_intent = False
+        else:
+            seller_intent = _should_start_listing_flow(request.message) or is_listing_creation
+            if seller_intent:
+                logger.info("📋 Detected listing creation intent - starting listing flow")
 
         if user_role == "seller" and flow_key:
             # Continue ongoing listing flow if present
@@ -1472,12 +1547,15 @@ async def chat(request: ChatRequest, http_request: Request):
             )
 
         # Try Watson services first if available
-        if WATSON_AVAILABLE and get_watson_service:
+        # Skip this if it's a listing creation query (already handled above with WatsonX)
+        if not seller_intent and WATSON_AVAILABLE and get_watson_service:
             watson_service = get_watson_service()
             
             # Check if watson services are enabled
             if watson_service.orchestrate_enabled or watson_service.watsonx_enabled:
                 logger.info("🤖 Using Watson services for response")
+                logger.info(f"   Orchestrate enabled: {watson_service.orchestrate_enabled}")
+                logger.info(f"   WatsonX enabled: {watson_service.watsonx_enabled}")
                 message_lower = request.message.lower()
                 
                 # Prepare context data (listings, materials, etc.)
@@ -1535,6 +1613,10 @@ async def chat(request: ChatRequest, http_request: Request):
                     )
                 else:
                     logger.warning("⚠️  Watson returned no response, falling back to rules")
+            else:
+                logger.warning("⚠️  Watson services available but not enabled - check configuration")
+        else:
+            logger.warning("⚠️  Watson services not available - using rule-based fallback")
         
         # Fallback to rule-based response
         logger.info("📝 Using rule-based response (fallback)")

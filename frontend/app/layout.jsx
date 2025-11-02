@@ -7,7 +7,7 @@ import { AuthProvider } from '../context/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Waste Material Marketplace',
+  title: 'Scraps2Stacks',
   description: 'Turning Industrial Waste into Opportunity',
 }
 

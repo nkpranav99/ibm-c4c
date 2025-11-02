@@ -182,33 +182,69 @@ export default function Chatbot() {
                   {/* Listings Display */}
                   {message.listings && message.listings.length > 0 && (
                     <div className="mt-4 space-y-2">
-                      {message.listings.map((listing, listIndex) => (
-                        <a
-                          key={listIndex}
-                          href={`/listing/${listing.id}`}
-                          className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
-                            <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded">{listing.listing_type?.replace('_', ' ')}</span>
-                          </div>
-                          <div className="text-xs text-gray-700 space-y-1">
-                            <p><strong>Material:</strong> {listing.material_name} • {listing.category}</p>
-                            <p><strong>Quantity:</strong> {listing.quantity} {listing.quantity_unit}</p>
-                            <p><strong>Price:</strong> ₹{listing.price?.toLocaleString('en-IN') || '0'} / {listing.quantity_unit}</p>
-                            {listing.total_value && (
-                              <p><strong>Total Value:</strong> ₹{listing.total_value.toLocaleString('en-IN')}</p>
-                            )}
-                            <p><strong>Location:</strong> {listing.location}</p>
-                            {listing.seller_company && (
-                              <p><strong>Seller:</strong> {listing.seller_company}</p>
-                            )}
-                          </div>
-                          <div className="mt-2 text-xs text-primary-700 font-medium">
-                            View Details →
-                          </div>
-                        </a>
-                      ))}
+                      {message.listings.map((listing, listIndex) => {
+                        // Determine the correct detail path
+                        let detailPath = listing.detail_path
+                        if (!detailPath) {
+                          // Fallback: use card_type to determine path, or default to listing
+                          if (listing.card_type === 'machinery') {
+                            detailPath = `/machinery/${listing.id}`
+                          } else {
+                            detailPath = `/listing/${listing.id}`
+                          }
+                        }
+                        
+                        const isMachinery = listing.card_type === 'machinery'
+                        
+                        return (
+                          <a
+                            key={listIndex}
+                            href={detailPath}
+                            className="block bg-primary-50 hover:bg-primary-100 border border-primary-200 rounded-lg p-3 text-left transition-colors"
+                          >
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-semibold text-sm text-primary-900">{listing.title}</h4>
+                              <span className="text-xs bg-primary-600 text-white px-2 py-1 rounded">
+                                {listing.listing_type?.replace('_', ' ') || (isMachinery ? 'Machinery' : 'Listing')}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-700 space-y-1">
+                              {isMachinery ? (
+                                <>
+                                  <p><strong>Type:</strong> {listing.machine_type || listing.title}</p>
+                                  {listing.category && <p><strong>Category:</strong> {listing.category}</p>}
+                                  {listing.brand && <p><strong>Brand:</strong> {listing.brand}</p>}
+                                  {listing.model && <p><strong>Model:</strong> {listing.model}</p>}
+                                  <p><strong>Condition:</strong> {listing.condition || 'N/A'}</p>
+                                  {listing.price && (
+                                    <p><strong>Price:</strong> ₹{listing.price.toLocaleString('en-IN')}</p>
+                                  )}
+                                  <p><strong>Location:</strong> {listing.location}</p>
+                                  {listing.seller_company && (
+                                    <p><strong>Seller:</strong> {listing.seller_company}</p>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <p><strong>Material:</strong> {listing.material_name} • {listing.category}</p>
+                                  <p><strong>Quantity:</strong> {listing.quantity} {listing.quantity_unit}</p>
+                                  <p><strong>Price:</strong> ₹{listing.price?.toLocaleString('en-IN') || '0'} / {listing.quantity_unit}</p>
+                                  {listing.total_value && (
+                                    <p><strong>Total Value:</strong> ₹{listing.total_value.toLocaleString('en-IN')}</p>
+                                  )}
+                                  <p><strong>Location:</strong> {listing.location}</p>
+                                  {listing.seller_company && (
+                                    <p><strong>Seller:</strong> {listing.seller_company}</p>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                            <div className="mt-2 text-xs text-primary-700 font-medium">
+                              View Details →
+                            </div>
+                          </a>
+                        )
+                      })}
                     </div>
                   )}
                   

@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '../context/AuthContext'
 import { useRouter, usePathname } from 'next/navigation'
 
@@ -23,8 +24,15 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-2xl font-semibold tracking-tight text-primary-700" aria-label="Scraps2Stacks home">
-              Scraps2Stacks
+            <Link href="/" className="flex items-center" aria-label="Trash2Stacks home">
+              <Image
+                src="/Trash2Stacks_Logo.png"
+                alt="Trash2Stacks Logo"
+                width={150}
+                height={40}
+                className="h-10 w-auto object-contain"
+                priority
+              />
             </Link>
             {isAuthenticated && (
               <>

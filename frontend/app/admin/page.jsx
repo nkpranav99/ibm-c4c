@@ -141,7 +141,7 @@ export default function AdminPage() {
                 {stats.recent_listings?.slice(0, 5).map((l) => (
                   <div key={l.id} className="p-2 border rounded">
                     <p className="font-medium">{l.title}</p>
-                    <p className="text-sm text-gray-600">${l.price} - {l.location}</p>
+                    <p className="text-sm text-gray-600">₹{l.price} - {l.location}</p>
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export default function AdminPage() {
               <div key={listing.id} className="p-4 border rounded flex justify-between items-center">
                 <div>
                   <h3 className="font-medium">{listing.title}</h3>
-                  <p className="text-sm text-gray-600">{listing.material_name} - ${listing.price}</p>
+                  <p className="text-sm text-gray-600">{listing.material_name} - ₹{listing.price}</p>
                 </div>
                 <button
                   onClick={() => handleDeleteListing(listing.id)}

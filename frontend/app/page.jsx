@@ -195,7 +195,7 @@ export default function Home() {
                     <p className="text-gray-600 mb-2">{listing.material_name}</p>
                     <div className="flex justify-between items-center">
                       <span className="text-primary-600 font-bold text-lg">
-                        ${price?.toLocaleString?.() ?? price ?? '0'}
+                        ₹{price?.toLocaleString?.() ?? price ?? '0'}
                       </span>
                       <span className="text-sm text-gray-500">{listing.location}</span>
                     </div>

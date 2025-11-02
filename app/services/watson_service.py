@@ -117,8 +117,34 @@ class WatsonHybridService:
     def is_data_query(self, message: str) -> bool:
         """
         Determine if query is about waste data (should use Orchestrate agent)
+        Excludes listing creation queries which should use WatsonX
         """
         message_lower = message.lower()
+        
+        # First, check if this is a listing creation query (should use WatsonX, not Orchestrate)
+        listing_creation_phrases = [
+            "available for sale", "for sale", "ready for sale", "up for sale",
+            "priced at", "price per", "selling", "i have", "i've got", 
+            "we have", "we've got", "material available", "tons available",
+            "kg available", "fixed sale", "fixed price", "i want to sell",
+            "i want to list", "create a listing", "list my"
+        ]
+        
+        # Check if it's a question (informational query)
+        # Questions about waste materials should go to Orchestrate Agent
+        question_indicators = [
+            "what", "how", "where", "when", "why", "can i", "should i",
+            "what can i do", "what can i", "how can i", "tell me", "explain",
+            "describe", "help me", "i want to know"
+        ]
+        is_question = any(qword in message_lower for qword in question_indicators)
+        
+        # If it's a listing creation query (not a question), it's NOT a data query
+        # (it should go to WatsonX for structured parsing)
+        # But questions about materials ARE data queries (should use Orchestrate)
+        is_listing_creation = (not is_question) and any(phrase in message_lower for phrase in listing_creation_phrases)
+        if is_listing_creation:
+            return False
         
         # Keywords that indicate waste marketplace data queries
         data_keywords = [
